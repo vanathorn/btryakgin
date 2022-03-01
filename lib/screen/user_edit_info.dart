@@ -40,7 +40,8 @@ class UserEditInfoState extends State<UserEditInfo> {
   String txtName, txtMobile;
   String _txtName, _txtMobile;
   String _userImage;
-  String physicalpath = 'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\member\\';
+  String physicalpath = 
+    'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\member\\';
 
   PickedFile _imageFile;
   String gllery = 'N';
