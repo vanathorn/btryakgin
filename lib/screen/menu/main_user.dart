@@ -7,18 +7,18 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
-import 'package:btryakgin/model/count_model.dart';
-import 'package:btryakgin/model/mess_model.dart';
-import 'package:btryakgin/screen/custom/cart_shop_list.dart';
-import 'package:btryakgin/screen/user_edit_info.dart';
-import 'package:btryakgin/screen/custom/user_select_shoptype.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/signOut.dart';
-import 'package:btryakgin/widget/custom/user_order_list.dart';
+import 'package:yakgin/model/count_model.dart';
+import 'package:yakgin/model/mess_model.dart';
+import 'package:yakgin/screen/custom/cart_shop_list.dart';
+import 'package:yakgin/screen/user_edit_info.dart';
+import 'package:yakgin/screen/custom/user_select_shoptype.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/signOut.dart';
+import 'package:yakgin/widget/custom/user_order_list.dart';
 
 class MainUser extends StatefulWidget {
   @override
@@ -96,7 +96,7 @@ class _MainUserState extends State<MainUser> {
   }
 
   Future<Null> getMemberPict() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getMbpict.aspx?mbid=$mbid';
 
     await Dio().get(url).then((value) {
@@ -191,7 +191,7 @@ class _MainUserState extends State<MainUser> {
               child: logoimage == ''
                   ? Image.asset('userlogo.png')
                   : Image.network(
-                      '${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
+                     'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                       fit: BoxFit.cover,
                     )),
         ),
@@ -279,7 +279,7 @@ class _MainUserState extends State<MainUser> {
 
   Widget signOutMenu() {
     return Container(
-      decoration: BoxDecoration(color: Colors.red[600]),
+      decoration: BoxDecoration(color:MyStyle().bgsignout),
       child: ListTile(
         leading: Icon(
           Icons.exit_to_app,
@@ -293,7 +293,7 @@ class _MainUserState extends State<MainUser> {
   }
 
   Future<int> countOrder() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/custom/countOrder.aspx?mbid=' +
         mbid +
         '&condition=[Status] not in (2,3,9)';

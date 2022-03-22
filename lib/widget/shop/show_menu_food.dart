@@ -5,13 +5,13 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/foodtype_model.dart';
-import 'package:btryakgin/model/prodslider_model.dart';
-import 'package:btryakgin/model/product_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/foodtype_model.dart';
+import 'package:yakgin/model/prodslider_model.dart';
+import 'package:yakgin/model/product_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 
 class ShowMenuFood extends StatefulWidget {
   final ShopRestModel restModel;
@@ -50,7 +50,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
     if (foodTypeModels.length != 0) {
       foodTypeModels.clear();
     }
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodType.aspx?ccode=$ccode&strCondtion=&strOrder=';
 
     await Dio().get(url).then((value) {
@@ -77,7 +77,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
   Future<Null> readFoodSlide(String iid, int index) async {
     //ยังไม่ใช้
     sliderModels.clear();
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodSlide.aspx?ccode=$ccode&iid=$iid';
 
     await Dio().get(url).then((value) {
@@ -179,7 +179,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
                   child: ImageFiltered(
                     imageFilter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                     child: Image.network(
-                      '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/foodtype/${e.ftypepict}',
+                      'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/foodtype/${e.ftypepict}',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -194,7 +194,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
   }
 
   Future<Null> getFoodByType(String ftypeid) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodByType.aspx?ccode=$ccode&itid=$ftypeid&strOrder=iName';
 
     //&itid=${foodStateController.selectedFoodType.value.itid}
@@ -249,7 +249,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
                                 imageFilter:
                                     ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                                 child: Image.network(
-                                  '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/${productModels[index].foodpict}',
+                                  'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${productModels[index].foodpict}',
                                   width: screen * 0.8,
                                 ),
                               ),
@@ -257,7 +257,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
                               /*                    
                               child: CircleAvatar(
                                 backgroundImage: NetworkImage(
-                                  '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/${productModels[index].foodpict}'
+                                  'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${productModels[index].foodpict}'
                                 ),
                                 minRadius: screen*0.75,
                                 maxRadius: screen*0.75,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Future<Null> alertDialog(BuildContext context, String subtitle) async {

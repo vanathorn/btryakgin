@@ -1,7 +1,7 @@
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/view/menu_vm/menu_viewmodel.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/view/menu_vm/menu_viewmodel.dart';
 import 'package:get/get.dart';
 
 class MenuViewModelImp implements MenuViewModel {

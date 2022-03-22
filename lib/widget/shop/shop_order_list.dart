@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/order_detail_model.dart';
-import 'package:btryakgin/model/order_model.dart';
-import 'package:btryakgin/model/status_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
+import 'package:yakgin/model/order_detail_model.dart';
+import 'package:yakgin/model/order_model.dart';
+import 'package:yakgin/model/status_model.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
 import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_indicator/steps_indicator.dart';
@@ -156,7 +156,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
     String condStr = getCondition();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     mbid = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/getOrderList.aspx?resturantId=$mbid&condition=' +
         '$condStr&strorder=olid asc';
 
@@ -569,7 +569,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
           ),
         ),
         Container(
-          width: screen * 0.265,
+          width: screen * 0.28,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -582,7 +582,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
           ),
         ),
         Container(
-          width: screen * 0.35,
+          width: screen * 0.32,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -611,7 +611,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyStyle().txtTitle('Order List.'),
+                    MyStyle().txtshadowsIntoLight('Order List.'),
                     Container(
                       width: 90,
                       child: FloatingActionButton.extended(
@@ -838,7 +838,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
         Container(
           child: CircleAvatar(
             backgroundImage: NetworkImage(
-                '${MyConstant().domain}/${MyConstant().memberimagepath}/${listOrders[index].riderpict}'),
+                'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/${listOrders[index].riderpict}'),
             radius: 38,
           ),
         ),
@@ -867,7 +867,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
         Container(
           child: CircleAvatar(
             backgroundImage: NetworkImage(
-                '${MyConstant().domain}/${MyConstant().memberimagepath}/${listOrders[index].mbpict}'),
+                'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/${listOrders[index].mbpict}'),
             radius: 38,
           ),
         ),
@@ -878,10 +878,10 @@ class _ShopOrderListState extends State<ShopOrderList> {
                   fontFamily: 'thaisanslite',
                   fontSize: 13,
                   fontWeight: FontWeight.normal,
-                  color: Colors.black)),
+                  color: Colors.white)),
           icon: Icon(
             Icons.face_retouching_natural,
-            color: Colors.black,
+            color: Colors.white,
           ),
           backgroundColor: MyStyle().primarycolor, //Colors.lime[700],
           onPressed: () async {
@@ -895,7 +895,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
   Future<Null> riderOrder(OrderModel listord) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String resturantId = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/setStatusRider.aspx?mbordid=' +
         listord.mbordid +
         '&resturantId=' +
@@ -927,7 +927,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
   Future<Null> finishOrder(OrderModel listord) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String resturantId = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/setStatusFinish.aspx?mbordid=' +
         listord.mbordid +
         '&resturantId=' +
@@ -959,7 +959,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
 
   Future<Null> reciveOrder(OrderModel listord) async {
     //mbid =  mbid ของ Customer
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/setOrderStatus.aspx?mbordid=' +
         listord.mbordid +
         '&ccode=' +
@@ -986,7 +986,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
 
   Future<Null> checkReciveStatus(OrderModel listord) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shop/checkOrdStatus.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
             listord.ccode +
             '&olid=' +
             listord.olid +
@@ -1033,7 +1033,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
 
   Future<Null> checkCancelStatus(OrderModel listord) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shop/checkOrdStatus.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
             listord.ccode +
             '&olid=' +
             listord.olid +
@@ -1080,7 +1080,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
   }
 
   Future<Null> cancelOrder(OrderModel listord) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/setOrderStatus.aspx?mbordid=' +
         listord.mbordid +
         '&ccode=' +

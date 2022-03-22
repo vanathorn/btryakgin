@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/order_model.dart';
+import 'package:yakgin/model/order_model.dart';
 
 class CartOrderModel extends OrderModel {
   int countord = 0;

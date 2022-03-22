@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/food_list_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/food_list_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 import 'food_detail_screen.dart';
 
 class AdviceFoodScreen extends StatefulWidget {
@@ -57,7 +57,7 @@ class _AdviceFoodScreenState extends State<AdviceFoodScreen> {
   }
 
   Future<Null> getFoodAdvice() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodAdvice.aspx?ccode=$ccode&strOrder=';
     try {
       await Dio().get(url).then((value) {
@@ -142,8 +142,7 @@ class _AdviceFoodScreenState extends State<AdviceFoodScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: Stack(fit: StackFit.expand, children: [
                           CachedNetworkImage(
-                            imageUrl: '${MyConstant().domain}/$webPath' +
-                                '/${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
+                            imageUrl: 'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
                             fit: BoxFit.cover,
                           ),
                           Align(

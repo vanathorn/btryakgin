@@ -2,19 +2,19 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/user_model.dart';
-import 'package:btryakgin/screen/SingUp.dart';
-import 'package:btryakgin/screen/home.dart';
-import 'package:btryakgin/screen/menu/main_admin.dart';
-import 'package:btryakgin/screen/menu/main_rider.dart';
-import 'package:btryakgin/screen/menu/main_shop.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/screen/menu/multi_home.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:yakgin/model/user_model.dart';
+import 'package:yakgin/screen/SingUp.dart';
+import 'package:yakgin/screen/home.dart';
+import 'package:yakgin/screen/menu/main_admin.dart';
+import 'package:yakgin/screen/menu/main_rider.dart';
+import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/screen/menu/multi_home.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -108,7 +108,7 @@ class _SignInState extends State<SignIn> {
     }
     if (mobile.length == maxmobile) {
       Toast.show(
-        'ระบุรหัสพิน(PIN Code)',
+        'รหัส(PIN Code) 4 หลัก',
         context,
         gravity: Toast.CENTER,
         backgroundColor: Colors.amber,
@@ -186,7 +186,7 @@ class _SignInState extends State<SignIn> {
                           MaterialPageRoute(builder: (value) => SignUp());
                       Navigator.push(context, route);
                     },
-                    child: MyStyle().titleDark('สมัครใหม่')))
+                    child: MyStyle().titleLight('สมัครใหม่')))
           ])),
       body: Container(
         decoration: BoxDecoration(
@@ -204,7 +204,7 @@ class _SignInState extends State<SignIn> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               buildLogo(),
-              MyStyle().txtbrandsmall('Yakgin'),
+              //MyStyle().txtbrandsmall('Yakgin'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -313,7 +313,7 @@ class _SignInState extends State<SignIn> {
     if (setmode == 'MOBILE') {
       stepInfo = 'เบอร์มือถือ';
     } else if (setmode == 'PIN') {
-      stepInfo = 'รหัสพิน(PIN Code) 4 หลัก';
+      stepInfo = 'รหัส 4 หลัก';
       pin = '';
       txtencryptpin = '';
       txtpin = '';
@@ -590,7 +590,7 @@ class _SignInState extends State<SignIn> {
 
   Container buildLogo() {
     return Container(
-        width: screen * 0.33,
+        width: screen * 0.28,
         //margin: const EdgeInsets.only(top: 0),
         child: MyUtil().showLogo());
   }
@@ -630,7 +630,7 @@ class _SignInState extends State<SignIn> {
       );
 
   Future<Null> checkAuthen() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkMobile.aspx?Mobile=$mobile';
     try {
       Response response = await Dio().get(url);
@@ -671,8 +671,7 @@ class _SignInState extends State<SignIn> {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  MySnackBar.showSnackBar(
-                      "! รหัสพิน(PIN Code) ไม่ถูกต้อง", Icons.memory,
+                  MySnackBar.showSnackBar("! รหัส ไม่ถูกต้อง", Icons.memory,
                       strDimiss: 'ลองใหม่'),
                 );
               setState(() {
@@ -691,6 +690,7 @@ class _SignInState extends State<SignIn> {
         }
       }
     } catch (e) {
+      debugPrint('*** ${e.toString()}');
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
@@ -725,7 +725,7 @@ class _SignInState extends State<SignIn> {
           loginId.isNotEmpty &&
           token != null &&
           token.isNotEmpty) {
-        String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+        String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
             'updateToken.aspx?mbid=$loginId&token=$token';
         await Dio()
             .get(url)

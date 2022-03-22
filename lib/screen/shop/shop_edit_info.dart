@@ -8,17 +8,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:btryakgin/model/account_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/state/upimage/image_state.dart' as imgstate;
-import 'package:btryakgin/state/upimage/imageapi_call.dart';
-//import 'package:btryakgin/state/upimage/result_state.dart';
-import 'package:btryakgin/state/upimage/upload_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:yakgin/model/account_model.dart';
+import 'package:yakgin/model/phyimg_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/state/upimage/image_state.dart' as imgstate;
+import 'package:yakgin/state/upimage/imageapi_call.dart';
+import 'package:yakgin/state/upimage/upload_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
@@ -52,6 +52,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
   io.File imgFile;
   final imgPicker = ImagePicker();
 
+  bool getCurrLoc = false;
   bool getMstbank = false;
   String newAcc = '';
   //account bank
@@ -61,18 +62,23 @@ class ShopEditInfoState extends State<ShopEditInfo> {
   List<AccountModel> listmstBanks = List<AccountModel>.empty(growable: true);
   //AccbkDetailStateController foodController = Get.put(AccbkDetailStateController());
 
-  String physicalpath = 'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\shop\\';
+  List<PhyImgModel> lisphyimage = List<PhyImgModel>.empty(growable: true);
+  String physicalpath =
+      'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\shop\\';
 
   @override
   void initState() {
     super.initState();
-    //restModel = widget.restModel;
-    location.onLocationChanged.listen((event) {
-      lat = event.latitude;
-      lng = event.longitude;
-    });
     findUser();
-    //listStateController = Get.put(AccbkListStateController());//masterbank
+    location.onLocationChanged.listen((event) {
+      if (getCurrLoc) {
+        lat = event.latitude;
+        lng = event.longitude;
+        setState(() {
+          getCurrLoc = false;         
+        });
+      }
+    });
   }
 
   Future<Null> findUser() async {
@@ -88,6 +94,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
       restModel.ccode = restModel.ccode;
       restModel.account = listAccbks.toList();
       getMasterBank();
+      getPhycicalImagefolder();
     });
   }
 
@@ -96,7 +103,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
     _imageFile = null;
     imgFile = null;
     //imageCache.clear();
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkShop.aspx?ccode=$ccode';
 
     await Dio().get(url).then((value) {
@@ -144,7 +151,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
       restModels.clear();
     }
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/getResturant.aspx?strCondtion=&strOrder=';
+        '${MyConstant().apipath}.${MyConstant().domain}/getResturant.aspx?strCondtion=&strOrder=';
     await Dio().get(url).then((value) {
       setState(() {
         loadding = false;
@@ -205,8 +212,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
                               width: !kIsWeb ? (screen * 0.6) : (300),
                               child: (_imageFile == null)
                                   ? Image.network(
-                                      '${MyConstant().domain}/${MyConstant().shopimagepath}' +
-                                          '/$_shopImage')
+                                      'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/$_shopImage')
                                   : displayImage(), //watchState(),
                             ),
                             (!kIsWeb) ? photoGraphy() : Text(''),
@@ -219,7 +225,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
                               : Text(''),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [saveButton()],
+                        children: [currLocButton(), saveButton()],
                       ),
                     ],
                   ),
@@ -469,7 +475,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
       comm = '*';
     }
     try {
-      String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+      String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
           'shop/updateShopInfo.aspx?ccode=$ccode&shopname=$txtName' +
           '&address=$txtAddress&build=$txtBuild&road=$txtRoad' +
           '&district=$txtDistrict&amphur=$txtAmphur' +
@@ -821,15 +827,23 @@ class ShopEditInfoState extends State<ShopEditInfo> {
     LatLng latLng = LatLng(lat, lng);
     CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 11.0);
     return Container(
-      margin: EdgeInsets.only(left: 8, right: 8, top: 3, bottom: 3),
-      height: 200,
-      child: GoogleMap(
-        initialCameraPosition: cameraPosition,
-        mapType: MapType.normal,
-        markers: shopMarker(),
-        onMapCreated: (controller) {},
-      ),
-    );
+        margin: EdgeInsets.only(left: 8, right: 8, top: 3, bottom: 3),        
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            MyStyle().txtstyle('Lat=$lat Lng=$lng', Colors.black54, 10),
+            Container(
+              height:200,
+              child: 
+                GoogleMap(
+                  initialCameraPosition: cameraPosition,
+                  mapType: MapType.normal,
+                  markers: shopMarker(),
+                  onMapCreated: (controller) {},
+                ),
+            )
+          ],
+        ));
   }
 
   Set<Marker> shopMarker() {
@@ -843,6 +857,42 @@ class ShopEditInfoState extends State<ShopEditInfo> {
       )
     ].toSet();
   }
+
+  Widget currLocButton() => FloatingActionButton.extended(
+        backgroundColor: Colors.black,
+        icon: Icon(
+          Icons.near_me_outlined,
+          color: Colors.white,
+        ),
+        label: MyStyle().txtstyle('ตำแหน่งฉัน', Colors.white, 11),
+        onPressed: () {
+          _myLocation();
+        },
+      );
+
+  Future _myLocation() async {
+    // LocationData currentLocation = await getCurrentLocation();   
+    // setState(() {
+    //   lat = currentLocation.latitude;
+    //   lng = currentLocation.longitude;
+    //   buildMap();
+    // });    
+    getCurrLoc = true;
+  }
+
+  /*
+  Future<LocationData> getCurrentLocation() async {
+    Location location = Location();
+    try {
+      return await location.getLocation();
+    } catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        alertDialog(context, 'PERMISSION_DENIED');
+      }
+      return null;
+    }
+  }
+  */
 
   Container acountbkList() {
     return Container(
@@ -921,7 +971,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
       children: [
         FloatingActionButton.extended(
           backgroundColor:
-              (getMstbank) ? Colors.redAccent[700] : Color(0xffBFB372),
+              (getMstbank) ? Colors.redAccent[700] : MyStyle().primarycolor,
           onPressed: toggleMasterBank,
           label: Text((getMstbank) ? 'ยกเลิก' : 'เพิ่มบัญชี',
               style: TextStyle(
@@ -982,7 +1032,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
                   });
                 },
                 child: Card(
-                    color: Colors.lightGreenAccent[100],
+                    color: Colors.amber[300],
                     elevation: 5.0,
                     margin: const EdgeInsets.symmetric(
                         horizontal: 0.0, vertical: 5),
@@ -998,9 +1048,9 @@ class ShopEditInfoState extends State<ShopEditInfo> {
                             children: [
                               SizedBox(width: 8),
                               MyStyle().txtstyle(listmstBanks[index].bkcode,
-                                  Colors.redAccent[700], 14),
+                                  Colors.black38, 14),
                               SizedBox(width: 20),
-                              MyStyle().txtblack16TH(listmstBanks[index].bkname)
+                              MyStyle().txtblack18TH(listmstBanks[index].bkname)
                             ],
                           ),
                         ],
@@ -1182,7 +1232,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
   }
 
   Future<Null> getMasterBank() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/getMstBank.aspx?ccode=$ccode';
 
     listmstBanks.clear();
@@ -1194,6 +1244,29 @@ class ShopEditInfoState extends State<ShopEditInfo> {
             AccountModel aModel = AccountModel.fromJson(map);
             listmstBanks.add(AccountModel(
                 ccode, aModel.bkid, aModel.bkcode, aModel.bkname, '', ''));
+          });
+        }
+      } else {
+        setState(() {
+          //
+        });
+      }
+    });
+  }
+
+  Future<Null> getPhycicalImagefolder() async {
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
+        '/getfolderimage.aspx';
+
+    physicalpath = 'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\shop\\';
+    await Dio().get(url).then((value) {
+      var result = json.decode(value.data);
+      if (result != null && result != '') {
+        for (var map in result) {
+          setState(() {
+            PhyImgModel pModel = PhyImgModel.fromJson(map);
+            //lisphyimage.add(PhyImgModel(pModel.imageMember, pModel.imageShop, pModel.imageItem));
+            physicalpath = pModel.imageShop;
           });
         }
       } else {

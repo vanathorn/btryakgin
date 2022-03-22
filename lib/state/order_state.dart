@@ -1,9 +1,9 @@
 // import 'dart:convert';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/cart_ord_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-//*--  err-firebase import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/model/cart_ord_model.dart';
+import 'package:yakgin/state/main_state.dart';
+//*--  err-firebase import 'package:yakgin/utility/my_constant.dart';
 import 'package:get/get.dart';
 //*--  err-firebase import 'package:get_storage/get_storage.dart';
 import 'package:toast/toast.dart';

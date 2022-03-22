@@ -4,13 +4,15 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/model/shoptype_model.dart';
-import 'package:btryakgin/screen/custom/user_rest_food.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/shoptype_model.dart';
+//import 'package:yakgin/screen/custom/category_screen.dart';
+import 'package:yakgin/screen/custom/category_withappbar_screen.dart';
+import 'package:yakgin/screen/custom/user_rest_food.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 import 'package:get/get.dart';
 
 class UserSelectShoptype extends StatefulWidget {
@@ -19,7 +21,6 @@ class UserSelectShoptype extends StatefulWidget {
 }
 
 class _UserSelectShoptype extends State<UserSelectShoptype> {
-  String strConn, webPath;
   String loginMobile, ccode;
   double screen;
   bool loadding = true;
@@ -28,11 +29,8 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
 
   final MainStateController mainStateContoller = Get.find();
 
-  List<ShopTypeModel> shoptypeModels =
-      List<ShopTypeModel>.empty(growable: true);
+  List<ShopTypeModel> shoptypeModels = List<ShopTypeModel>.empty(growable: true);
   List<ShopRestModel> restModels = List<ShopRestModel>.empty(growable: true);
-
-  //List<AccountModel> listAccbks = List<AccountModel>.empty(growable: true);
 
   @override
   void initState() {
@@ -44,7 +42,7 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
   Future<Null> getShopType() async {
     //if (shoptypeModels.length > 0)
     shoptypeModels.clear();
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getShopType.aspx?withall=Y';
     await Dio().get(url).then((value) {
       setState(() {
@@ -63,7 +61,7 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
   }
 
   Future<Null> firstAllShopType() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getShopType.aspx?withall=Y';
 
     await Dio().get(url).then((value) {
@@ -156,7 +154,7 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
                                     radius: 34.0,
                                     //backgroundColor: MyStyle().coloroverlay,
                                     backgroundImage: NetworkImage(
-                                      '${MyConstant().domain}/${MyConstant().shoptypeimagepath}/${shoptypeModels[index].stypepict}',
+                                      '${MyConstant().apipath}.${MyConstant().domain}/${MyConstant().shoptypeimagepath}/${shoptypeModels[index].stypepict}',
                                     ),
                                     child: Stack(
                                       children: [
@@ -171,7 +169,7 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
                                               alignment: Alignment.bottomRight,
                                               child: CircleAvatar(
                                                 backgroundImage: NetworkImage(
-                                                  '${MyConstant().domain}/${MyConstant().shoptypeimagepath}/${shoptypeModels[index].stypepict}',
+                                                  '${MyConstant().apipath}.${MyConstant().domain}/${MyConstant().shoptypeimagepath}/${shoptypeModels[index].stypepict}',
                                                 ),
                                                 radius: 15.0,
                                                 /* child:                                       
@@ -223,12 +221,9 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
             itemCount: restModels.length,
             itemBuilder: animationItemBuilder((index) => InkWell(
                   onTap: () {
-                    ccode = restModels[index].ccode;
-                    webPath = restModels[index].webpath;
-                    mainStateContoller.selectedRestaurant.value =
-                        restModels[index]; //vtr mainController
+                    mainStateContoller.selectedRestaurant.value = restModels[index]; 
                     MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => UerRestFood(
+                      builder: (context) => CategoryWithAppbarScreen(
                         restModel: restModels[index],
                       ),
                     );
@@ -244,13 +239,13 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(
-                                    top: 3, bottom: 3, right: 3),
-                                decoration: new BoxDecoration(
-                                    color: Colors.white), //grey[100]
-                                width: (screen - 152.0), height: 120,
+                                    top: 3, bottom: 5, right: 3),
+                                // decoration: new BoxDecoration(
+                                //      color: Colors.white), //grey[100]
+                                width: (screen - 152.0), //height: 120,
                                 child: SingleChildScrollView(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       MyStyle().txtstyle(
                                           '${restModels[index].thainame}',
@@ -287,6 +282,29 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
                                           ),
                                         ],
                                       ),
+                                      FloatingActionButton.extended(
+                                        backgroundColor: Color(0xffBFB372),
+                                        label: Text('เกี่ยวกับร้าน',
+                                            style: TextStyle(
+                                                fontFamily: 'thaisanslite',
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.black)),
+                                        icon: Icon(Icons.deck, color: Colors.black,),
+                                        onPressed: () async {
+                                          mainStateContoller
+                                                  .selectedRestaurant.value =
+                                              restModels[
+                                                  index]; //vtr mainController
+                                          MaterialPageRoute route =
+                                              MaterialPageRoute(
+                                            builder: (context) => UerRestFood(
+                                              restModel: restModels[index],
+                                            ),
+                                          );
+                                          Navigator.push(context, route);
+                                        },
+                                      )
                                     ],
                                   ),
                                 ),
@@ -297,8 +315,7 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
                                 height: 120,
                                 child: CachedNetworkImage(
                                   imageUrl:
-                                      '${MyConstant().domain}/${MyConstant().shopimagepath}/' +
-                                          '${restModels[index].shoppict}',
+                                      'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels[index].shoppict}',
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -341,8 +358,8 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
   Future<Null> readShopByTypeSlide(String id, int index) async {
     restModels.clear();
     String url = (id == '0')
-        ? '${MyConstant().domain}/${MyConstant().apipath}/getShopAll.aspx?strCondtion=&strOrder='
-        : '${MyConstant().domain}/${MyConstant().apipath}/getShopByType.aspx?stid=$id';
+        ? '${MyConstant().apipath}.${MyConstant().domain}/getShopAll.aspx?strCondtion=&strOrder='
+        : '${MyConstant().apipath}.${MyConstant().domain}/getShopByType.aspx?stid=$id';
 
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {

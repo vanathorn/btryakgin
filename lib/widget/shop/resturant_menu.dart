@@ -1,8 +1,8 @@
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 //vtr after upgrade import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/resturant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/screen/resturant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 
 class ResturantMenu extends StatelessWidget {
   final String menuName;

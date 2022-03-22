@@ -1,8 +1,8 @@
-name: btryakgin
-description: A new Flutter project.
+name: yakgin
+description: Flutter yakgin Online Delivery Project.
 
 # The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
+# pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
@@ -55,6 +55,7 @@ dependencies:
   steps_indicator: ^1.2.0
   flutter_riverpod: ^0.13.0
   image_picker: ^0.6.7+22
+  sql_conn: ^0.0.3
   
 dev_dependencies:
   flutter_test:

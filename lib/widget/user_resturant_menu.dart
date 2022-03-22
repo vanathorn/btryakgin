@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/screen/custom/food_bytype.dart';
-import 'package:btryakgin/screen/custom/user_rest_food.dart';
-import 'package:btryakgin/screen/shop/shop_location.dart';
-import 'package:btryakgin/state/resturant_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/custom/food_bytype.dart';
+import 'package:yakgin/screen/custom/user_rest_food.dart';
+import 'package:yakgin/screen/shop/shop_location.dart';
+import 'package:yakgin/state/resturant_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 
 class UserResturantMenu extends StatefulWidget {
   @override
@@ -62,7 +62,7 @@ class _UserResturantMenuState extends State<UserResturantMenu> {
     if (restModels.length != 0) {
       restModels.clear();
     }
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getResturant.aspx?strCondtion=&strOrder=';
     await Dio().get(url).then((value) {
       setState(() {
@@ -129,7 +129,7 @@ class _UserResturantMenuState extends State<UserResturantMenu> {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                              '${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels[index].shoppict}'),
+                              'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels[index].shoppict}'),
                           //Container(color: MyStyle().coloroverlay),
                           // Center(
                           //   child: MyStyle().txtstyle(restModels[index].thainame, Colors.white, 22),
@@ -258,7 +258,7 @@ class _UserResturantMenuState extends State<UserResturantMenu> {
                   fit: StackFit.expand,
                   children: [
                     Image.network(
-                        '${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels[index].shoppict}'),
+                        'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels[index].shoppict}'),
                     Container(color: MyStyle().coloroverlay),
                     Center(
                       child: MyStyle().txtstyle(

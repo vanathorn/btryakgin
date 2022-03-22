@@ -1,28 +1,30 @@
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:dio/dio.dart' as dio;
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/mess_model.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
+import 'package:dio/dio.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/mess_model.dart';
+import 'package:yakgin/model/phyimg_model.dart';
+import 'package:yakgin/utility/my_calculate.dart';
 import 'package:get/get.dart' as dget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/state/food_detail_state.dart';
-import 'package:btryakgin/state/food_list_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/state/upimage/image_state.dart' as imgstate;
-import 'package:btryakgin/state/upimage/imageapi_call.dart';
-//import 'package:btryakgin/state/upimage/result_state.dart';
-import 'package:btryakgin/state/upimage/upload_state.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/state/food_detail_state.dart';
+import 'package:yakgin/state/food_list_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/state/upimage/image_state.dart' as imgstate;
+import 'package:yakgin/state/upimage/imageapi_call.dart';
+//import 'package:yakgin/state/upimage/result_state.dart';
+import 'package:yakgin/state/upimage/upload_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 
@@ -82,7 +84,7 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
   Future<Null> readExistItem(String iid) async {
     _imageFile = null;
     imgFile = null;
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'shop/getItem.aspx?ccode=$ccode&iid=$iid';
 
     await dio.Dio().get(url).then((value) {
@@ -118,6 +120,7 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
             fModel.manfavor = foodModel.manfavor;
             fModel.image = foodModel.image;
             foodListStateController.selectedFood.value = fModel;
+            getPhycicalImagefolder();
           });
         }
       }
@@ -153,8 +156,7 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
                               width: (!kIsWeb) ? (210) : (screen * 0.25),
                               child: (_imageFile == null)
                                   ? Image.network(
-                                      '${MyConstant().domain}/${MyConstant().fixwebpath}/' +
-                                          '${MyConstant().imagepath}/$ccode/${foodModel.image}',
+                                      'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModel.image}',
                                       fit: BoxFit.cover,
                                     )
                                   : displayImage(), //watchState(),
@@ -335,8 +337,8 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
           child: new Hero(
               tag: 'img-${foodModel.name}',
               child: CachedNetworkImage(
-                imageUrl: '${MyConstant().domain}/${MyConstant().fixwebpath}/' +
-                    '${MyConstant().imagepath}/$ccode/${foodModel.image}',
+                imageUrl:
+                    'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModel.image}',
                 fit: BoxFit.cover,
                 imageBuilder: (context, imageProvider) => Container(
                   //height: 200, width: 200,
@@ -673,7 +675,7 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
     String manfav = (manFavor != null) ? manFavor.toString() : '0';
 
     try {
-      String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+      String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
           'shop/updateItem.aspx?ccode=$ccode&iid=${foodModel.id}&iname=$txtName' +
           '&idescription=$txtDescription&price=$price&priceSp=$priceSp' +
           '&auto=$flagAuto&manfavor=$manfav';
@@ -759,7 +761,7 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
   }
 
   Future<String> checkDupItem() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/checkDupItem.aspx?ccode=$ccode&iid=${foodModel.id}&iname=$txtName';
 
     String mess = 'ข้อมูลไม่ถูกต้อง';
@@ -779,5 +781,28 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
       mess = '!ติดต่อServer ไม่ได้';
     }
     return mess;
+  }
+
+  Future<Null> getPhycicalImagefolder() async {
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
+        '/getfolderimage.aspx';
+
+    physicalpath =
+        'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\product\\';
+    await Dio().get(url).then((value) {
+      var result = json.decode(value.data);
+      if (result != null && result != '') {
+        for (var map in result) {
+          setState(() {
+            PhyImgModel pModel = PhyImgModel.fromJson(map);
+            physicalpath = pModel.imageItem;
+          });
+        }
+      } else {
+        setState(() {
+          //
+        });
+      }
+    });
   }
 }

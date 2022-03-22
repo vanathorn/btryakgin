@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/resturant_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/resturant_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserBasketList extends StatefulWidget {
@@ -48,7 +48,7 @@ class _UserBasketListState extends State<UserBasketList> {
       foodModels.clear();
     }
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/xx.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/xx.aspx?ccode=' +
             loginccode +
             '&strCondtion=&strOrder=';
     await Dio().get(url).then((value) {

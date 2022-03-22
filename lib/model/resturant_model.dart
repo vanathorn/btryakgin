@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
 
 class ResturantModel {
   String key = '', name = '', image = '';

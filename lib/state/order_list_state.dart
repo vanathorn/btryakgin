@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/order_model.dart';
+import 'package:yakgin/model/order_model.dart';
 import 'package:get/get.dart';
 
 class OrderListStateController extends GetxController {

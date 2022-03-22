@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:btryakgin/model/foodtype_model.dart';
-import 'package:btryakgin/model/menu_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/screen/menu/home_screen.dart';
-import 'package:btryakgin/screen/menu/main_rider.dart';
-import 'package:btryakgin/screen/menu/main_shop.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/screen/menu/menu_screen.dart';
-import 'package:btryakgin/state/food_state.dart';
-import 'package:btryakgin/view/food_view_imp.dart';
+import 'package:yakgin/model/foodtype_model.dart';
+import 'package:yakgin/model/menu_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/screen/menu/home_screen.dart';
+import 'package:yakgin/screen/menu/main_rider.dart';
+import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/screen/menu/menu_screen.dart';
+import 'package:yakgin/state/food_state.dart';
+import 'package:yakgin/view/food_view_imp.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -80,7 +80,7 @@ class _MultiHomeState extends State<MultiHome> {
     });
     /*
       if (xccode !=''){
-        String url = '${MyConstant().domain}/${MyConstant().apipath}/checkShop.aspx?ccode='+'$xccode';
+        String url = '${MyConstant().apipath}.${MyConstant().domain}/checkShop.aspx?ccode='+'$xccode';
         await Dio().get(url).then((value) {
           var result = json.decode(value.data);
           for (var map in result) {

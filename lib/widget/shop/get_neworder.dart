@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/order_detail_model.dart';
-import 'package:btryakgin/model/order_model.dart';
-import 'package:btryakgin/model/status_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
-import 'package:btryakgin/widget/order/grs_total_widget.dart';
+import 'package:yakgin/model/order_detail_model.dart';
+import 'package:yakgin/model/order_model.dart';
+import 'package:yakgin/model/status_model.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
+import 'package:yakgin/widget/order/grs_total_widget.dart';
 import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +45,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
   Future<Null> findNewOrder() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     mbid = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/getNewOrder.aspx?resturantId=$mbid&condition=' +
         '[Status]=0&strorder=olid asc';
 
@@ -113,7 +113,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
       children: <Widget>[
         Container(
           margin: const EdgeInsets.only(left: 5),
-          child: MyStyle().txtTitle('New Order'),
+          child: MyStyle().txtshadowsIntoLight('New Order'),
         ),
         Container(
           margin: const EdgeInsets.only(top: 30),
@@ -493,7 +493,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
 
   Future<Null> reciveOrder(OrderModel listord) async {
     //mbid =  mbid ของ Customer
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'shop/setOrderStatus.aspx?mbordid=' +
         listord.mbordid +
         '&ccode=' +
@@ -520,7 +520,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
 
   Future<Null> checkReciveStatus(OrderModel listord) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shop/checkOrdStatus.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
             listord.ccode +
             '&olid=' +
             listord.olid +
@@ -536,7 +536,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
               //listord.mbid -> mbid=ของลูกค้าที่สั่งซื้อ
               MyUtil().sendNoticToCustRider(
                   listord.mbid,
-                  'รับคำสั่งซื้อ:' + '${listord.orderNo}',
+                  'รับคำสั่งซื้อ\r\n' + '${listord.orderNo}',
                   'ร้าน:' + listord.shopName);
               //Toast.show('รับคำสั่งซื้อ '+ listord.orderNo +' เรียบร้อย', context);
               ScaffoldMessenger.of(context)
@@ -568,7 +568,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
 
   Future<Null> checkCancelStatus(OrderModel listord) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shop/checkOrdStatus.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
             listord.ccode +
             '&olid=' +
             listord.olid +
@@ -614,7 +614,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
   }
 
   Future<Null> cancelOrder(OrderModel listord) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/setOrderStatus.aspx?mbordid=' +
         listord.mbordid +
         '&ccode=' +

@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/rider_order.dart';
+import 'package:yakgin/model/rider_order.dart';
 
 class RiderModel {
   String restaurantId;

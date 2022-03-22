@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/shoptype_model.dart';
+import 'package:yakgin/model/shoptype_model.dart';
 import 'package:get/get.dart';
 
 class ShopTypeStateController extends GetxController {

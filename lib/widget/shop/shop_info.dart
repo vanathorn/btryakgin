@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/screen/shop/shop_edit_info.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/shop/shop_add_info.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/screen/shop/shop_edit_info.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/shop/shop_add_info.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,7 +49,7 @@ class _ShopInfoState extends State<ShopInfo> {
   }
 
   Future<Null> readDataShop() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkShop.aspx?ccode=$ccode';
 
     await Dio().get(url).then((value) {
@@ -124,7 +124,7 @@ class _ShopInfoState extends State<ShopInfo> {
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
-                                    Image.network('${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}')
+                                    Image.network('https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}')
                                   ]
                                 ),
                               ),
@@ -238,7 +238,7 @@ class _ShopInfoState extends State<ShopInfo> {
                             height: (!kIsWeb) ? 150 : 300,
                             child: Stack(fit: StackFit.expand, children: [
                               Image.network(
-                                  '${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}')
+                                  'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}')
                             ]),
                           ),
                         ],
@@ -347,7 +347,7 @@ class _ShopInfoState extends State<ShopInfo> {
   //     height: !kIsWeb ? double.infinity : 200.0,
   //     margin: EdgeInsets.only(top: 2.0),
   //     child: Image.network(
-  //         '${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}'),
+  //         'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}'),
   //   );
   // }
 
@@ -382,7 +382,7 @@ class _ShopInfoState extends State<ShopInfo> {
       height: 350,
       width: screen * 0.98,
       child: GoogleMap(
-        myLocationEnabled: true,
+        myLocationEnabled: false,
         initialCameraPosition: cameraPosition,
         mapType: MapType.normal,
         markers: shopMarker(),

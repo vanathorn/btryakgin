@@ -1,17 +1,17 @@
 import 'package:badges/badges.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/custom/cart_screen.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/screen/custom/cart_screen.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class AppBarWithCartButton extends StatelessWidget
-    implements PreferredSizeWidget {
+  implements PreferredSizeWidget {
   final String title;
   final String subtitle;
   final CartStateController cartStateController = Get.find();
@@ -22,6 +22,7 @@ class AppBarWithCartButton extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      //***** automaticallyImplyLeading: false,
       title: subtitle != ''
           ? ListTile(
               title: MyStyle().txtstyle(title, Colors.white, 14.0),

@@ -1,7 +1,7 @@
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/view/cart_vm/cart_view_model.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/view/cart_vm/cart_view_model.dart';
 import 'package:get/get.dart';
 
 class CartViewModelImp implements CartViewModel {

@@ -1,6 +1,6 @@
 //import 'dart:convert';
-import 'package:btryakgin/model/resturant_model.dart';
-//import 'package:btryakgin/strings/my_string.dart';
+import 'package:yakgin/model/resturant_model.dart';
+//import 'package:yakgin/strings/my_string.dart';
 
 Future<List<ResturantModel>> getCategoryByRestaurantId(
     String restaurantId) async {

@@ -5,14 +5,14 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/screen/shop/shop_foodlist_screen.dart';
-import 'package:btryakgin/state/category_state.dart';
-import 'package:btryakgin/state/resturant_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/shop/shop_foodlist_screen.dart';
+import 'package:yakgin/state/category_state.dart';
+import 'package:yakgin/state/resturant_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,7 +60,7 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
   Future<Null> getRestutant() async {
     restModels.clear();
     String url =
-        "${MyConstant().domain}/${MyConstant().apipath}/getResturant.aspx?" +
+        "${MyConstant().apipath}.${MyConstant().domain}/getResturant.aspx?" +
             "strCondtion=ccode='$ccode'&strOrder=";
 
     await Dio().get(url).then((value) {
@@ -85,7 +85,7 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
   }
 
   Future<Null> getCategory() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodType.aspx?ccode=$ccode&strCondtion=&strOrder=';
 
     categoryModels.clear();
@@ -141,11 +141,8 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: Stack(fit: StackFit.expand, children: [
                       CachedNetworkImage(
-                        //F:\Webapp\Food4u\Images\product\2B13\foodtype
                         imageUrl:
-                            '${MyConstant().domain}/${MyConstant().fixwebpath}/' +
-                                '${MyConstant().imagepath}/$ccode/foodtype/' +
-                                '${categoryModels[index].image}',
+                            'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/foodtype/${categoryModels[index].image}',                               
                         fit: BoxFit.cover,
                       ),
                       Container(

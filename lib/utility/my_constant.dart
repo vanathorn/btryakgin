@@ -16,13 +16,13 @@ class MyConstant{
   MyConstant();
 
   String domain = 'yakgin.com';//=> D:\\Inetpub\\vhosts\\yakgin.com //'http://27.254.206.234';
-  String memberimagepath = '//yakginapi/Image/Member';
-  String shoptypeimagepath = '//yakginapi/Image/Shop';
-  String shopimagepath = '//yakginapi/Image/Shop';
+  String memberimagepath = 'Images/member';
+  String shoptypeimagepath = 'Image/ShopType';
+  String shopimagepath = 'Images/shop';
  
   String imagepath = 'Images/product';
   String fixwebpath = ''; // = \httpdocs ???
-  String apipath = 'yakginapi';
+  String apipath = 'https://yakginapi';
   String imageapi = 'https://imageapi.yakgin.com';  //'https://27.254.206.234/imageapi';
 
   String keymbid='pid';

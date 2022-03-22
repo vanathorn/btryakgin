@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 //vtr after upgrade import 'package:flutter/rendering.dart';
-import 'package:btryakgin/model/account_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/screen/shop/shop_location.dart';
-import 'package:btryakgin/state/accbk_detail_state.dart';
-import 'package:btryakgin/state/accbk_list_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/account_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/shop/shop_location.dart';
+import 'package:yakgin/state/accbk_detail_state.dart';
+import 'package:yakgin/state/accbk_list_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -107,7 +107,7 @@ class _AboutShopState extends State<AboutShop> {
                             fit: StackFit.expand,
                             children: [
                               Image.network(
-                                  '${MyConstant().domain}/${MyConstant().shopimagepath}/${restModel.shoppict}'),
+                                  'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${restModel.shoppict}'),
                             ],
                           ),
                         ),
@@ -376,9 +376,9 @@ class _AboutShopState extends State<AboutShop> {
                 width: screen * 0.4,
                 child: (restModel.shoppict != null)
                     ? Image.network(
-                        '${MyConstant().domain}/${MyConstant().shopimagepath}/${restModel.shoppict}')
+                        'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${restModel.shoppict}')
                     : Image.network(
-                        '${MyConstant().domain}/${MyConstant().shopimagepath}/photo256.png')),
+                        'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/photo256.png')),
           ],
         ),
       );

@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
 import 'package:get/get.dart';
 
 class ResturantStateController extends GetxController {

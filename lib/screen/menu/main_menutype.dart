@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
-import 'package:btryakgin/screen/custom/cart_screen.dart';
-import 'package:btryakgin/screen/custom/cart_shop_list.dart';
-import 'package:btryakgin/screen/custom/user_select_shoptype.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/signOut.dart';
+import 'package:yakgin/screen/custom/cart_screen.dart';
+import 'package:yakgin/screen/custom/cart_shop_list.dart';
+import 'package:yakgin/screen/custom/user_select_shoptype.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/signOut.dart';
 
 class MainMenuType extends StatefulWidget {
   @override
@@ -147,7 +147,7 @@ class _MainMenuTypeState extends State<MainMenuType> {
 
   Widget signOutMenu() {
     return Container(
-      decoration: BoxDecoration(color: Colors.red[600]),
+      decoration: BoxDecoration(color: MyStyle().bgsignout),
       child: ListTile(
         leading: Icon(
           Icons.exit_to_app,

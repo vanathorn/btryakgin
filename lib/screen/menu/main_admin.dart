@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/count_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/signOut.dart';
-import 'package:btryakgin/widget/admin/get_newmember.dart';
-import 'package:btryakgin/widget/appbar_admin.dart';
+import 'package:yakgin/model/count_model.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/signOut.dart';
+import 'package:yakgin/widget/admin/get_newmember.dart';
+import 'package:yakgin/widget/appbar_admin.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //*** https://mui.com/components/material-icons/
@@ -63,7 +63,7 @@ class _MainAdminState extends State<MainAdmin> {
   }
 
   Future<Null> countNewMember() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'admin/countNewMember.aspx';
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -132,7 +132,7 @@ class _MainAdminState extends State<MainAdmin> {
 
   Widget signOutMenu() {
     return Container(
-      decoration: BoxDecoration(color: Colors.red[600]),
+      decoration: BoxDecoration(color: MyStyle().bgsignout),
       child: ListTile(
         leading: Icon(
           Icons.exit_to_app,

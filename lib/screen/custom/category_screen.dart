@@ -3,14 +3,15 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/screen/custom/food_list_screen.dart';
-import 'package:btryakgin/state/category_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/view/category_view_imp.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/custom/food_list_screen.dart';
+//import 'package:yakgin/screen/custom/food_list_screen.dart';
+import 'package:yakgin/state/category_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/view/category_view_imp.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
 import 'package:toast/toast.dart';
@@ -40,14 +41,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
     super.initState();
     restModel = widget.restModel;
     ccode = restModel.ccode;
-    strConn = restModel
-        .strconn; //'Data Source=10.1.1.100, 49728\\SQLEXPRESS; connection timeout = 150; Initial Catalog=dbFood4U; User ID=usrf4u; Password=F4uweb2612'; //restModel.strconn;
-    webPath = restModel.webpath; //'Food4U'; //restModel.webpath;
+    strConn = restModel.strconn;
+    webPath = restModel.webpath;
     getCategory();
   }
 
   Future<Null> getCategory() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodType.aspx?ccode=$ccode&strCondtion=&strOrder=';
 
     categoryModels.clear();
@@ -125,7 +125,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Stack(fit: StackFit.expand, children: [
                       CachedNetworkImage(
                         imageUrl:
-                            '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/foodtype/${categoryModels[index].image}',
+                            'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/foodtype/${categoryModels[index].image}',
                         fit: BoxFit.cover,
                       ),
                       Container(

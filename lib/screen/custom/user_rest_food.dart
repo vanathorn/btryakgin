@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/screen/custom/advice_food_screen.dart';
-import 'package:btryakgin/screen/custom/category_screen.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/widget/shop/about_shop.dart';
-import 'package:btryakgin/widget/appbar_withcart.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/custom/advice_food_screen.dart';
+import 'package:yakgin/screen/custom/category_screen.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/widget/shop/about_shop.dart';
+import 'package:yakgin/widget/appbar_withcart.dart';
 import 'package:get/get.dart';
 
 class UerRestFood extends StatefulWidget {
@@ -15,8 +15,7 @@ class UerRestFood extends StatefulWidget {
 }
 
 class _UerRestFoodState extends State<UerRestFood> {
-  final MainStateController mainStateController =
-      Get.find(); //vtr mainController
+  final MainStateController mainStateController = Get.find(); 
   ShopRestModel restModel;
   List<Widget> listWidgets;
   int indexPage = 0;
@@ -27,9 +26,7 @@ class _UerRestFoodState extends State<UerRestFood> {
     restModel = widget.restModel;
     listWidgets = [
       AboutShop(restModel: restModel),
-      AdviceFoodScreen(
-        restModel: restModel,
-      ),
+      AdviceFoodScreen(restModel: restModel),
       CategoryScreen(restModel: restModel)
     ];
   }

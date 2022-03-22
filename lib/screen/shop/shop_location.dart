@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -61,9 +61,9 @@ class _ShopLocationState extends State<ShopLocation> {
                 width: screen * 0.65,
                 child: (restModels.shoppict != null)
                     ? Image.network(
-                        '${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels.shoppict}')
+                        'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${restModels.shoppict}')
                     : Image.network(
-                        '${MyConstant().domain}/${MyConstant().shopimagepath}/photo256.png')),
+                        'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/photo256.png')),
           ],
         ),
       );

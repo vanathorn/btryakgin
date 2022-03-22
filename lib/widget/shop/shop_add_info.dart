@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/my_constant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'package:flutter/material.dart';
 //vtr after upgrade import 'package:flutter/rendering.dart';
-import 'package:btryakgin/model/login_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/login_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
@@ -53,7 +53,7 @@ class _ShopAddInfoState extends State<ShopAddInfo> {
   }
 
   Future<Null> findStrConn() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkMobile.aspx?Mobile=' +
         loginMobile;
     try {
@@ -83,7 +83,7 @@ class _ShopAddInfoState extends State<ShopAddInfo> {
   }
 
   Future<Null> findData() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkShop.aspx?ccode=$ccode&strCondtion=';
 
     try {
@@ -388,7 +388,7 @@ class _ShopAddInfoState extends State<ShopAddInfo> {
     //open a bytestream
     //old version var stream = new http.ByteStream(DelegatingStream.typed(_image.openRead()));
     String aspEndPoint =
-        '${MyConstant().domain}/${MyConstant().apipath}/uploadImage.aspx';
+        '${MyConstant().apipath}.${MyConstant().domain}/uploadImage.aspx';
 
     var stream = new http.ByteStream(_image.openRead());
     stream.cast();
@@ -409,7 +409,7 @@ class _ShopAddInfoState extends State<ShopAddInfo> {
   Future<Null> uploadImage() async {
     if (_imageFile == null) return;
     final String phpEndPoint =
-        '${MyConstant().domain}/${MyConstant().apipath}/image.php';
+        '${MyConstant().apipath}.${MyConstant().domain}/image.php';
     File file = File(_imageFile.path);
     String base64Image = base64Encode(file.readAsBytesSync());
     String fileName = file.path.split("/").last;
@@ -433,7 +433,7 @@ class _ShopAddInfoState extends State<ShopAddInfo> {
       print('nameImage = $nameImage');
       //FormData formdata = FormData.fromMap(map);
       //await Dio().post(url, data: formdata).then((value) {
-      //urlImage = '${MyConstant().domain}/${MyConstant().apipath}/Shop/$nameImage';
+      //urlImage = '${MyConstant().apipath}.${MyConstant().domain}/Shop/$nameImage';
       //});
     } catch (ex) {
       //

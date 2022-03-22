@@ -7,23 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_elegant_number_button/flutter_elegant_number_button.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:btryakgin/model/mess_model.dart';
-import 'package:btryakgin/model/topping_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
+import 'package:yakgin/model/mess_model.dart';
+import 'package:yakgin/model/topping_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_calculate.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:btryakgin/model/addon_model.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/model/toppingb_model.dart';
-import 'package:btryakgin/model/toppingc_model.dart';
-import 'package:btryakgin/state/food_detail_state.dart';
-import 'package:btryakgin/state/food_list_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/addon_model.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/toppingb_model.dart';
+import 'package:yakgin/model/toppingc_model.dart';
+import 'package:yakgin/state/food_detail_state.dart';
+import 'package:yakgin/state/food_list_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:toast/toast.dart';
 
 class FoodDetailScreen extends StatefulWidget {
@@ -94,7 +94,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
 
   Future<Null> getSelection() async {
     String iid = '${foodListStateController.selectedFood.value.id}';
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getTopping_Price.aspx?ccode=$ccode&iid=$iid';
 
     toppingB.clear();
@@ -184,7 +184,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
               flexibleSpace: FlexibleSpaceBar(                
                 background: CachedNetworkImage(
                   imageUrl:
-                    '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/${foodModel.image}',
+                    'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModel.image}',
                     fit: BoxFit.cover, 
                 ),
               ),
@@ -218,8 +218,9 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MyStyle().txtstyle(
-                              '${foodModel.name}', Colors.black, 16.0),
+                          MyStyle().txtstyle('${foodModel.name}',
+                              Color.fromARGB(255, 59, 2, 124), 18.0),
+                          showBalQty(foodModel),
                           Container(
                               child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -503,7 +504,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
             tag: 'img-${foodModel.name}',
             child: CachedNetworkImage(
               imageUrl:
-                '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/${foodModel.image}',
+                'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModel.image}',
                 fit: BoxFit.cover,
             )
           ),*/
@@ -511,7 +512,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
               tag: 'img-${foodModel.name}',
               child: CachedNetworkImage(
                 imageUrl:
-                    '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/${foodModel.image}',
+                    'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModel.image}',
                 fit: BoxFit.cover,
                 imageBuilder: (context, imageProvider) => Container(
                   //height: 200, width: 200,
@@ -568,56 +569,73 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
                   FloatingActionButton(
                     heroTag: hero_fabCartTag,
                     onPressed: () {
-                      String topBid = '0', topCid = '0', addonid = '';
-                      String nameB = '', nameC = '', addonWORD = '';
-                      String delim = '', mess = '';
-                      if (foodModel.toppingB.length > 0) {
-                        if (foodController.selectToppingB.value == null) {
-                          mess = '!กรุณาเลือก' + foodModel.toppingB[0].toptitle;
-                        } else {
-                          topBid = foodController.selectToppingB.value.topid
-                              .toString();
-                          nameB = foodController.selectToppingB.value.topname;
+                      int nqty = foodDetailStateController.quantity.value;
+                      int sqty = foodDetailStateController.quantitySp.value;
+                      double ttlqty = double.parse(nqty.toString()) +
+                          double.parse(sqty.toString());
+                      if (ttlqty <= foodModel.reqty) {
+                        String topBid = '0', topCid = '0', addonid = '';
+                        String nameB = '', nameC = '', addonWORD = '';
+                        String delim = '', mess = '';
+                        if (foodModel.toppingB.length > 0) {
+                          if (foodController.selectToppingB.value == null) {
+                            mess =
+                                '!กรุณาเลือก' + foodModel.toppingB[0].toptitle;
+                          } else {
+                            topBid = foodController.selectToppingB.value.topid
+                                .toString();
+                            nameB = foodController.selectToppingB.value.topname;
+                          }
                         }
-                      }
-                      if (foodModel.toppingC.length > 0) {
-                        if (foodController.selectToppingC.value == null) {
-                          mess += (mess == '' ? '!กรุณาเลือก' : ' ') +
-                              foodModel.toppingC[0].toptitle;
-                        } else {
-                          topCid = foodController.selectToppingC.value.topid
-                              .toString();
-                          nameC = foodController.selectToppingC.value.topname;
+                        if (foodModel.toppingC.length > 0) {
+                          if (foodController.selectToppingC.value == null) {
+                            mess += (mess == '' ? '!กรุณาเลือก' : ' ') +
+                                foodModel.toppingC[0].toptitle;
+                          } else {
+                            topCid = foodController.selectToppingC.value.topid
+                                .toString();
+                            nameC = foodController.selectToppingC.value.topname;
+                          }
                         }
-                      }
-                      if (mess == '') {
-                        List<AddonModel> addonItems =
-                            foodController.selectAddon;
-                        if (addonItems != null && addonItems.length > 0) {
-                          addonItems.forEach((addon) {
-                            addonid += delim + addon.optid.toString();
-                            addonWORD += delim + addon.optname;
-                            delim = '|';
+                        if (mess == '') {
+                          List<AddonModel> addonItems =
+                              foodController.selectAddon;
+                          if (addonItems != null && addonItems.length > 0) {
+                            addonItems.forEach((addon) {
+                              addonid += delim + addon.optid.toString();
+                              addonWORD += delim + addon.optname;
+                              delim = '|';
+                            });
+                          } else {
+                            addonid = '0';
+                          }
+                          cartStateController.addToCart(
+                            context,
+                            foodModel,
+                            mainStateController
+                                .selectedRestaurant.value.restaurantId,
+                            quantity: foodDetailStateController.quantity.value,
+                            quantitySp:
+                                foodDetailStateController.quantitySp.value,
+                            topBid: topBid,
+                            topCid: topCid,
+                            addonid: addonid,
+                            nameB: nameB,
+                            nameC: nameC,
+                            straddon: addonWORD,
+                          );
+                          setState(() {
+                            foodModel.reqty -= ttlqty; //re-check
                           });
                         } else {
-                          addonid = '0';
+                          alertDialog(context, mess);
                         }
-                        cartStateController.addToCart(
-                          context,
-                          foodModel,
-                          mainStateController
-                              .selectedRestaurant.value.restaurantId,
-                          quantity: foodDetailStateController.quantity.value,
-                          quantitySp:
-                              foodDetailStateController.quantitySp.value,
-                          topBid: topBid,
-                          topCid: topCid,
-                          addonid: addonid,
-                          nameB: nameB,
-                          nameC: nameC,
-                          straddon: addonWORD,
-                        );
                       } else {
+                        double qty = double.parse('${foodModel.reqty}');
+                        var myFmt = NumberFormat('##0.##', 'en_US');
+                        var balqty = myFmt.format(qty);
+                        String mess =
+                            'จำนวนที่สั่งมากกว่า สินค้าคงเหลือ\r\n($balqty)';
                         alertDialog(context, mess);
                       }
                     },
@@ -699,7 +717,13 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
               minValue: 0,
               maxValue: 100,
               onChanged: (value) {
-                foodController.quantity.value = value.toInt();
+                int nqty = value;
+                int sqty = foodController.quantitySp.value;
+                double ttlqty = double.parse(nqty.toString()) +
+                    double.parse(sqty.toString());
+                if (ttlqty <= foodModel.reqty) {
+                  foodController.quantity.value = value.toInt();
+                }
               },
               decimalPlaces: 0,
               step: 1,
@@ -733,7 +757,13 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
               minValue: 0,
               maxValue: 100,
               onChanged: (value) {
-                foodController.quantitySp.value = value.toInt();
+                int nqty = foodController.quantity.value;
+                int sqty = value;
+                double ttlqty = double.parse(nqty.toString()) +
+                    double.parse(sqty.toString());
+                if (ttlqty <= foodModel.reqty) {
+                  foodController.quantitySp.value = value.toInt();
+                }
               },
               decimalPlaces: 0,
               step: 1,
@@ -750,7 +780,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
   }
 
   Future<Null> saveFavorite() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'custom/favorScore.aspx?ccode=$ccode&iid=${foodModel.id}' +
         '&favorscore=$favorScore';
 
@@ -792,5 +822,23 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
     setState(() {
       isExpanD = val;
     });
+  }
+
+  Row showBalQty(FoodModel fmodel) {
+    double qty = double.parse('${fmodel.reqty}');
+    var myFmt = NumberFormat('##0.##', 'en_US');
+    var balqty = myFmt.format(qty);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        MyStyle().txtstyle('สินค้าเหลือ', Colors.black54, 16.0),
+        SizedBox(width: 8),
+        MyStyle().txtstyle(balqty, Color.fromARGB(255, 2, 68, 4), 20.0),
+        SizedBox(width: 8),
+        MyStyle().txtstyle(fmodel.uname, Colors.black54, 16.0),
+        SizedBox(width: 8),
+      ],
+    );
   }
 }

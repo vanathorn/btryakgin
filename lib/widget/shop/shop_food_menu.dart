@@ -3,17 +3,17 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:dio/dio.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/custom/food_bytype.dart';
-import 'package:btryakgin/state/food_state.dart';
-import 'package:btryakgin/widget/shop/edit_foodtype.dart';
+import 'package:yakgin/screen/custom/food_bytype.dart';
+import 'package:yakgin/state/food_state.dart';
+import 'package:yakgin/widget/shop/edit_foodtype.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:btryakgin/model/foodtype_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/view/food_view_imp.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/foodtype_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/view/food_view_imp.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 
 class ShopFoodMenu extends StatefulWidget {
   @override
@@ -66,7 +66,7 @@ class _ShopFoodMenuState extends State<ShopFoodMenu> {
 
   Future<Null> readShopName() async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shopMenu.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shopMenu.aspx?ccode=' +
             loginccode;
     await Dio().get(url).then((value) {
       var result = json.decode(value.data);
@@ -84,7 +84,7 @@ class _ShopFoodMenuState extends State<ShopFoodMenu> {
       foodTypeModels.clear();
     }
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/foodType.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/foodType.aspx?ccode=' +
             loginccode +
             '&strCondtion=&strOrder=';
     await Dio().get(url).then((value) {

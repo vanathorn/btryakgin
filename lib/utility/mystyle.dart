@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/loader.dart';
+import 'package:yakgin/utility/my_constant.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui'; //FontFeature
+import 'dart:ui';
 
 class MyStyle {
-  Color primarycolor = Color(0xffBFB372);
-  Color secondarycolor = Color.fromARGB(0, 4, 4, 236);
+  Color primarycolor = Color.fromARGB(255, 26, 26, 199);
+  Color secondarycolor = Color.fromARGB(255, 238, 203, 7);
   Color darkcolor = Color(0xff030342);
   Color lightcolor = Color(0xffeadd94);
   Color blackcolor = Color(0xff000000);
@@ -15,12 +16,19 @@ class MyStyle {
   Color headcolor = Colors.deepPurpleAccent;
   Color menubgcolor = Color(0xffBFB372);
   Color icondrawercolor = Color(0xff7f0000);
+  Color bgsignout = Color(0xff7f0000);
   Color coloroverlay = Color(0x99333639);
-  Color savecolor = Color.fromARGB(255, 0, 0, 80);
+  Color savecolor = Color.fromARGB(255, 2, 133, 13);
   //final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  // Widget showProgress() {
+  //   return Center(child: CircularProgressIndicator());
+  // }
+
   Widget showProgress() {
-    return Center(child: CircularProgressIndicator());
+    return Center(child: 
+      Loader()
+    );
   }
 
   Widget mobileProgress(bool isweb) {
@@ -50,7 +58,7 @@ class MyStyle {
           fontStyle: FontStyle.normal,
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: blackcolor,
+          color: Colors.black,
           fontFeatures: [
             FontFeature.enable('subs'),
           ]));
@@ -177,7 +185,7 @@ class MyStyle {
         fontStyle: FontStyle.normal,
         fontSize: 16,
         fontWeight: FontWeight.normal,
-        color: Color(0xff0a0a77),
+        color: Color.fromARGB(255, 190, 190, 243),
       ));
 
   Widget titleDrawerLight(String strtxt) => Text(strtxt,
@@ -190,7 +198,7 @@ class MyStyle {
   Widget subTitleDrawerLight(String strtxt) => Text(strtxt,
       style: TextStyle(
           fontFamily: 'thaisanslite',
-          fontSize: 15.0,
+          fontSize: 18.0,
           fontWeight: FontWeight.normal,
           color: Colors.white));
 
@@ -213,7 +221,7 @@ class MyStyle {
         fontStyle: FontStyle.normal,
         fontSize: 12,
         fontWeight: FontWeight.normal,
-        color: Colors.black45,
+        color: Colors.white54,
       ));
 
   Widget titleCenter(
@@ -453,7 +461,7 @@ class MyStyle {
             child: logoimage == ''
                 ? Image.asset('userlogo.png')
                 : Image.network(
-                    '${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
+                    'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                     fit: BoxFit.cover,
                   )),
       ),

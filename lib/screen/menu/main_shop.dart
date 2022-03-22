@@ -3,22 +3,22 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/map_sample.dart';
-import 'package:btryakgin/model/mess_model.dart';
-import 'package:btryakgin/model/ord_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/screen/shop/shop_food_category.dart';
-import 'package:btryakgin/screen/user_edit_info.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/signOut.dart';
-import 'package:btryakgin/widget/appbar_withorder.dart';
-import 'package:btryakgin/widget/shop/get_neworder.dart';
-import 'package:btryakgin/widget/shop/order_summary.dart';
-import 'package:btryakgin/widget/shop/shop_info.dart';
-import 'package:btryakgin/widget/shop/shop_order_list.dart';
+import 'package:yakgin/map_sample.dart';
+import 'package:yakgin/model/mess_model.dart';
+import 'package:yakgin/model/ord_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/screen/shop/shop_food_category.dart';
+import 'package:yakgin/screen/user_edit_info.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/signOut.dart';
+import 'package:yakgin/widget/appbar_withorder.dart';
+import 'package:yakgin/widget/shop/get_neworder.dart';
+import 'package:yakgin/widget/shop/order_summary.dart';
+import 'package:yakgin/widget/shop/shop_info.dart';
+import 'package:yakgin/widget/shop/shop_order_list.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //*** https://mui.com/components/material-icons/
@@ -85,7 +85,7 @@ class _MainShopState extends State<MainShop> {
 
   Future<Null> findShop() async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/checkShop.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/checkShop.aspx?ccode=' +
             ccode;
     try {
       await Dio().get(url).then((value) {
@@ -105,7 +105,6 @@ class _MainShopState extends State<MainShop> {
         }
       });
     } catch (ex) {
-      print('************* ${ex.toString()}');
       setState(() {
         loading = false;
       });
@@ -113,7 +112,7 @@ class _MainShopState extends State<MainShop> {
   }
 
   Future<Null> getMemberPict() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getMbpict.aspx?mbid=$mbid';
 
     await Dio().get(url).then((value) {
@@ -131,7 +130,7 @@ class _MainShopState extends State<MainShop> {
 
   Future<Null> countOrderNo() async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shop/countOrder.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shop/countOrder.aspx?ccode=' +
             '$ccode&condition=[Status]=0';
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -312,7 +311,7 @@ class _MainShopState extends State<MainShop> {
               child: logoimage == ''
                   ? Image.asset('userlogo.png')
                   : Image.network(
-                      '${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
+                      'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                       fit: BoxFit.cover,
                     )),
         ),
@@ -402,7 +401,7 @@ class _MainShopState extends State<MainShop> {
 
   Widget signOutMenu() {
     return Container(
-      decoration: BoxDecoration(color: Colors.red[600]),
+      decoration: BoxDecoration(color: MyStyle().bgsignout),
       child: ListTile(
         leading: Icon(
           Icons.exit_to_app,

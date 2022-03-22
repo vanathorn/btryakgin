@@ -1,19 +1,22 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/model/login_model.dart';
-import 'package:btryakgin/model/sum_value.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/view/cart_vm/cart_view_model_imp.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/model/item_model.dart';
+import 'package:yakgin/model/login_model.dart';
+import 'package:yakgin/model/sum_value.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/view/cart_vm/cart_view_model_imp.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -45,18 +48,24 @@ class _SendOrderState extends State<SendOrder> {
   DateTime selectedDate = DateTime.now();
   String txtTime = 'ระบุเวลา', createdDT = '';
   String txtSelectDate = '';
+  String keyList = '';
 
   final firstDate = DateTime.now();
   final lastDate = DateTime.now();
   bool settime = false;
   bool isWeb = false;
+  bool enoughqty = true;
 
   Location location = Location();
 
   MainStateController mainStateController;
   CartStateController controller;
   List<CartModel> cartList = List<CartModel>.empty(growable: true);
+  List<ItemModel> itemsList = List<ItemModel>.empty(growable: true);
+  List<ItemModel> notenoughList = List<ItemModel>.empty(growable: true);
   LoginModel loginModel;
+
+  //x FoodListStateController foodListStateController;
 
   @override
   void initState() {
@@ -98,6 +107,7 @@ class _SendOrderState extends State<SendOrder> {
       txtName = loginModel.mbname;
       txtAddress = loginModel.sendaddr;
       txtMobile = loginModel.mobile;
+      getitemList();
     });
   }
 
@@ -107,7 +117,6 @@ class _SendOrderState extends State<SendOrder> {
       mbid = prefer.getString('pid');
       loginName = prefer.getString('pname');
       loginMobile = prefer.getString('pmobile');
-
       // sendModel.name=loginName;
       // sendModel.address='';
       // sendModel.mobile=loginMobile;
@@ -119,7 +128,7 @@ class _SendOrderState extends State<SendOrder> {
   }
   /* account bank
   Future<Null> findAccountShop() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/getShopBank.aspx?ccode=' +  ccode; 
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/getShopBank.aspx?ccode=' +  ccode; 
     listAccbks.clear();
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -155,78 +164,198 @@ class _SendOrderState extends State<SendOrder> {
     return location.getLocation();
   }
 
+  Future<Null> getitemList() async {
+    String strKey = '', dilim = '';
+    cartList.clear();
+    cartList = controller
+        .getCart(mainStateController.selectedRestaurant.value.restaurantId)
+        .toList();
+
+    for (int j = 0; j < cartList.length; j++) {
+      strKey += dilim + cartList[j].id;
+      dilim = ',';
+    }
+    keyList = strKey;
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
+        'custom/item_remain.aspx?ccode=$ccode&idlist=$keyList';
+
+    print('$url');
+
+    itemsList.clear();
+    await Dio().get(url).then((value) {
+      if (value.toString() != 'null') {
+        var result = json.decode(value.data);
+        for (var map in result) {
+          ItemModel fModels = ItemModel.fromJson(map);
+          itemsList.add(fModels);
+        }
+        setState(() {
+          //loadding = false;
+          //foodListStateController = Get.put(FoodListStateController());
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: MyStyle().txtTH('การจัดส่งสินค้า', Colors.white),
-      ),
-      body: loginModel == null
-          ? MyStyle().showProgress()
-          : SingleChildScrollView(
-              child: Column(
+        appBar: AppBar(
+          title: MyStyle().txtTH('การจัดส่งสินค้า', Colors.white),
+        ),
+        body: loginModel == null
+            ? MyStyle().showProgress()
+            : enoughqty
+                ? getdataInfo()
+                : dispnotEnough());
+  }
+
+  Widget dispnotEnough() => Column(children: [
+        MyStyle().txtTH18Color('สินค้าไม่เพียงพอตามรายการด้านล่าง', Colors.red),
+        Row(children: [
+          Expanded(flex: 3, child: rowHead('รายการ')),
+          Expanded(flex: 3, child: rowHead('คงเหลือ')),
+          Expanded(flex: 1, child: rowHead('หน่วย')),
+          Expanded(flex: 1, child: rowHead('')),
+        ]),
+        Divider(thickness: 1),
+        notEnoughList(),
+        Divider(thickness: 2),
+        FloatingActionButton.extended(
+          backgroundColor: MyStyle().primarycolor,
+          label: Text('สั่งตามจำนวนคงเหลือ',
+              style: TextStyle(
+                  fontFamily: 'thaisanslite',
+                  fontSize: 13,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white)),
+          icon: Icon(Icons.mark_chat_read),
+          onPressed: () async {
+            //
+          },
+        ),
+      ]);
+
+  SingleChildScrollView notEnoughList() {
+    return SingleChildScrollView(
+        child: Column(children: [
+      ListView.builder(
+        shrinkWrap: true,
+        physics: ScrollPhysics(),
+        itemCount: notenoughList.length,
+        itemBuilder: (context, index) =>
+            //padding: const EdgeInsets.only(left:10, top:4, bottom: 4, right:8),
+            Container(
+          margin: const EdgeInsets.only(left: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  inputName(),
-                  iputAddress(),
-                  inputMobile(),
-                  Container(
-                    margin: const EdgeInsets.only(left: 1),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        MyStyle().txtbody('ส่ง'),
-                        Text('$txtSelectDate',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black)),
-                        Text(txthhmm != '' ? ('$txthhmm') : '',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black)),
-                        specifyTime(),
-                      ],
-                    ),
-                  ),
-                  (settime && !kIsWeb)
-                      ? Container(
-                          child: Text(
-                              'ไม่ต่ำกว่า ' +
-                                  MyCalculate()
-                                      .calculateTime(sumValue.distiance),
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black)),
-                        )
-                      : Container(),
-                  (settime && !kIsWeb)
-                      ? Container(
-                          margin: EdgeInsets.only(top: 10),
-                          width: screen,
-                          height: 120,
-                          child: CupertinoDatePicker(
-                              mode: CupertinoDatePickerMode.time,
-                              initialDateTime: (selectedDate != null &&
-                                      selectedDate.toString() != '')
-                                  ? selectedDate
-                                  : DateTime.now(),
-                              //minimumDate: firstDate,
-                              //maximumDate: lastDate,
-                              onDateTimeChanged: (newDate) {
-                                selectedDate = newDate;
-                                setState(() {
-                                  txthhmm = '$selectedDate'
-                                      .split(' ')[1]
-                                      .substring(0, 5);
-                                  //txthhmm = selectedDate.minute.toString()+':'+selectedDate.second.toString();
-                                });
-                              }))
-                      : Container(),
-                  (!isWeb) ? buildMap() : Text(''),
-                  buildAttach(),
-                  buildSaveButton()
-                ],
-              ),
+                  Row(children: [
+                    Expanded(
+                        flex: 5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            MyStyle().txtstyle(notenoughList[index].iname,
+                                Color.fromARGB(255, 39, 17, 17), 14)
+                          ],
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            MyStyle().txtstyle(
+                                notenoughList[index].currqty.toString(),
+                                Color.fromARGB(255, 39, 17, 17),
+                                14)
+                          ],
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            MyStyle().txtstyle(notenoughList[index].uname,
+                                Color.fromARGB(255, 39, 17, 17), 14)
+                          ],
+                        ))
+                  ])
+                ]),
+          ),
+        ),
+      )
+    ]));
+  }
+
+  SingleChildScrollView getdataInfo() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          inputName(),
+          iputAddress(),
+          inputMobile(),
+          Container(
+            height: 38,
+            margin: const EdgeInsets.only(left: 10),
+            child: Row(              
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                MyStyle().txtbody('วันที่ส่งสินค้า'),
+                SizedBox(width: 25),
+                Text('$txtSelectDate',
+                    style: TextStyle(fontSize: 15, color: Colors.black)),               
+                //Text(txthhmm != '' ? ('$txthhmm') : '',
+                //    style: TextStyle(fontSize: 12, color: Colors.black)),
+                //*** specifyTime(),
+              ],
             ),
+          ),
+          (settime && !kIsWeb)
+              ? Container(
+                  child: Text(
+                      'ไม่ต่ำกว่า ' +
+                          MyCalculate().calculateTime(sumValue.distiance),
+                      style: TextStyle(fontSize: 12, color: Colors.black)),
+                )
+              : Container(),
+          (settime && !kIsWeb)
+              ? Container(
+                  margin: EdgeInsets.only(top: 10),
+                  width: screen,
+                  height: 120,
+                  child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.time,
+                      initialDateTime: (selectedDate != null &&
+                              selectedDate.toString() != '')
+                          ? selectedDate
+                          : DateTime.now(),
+                      //minimumDate: firstDate,
+                      //maximumDate: lastDate,
+                      onDateTimeChanged: (newDate) {
+                        selectedDate = newDate;
+                        setState(() {
+                          txthhmm =
+                              '$selectedDate'.split(' ')[1].substring(0, 5);
+                          //txthhmm = selectedDate.minute.toString()+':'+selectedDate.second.toString();
+                        });
+                      }))
+              : Container(),
+          (!isWeb) ? buildMap() : Text(''),
+          buildAttach(),
+          buildSaveButton()
+        ],
+      ),
     );
   }
+
+  Widget rowHead(String txt) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [MyStyle().txtblack12TH(txt)],
+      );
 
   Widget specifyTime() => Row(
         children: <Widget>[
@@ -249,7 +378,7 @@ class _SendOrderState extends State<SendOrder> {
                       });
                     }
                   },
-                  child: MyStyle().txtstyle('$txtTime', Colors.black, 11),
+                  child: MyStyle().txtstyle('$txtTime', Colors.white, 11),
                   style: ElevatedButton.styleFrom(
                       primary: MyStyle().primarycolor,
                       shape: RoundedRectangleBorder(
@@ -448,7 +577,7 @@ class _SendOrderState extends State<SendOrder> {
               TextButton(
                   onPressed: () async {
                     Navigator.pop(context);
-                    editThread();
+                    sendData();
                   },
                   child: Container(
                       width: screen * 0.28,
@@ -470,7 +599,55 @@ class _SendOrderState extends State<SendOrder> {
     return val != null ? val.toStringAsFixed(2) : '0';
   }
 
-  Future<Null> editThread() async {
+  Future<Null> validate() async {
+    notenoughList.clear();
+    //var myFmt = NumberFormat('##0.##', 'en_US');
+    //String mess = '', dilim = '';
+    for (int j = 0; j < cartList.length; j++) {
+      int qty = cartList[j].quantity;
+      int qtySp = cartList[j].quantitySp;
+      int ttlqty = qty + qtySp;
+      if (ttlqty > 0) {
+        for (int k = 0; k < itemsList.length; k++) {
+          if (itemsList[k].iid.toString() == cartList[j].id) {
+            if (ttlqty > itemsList[k].currqty) {
+              // mess += dilim +
+              //     '${itemsList[k].iname} เหลือ ' +
+              //     myFmt.format(itemsList[k].currqty);
+              // dilim = '\r\n';
+              notenoughList.add(itemsList[k]);
+              cartList[j].balqty =
+                  double.parse(itemsList[k].currqty.toString());
+              setState(() {
+                cartViewModel.updateQuantity(
+                    controller,
+                    mainStateController.selectedRestaurant.value.restaurantId,
+                    j,
+                    itemsList[k].currqty);
+              });
+            }
+            break;
+          }
+        }
+      }
+    }
+    for (int index = cartList.length - 1; index > -1; index--) {
+      if (cartList[index].balqty == 0) {        
+        setState(() {
+           //cartList.removeAt(index);
+          cartViewModel.deleteCart(
+          controller,
+          mainStateController.selectedRestaurant.value.restaurantId,
+          controller
+              .getCart(mainStateController.selectedRestaurant.value.restaurantId)
+              .toList()[index],
+          cartList[index].id);
+        });
+      }
+    }   
+  }
+
+  Future<Null> sendData() async {
     String ccode = mainStateController.selectedRestaurant.value.ccode;
     String resturantid =
         mainStateController.selectedRestaurant.value.restaurantId;
@@ -487,43 +664,24 @@ class _SendOrderState extends State<SendOrder> {
     createdDT = DateFormat('MM-dd-yyyy HH:mm:ss.ms')
         .format(now); //'11-23-2021 08:44:00.000'
 
-    String ordhead = resturantid +
-        '*' +
-        mbid +
-        '*' +
-        txtName +
-        '*' +
-        txtAddress +
-        '*' +
-        txtMobile +
-        '*' +
-        txthhmm +
-        '*' +
+    String ordhead = '$resturantid*$mbid*$txtName*$txtAddress*$txtMobile*' +
+        '$txthhmm*' +
         dtoSFixed2(distiance) +
-        '*' +
-        attlat +
-        '*' +
-        attlng +
-        '*' +
+        '*$attlat*$attlng*' +
         dtoSFixed2(ttlAmount) +
-        '*' +
-        ttlDiscount +
-        '*' +
-        ttlFree +
-        '*' +
-        loginName +
-        '*' +
-        createdDT;
-    String orddetail =
-        ''; //'restaurantId+'_'+'iid'+ '_'+topBid+'_'+topCid+'_'+addonid_qty_unitprice_spFlag;';
+        '*$ttlDiscount*$ttlFree*$loginName*$createdDT';
+    String orddetail = '';
+    //'restaurantId+'_'+'iid'+ '_'+topBid+'_'+topCid+'_'+addonid_qty_unitprice_spFlag;';
 
-    cartList.clear();
-    cartList = controller
-        .getCart(mainStateController.selectedRestaurant.value.restaurantId)
-        .toList();
+    // cartList.clear();
+    // cartList = controller
+    //     .getCart(mainStateController.selectedRestaurant.value.restaurantId)
+    //     .toList();
+
     int qty = 0;
     int qtySp = 0;
     String strKey = '', delimiter = '';
+
     for (int j = 0; j < cartList.length; j++) {
       strKey = cartList[j].strKey;
       qty = cartList[j].quantity;
@@ -550,9 +708,8 @@ class _SendOrderState extends State<SendOrder> {
       }
     }
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/order/insertOrder.aspx?ccode=' +
-            ccode +
-            '&ordhead=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/order/insertOrder.aspx?ccode=' +
+            '$ccode&ordhead=' +
             ordhead +
             '&orddetail=' +
             orddetail;
@@ -580,12 +737,9 @@ class _SendOrderState extends State<SendOrder> {
   Future<Null> checkOrder(
       String resturantid, String ccode, String mbid, String createdDT) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/order/checkOrdHeadByShop.aspx?ccode=' +
-            ccode +
-            '&mbid=' +
-            mbid +
-            '&createdDT=' +
-            createdDT;
+        '${MyConstant().apipath}.${MyConstant().domain}/order/checkOrdHeadByShop.aspx?ccode=' +
+            '$ccode&mbid=$mbid&createdDT=$createdDT';
+
     try {
       Response response = await Dio().get(url);
       if (response.toString().trim() != '') {
@@ -607,7 +761,7 @@ class _SendOrderState extends State<SendOrder> {
       width: screen * 0.95,
       height: 50.0,
       child: ElevatedButton.icon(
-        onPressed: () {
+        onPressed: () async {
           if ((txtName?.isEmpty ?? true) ||
               (txtAddress?.isEmpty ?? true) ||
               (txtMobile?.isEmpty ?? true)) {
@@ -622,7 +776,14 @@ class _SendOrderState extends State<SendOrder> {
                     .checkTime(DateTime.now(), '$txthhmm', sumValue.distiance);
               }
               if (strError == '') {
-                confirmDialog();
+                await validate();
+                if (notenoughList.length > 0) {
+                  setState(() {
+                    enoughqty = false;
+                  });
+                } else {
+                  confirmDialog();
+                }
               } else {
                 alertDialog(context, '$strError');
               }

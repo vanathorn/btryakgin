@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/mbt_model.dart';
+import 'package:yakgin/model/mbt_model.dart';
 
 class MTypeModel {
   String mbid = '';

@@ -1,13 +1,13 @@
 //import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/state/cart_shop_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-//import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/state/cart_shop_state.dart';
+import 'package:yakgin/state/main_state.dart';
+//import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:get/get.dart';
 //*--  err-firebase import 'package:get_storage/get_storage.dart';
 import 'package:toast/toast.dart';
@@ -37,7 +37,8 @@ class CartStateController extends GetxController {
       String addonid: '0',
       String nameB: '',
       String nameC: '',
-      String straddon: ''}) async {
+      String straddon: '',
+      bool warning: true}) async {
     String strKey = restaurantId +
         '_' +
         '${foodModel.id}' +
@@ -70,7 +71,8 @@ class CartStateController extends GetxController {
           nameB: nameB,
           nameC: nameC,
           straddon: straddon,
-          flagSp: foodModel.flagSp);
+          flagSp: foodModel.flagSp,
+          balqty: foodModel.balqty);
       if (isExistsShop(restaurantId)) {
         //print('******** isExistsShop  restaurantId=$restaurantId');
       } else {
@@ -116,6 +118,8 @@ class CartStateController extends GetxController {
           cartItem.quantitySp = 0;
         }
         cartItem.flagSp = foodModel.flagSp;
+        cartItem.id = foodModel.id; //new  *** for qtyIncart
+        cartItem.balqty = foodModel.balqty;
         //print('II. ****** not exist cartItem restaurantId=$restaurantId  strKey=$strKey');
       }
       /*--  err-firebase
@@ -127,16 +131,17 @@ class CartStateController extends GetxController {
       /***********************/
       cart.refresh(); //update
       /***********************/
-
+      //print('xxxxxx cartItem.id = ${cartItem.id}');
       if (quantity + quantitySp > 0) {
         MyUtil().showToast(context, 'เพิ่มลงตะกร้าเรียบร้อย');
       } else {
-        //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            MySnackBar.showSnackBar("!กรุณาระบุจำนวน", Icons.fastfood),
-          );
+        if (warning) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              MySnackBar.showSnackBar("!กรุณาระบุจำนวน", Icons.fastfood),
+            );
+        }
       }
     } catch (e) {
       Toast.show(
@@ -182,6 +187,28 @@ class CartStateController extends GetxController {
             .reduce((value, element) => value + element);
   }
 
+  getCartByItemid(String restaurantId, String keyid) =>
+      cart.where((e) => e.restaurantId == restaurantId && e.id == keyid);
+
+  int qtyIncart(String restaurantId, String keyid) {
+    int retval = 0;
+    if (getCart(restaurantId).length == 0) {
+      return 0;
+    } else {
+      if (isItemExists(restaurantId, keyid)) {
+        retval = getCartByItemid(restaurantId, keyid)
+            .map((e) => (e.quantity + e.quantitySp))
+            .reduce((value, element) => value + element);
+      } else {
+        retval = 0;
+      }
+    }
+    return retval;
+  }
+
+  isItemExists(String restaurantId, String strKey) =>
+      cart.any((e) => e.restaurantId == restaurantId && e.id == strKey);
+
   double getShippingFee(double startLogist, double distance) {
     double logistcost;
     if (distance < 1.0) {
@@ -200,12 +227,33 @@ class CartStateController extends GetxController {
   deleteItemCart(String restaurantId, CartModel cartItem, String strKey) {
     cart.remove(cart.firstWhere((e) =>
         e.restaurantId == restaurantId &&
-        e.strKey == strKey)); // && e.id == cartItem.id
+        e.id == strKey &&
+        e.id == cartItem.id));
+    /*--  err-firebase
+    saveDatabase();
+    */
+    //***** clear summary cartShop
+    if (isRemainCart(restaurantId)) {
+      //
+    } else {
+      shopController.cartShop.remove(shopController.cartShop
+          .firstWhere((e) => e.restaurantId == restaurantId));
+    }
+  }
+
+  deleteItemCartII(String restaurantId, CartModel cartItem, String strKey) {
+    for (int index = cart.length - 1; index > -1; index--) {
+      if (cart[index].restaurantId == restaurantId &&
+          cart[index].id == strKey &&
+          cart[index].id == cartItem.id) {
+        cart.removeAt(index);
+        break;
+      }
+    }
 
     /*--  err-firebase
     saveDatabase();
     */
-
     //***** clear summary cartShop
     if (isRemainCart(restaurantId)) {
       //

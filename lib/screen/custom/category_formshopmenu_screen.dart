@@ -1,12 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/screen/custom/advice_food_screen.dart';
-import 'package:btryakgin/screen/custom/user_rest_food.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/view/category_view_imp.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/custom/advice_food_screen.dart';
+import 'package:yakgin/screen/custom/user_rest_food.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/view/category_view_imp.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 
@@ -35,9 +35,8 @@ class _CategoryFormshopMenuScreenState
     super.initState();
     restModel = widget.restModel;
     ccode = restModel.ccode;
-    strConn = restModel
-        .strconn; //'Data Source=10.1.1.100, 49728\\SQLEXPRESS; connection timeout = 150; Initial Catalog=dbFood4U; User ID=usrf4u; Password=F4uweb2612'; //restModel.strconn;
-    webPath = restModel.webpath; //'Food4U'; //restModel.webpath;
+    strConn = restModel.strconn;
+    webPath = restModel.webpath;
     findLat1Lng1();
   }
 

@@ -1,6 +1,6 @@
-import 'package:btryakgin/model/shopmenu_model.dart';
-import 'package:btryakgin/referance/shopmenu_refer.dart';
-import 'package:btryakgin/view/shopmenu_view.dart';
+import 'package:yakgin/model/shopmenu_model.dart';
+import 'package:yakgin/referance/shopmenu_refer.dart';
+import 'package:yakgin/view/shopmenu_view.dart';
 
 class ShopMenuViewImp implements ShopMenuView {
   @override

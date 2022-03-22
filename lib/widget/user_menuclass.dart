@@ -2,9 +2,9 @@ import 'package:auto_animated/auto_animated.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 
 class UserMenuClass extends StatelessWidget {
   final ZoomDrawerController zoomDrawerController;
@@ -39,7 +39,7 @@ class UserMenuClass extends StatelessWidget {
                       // child: Stack(
                       //   fit: StackFit.expand,
                       //   children: [
-                      //     Image.network('${MyConstant().domain}/${MyConstant().apipath}/Image/user.jpg')
+                      //     Image.network('${MyConstant().apipath}.${MyConstant().domain}/Image/user.jpg')
                       //   ],
                       // ),
                     ),

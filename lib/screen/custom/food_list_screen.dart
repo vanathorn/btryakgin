@@ -7,18 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/category_state.dart';
-import 'package:btryakgin/state/food_list_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/appbar_withcart.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
-import 'food_detail_screen.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/category_state.dart';
+import 'package:yakgin/state/food_list_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/appbar_withcart.dart';
+import 'package:yakgin/widget/commonwidget.dart';
+//import 'food_detail_screen.dart';
 
 class FoodListScreen extends StatefulWidget {
   final ShopRestModel restModel;
@@ -34,18 +34,16 @@ class _FoodListScreenState extends State<FoodListScreen> {
   CategoryModel categoryModel;
   String strConn, ccode, webPath;
   double screen;
-  //String strDistance;
-  //Location location = Location();
-  //final int startLogist = 30;
-  //int logistCost;
   CategoryStateContoller categoryStateContoller;
   List<FoodModel> foodModels = List<FoodModel>.empty(growable: true);
   String oldItem = '0';
   bool itemSame = false;
-  FoodListStateController foodListStateController;
-  final CartStateController cartStateController = Get.find();
-  final MainStateController mainStateController = Get.find();
+  FoodListStateController foodListCtl;
+  final CartStateController cartStateCtl = Get.find();
+  final MainStateController mainStateCtl = Get.find();
+
   bool loadding = true;
+  String clickItem = '0';
 
   @override
   void initState() {
@@ -62,10 +60,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
 
   Future<Null> getFoodByType() async {
     String itid = '${categoryStateContoller.selectCategory.value.key}';
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
-        'foodByType.aspx?ccode=$ccode&itid=$itid&strOrder=iName';
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
+        'foodRemain_ByType.aspx?ccode=$ccode&itid=$itid&strOrder=iName';
 
-    //food_Addprice
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
@@ -75,23 +72,43 @@ class _FoodListScreenState extends State<FoodListScreen> {
           //*** addprice */
           fModels.addprice = 0;
           fModels.flagSp = (fModels.priceSp != 0) ? 'Y' : 'N';
+          //-------------------------------
+          double balqty = fModels.balqty;
+          int qtyincart = cartStateCtl.qtyIncart(
+              mainStateCtl.selectedRestaurant.value.restaurantId, fModels.id);
+          print('***** >>>> qtyincart= $qtyincart');
+          double remainQty = balqty - double.parse(qtyincart.toString());
+          fModels.reqty = remainQty;
+          //--------------------------------
           foodModels.add(fModels);
         }
       }
       setState(() {
         loadding = false;
-        foodListStateController = Get.put(FoodListStateController());
+        foodListCtl = Get.put(FoodListStateController());
       });
     });
   }
 
+  Future<Null> recalRemain() async {
+    for (int j = 0; j < foodModels.length; j++) {
+      int qtyincart = cartStateCtl.qtyIncart(
+          mainStateCtl.selectedRestaurant.value.restaurantId, foodModels[j].id);
+      double balqty = foodModels[j].balqty;
+      double remainQty = balqty - double.parse(qtyincart.toString());
+      foodModels[j].reqty = remainQty;
+    }
+  }
+
+  //automaticallyImplyLeading: false,
   @override
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBarWithCartButton(
-            title: 'ร้าน ${restModel.thainame}', subtitle: ''),
-        body: (loadding == false && foodModels.length > 0)
+            title:' ร้าน ${restModel.thainame}', 
+            subtitle: ''),
+        body: (loadding == false && foodModels.length > 0) //
             ? showFoodByType()
             : Container(
                 child: Column(
@@ -129,15 +146,21 @@ class _FoodListScreenState extends State<FoodListScreen> {
                       } else {
                         itemSame = true;
                       }
-                      foodListStateController.selectedFood.value =
-                          foodModels[index];
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FoodDetailScreen(
-                                  restModel: restModel,
-                                  foodModel: foodModels[index],
-                                  itemSame: itemSame)));
+                      foodListCtl.selectedFood.value = foodModels[index];
+                      /*
+                      if (foodModels[index].reqty > 0) {
+                        //ไม่ใช้ เนื่องจาก หลังจาก back กลับมา
+                        // ยอดคงเหลือจะไม่ถูก refresh
+         
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FoodDetailScreen(
+                                    restModel: restModel,
+                                    foodModel: foodModels[index],
+                                    itemSame: itemSame)));
+                      }
+                      */
                     },
                     child: SizedBox(
                       height: MediaQuery.of(context).size.height / 2.3,
@@ -146,8 +169,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: Stack(fit: StackFit.expand, children: [
                           CachedNetworkImage(
-                            imageUrl: '${MyConstant().domain}/$webPath' +
-                                '/${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
+                            imageUrl: 'https://www.${MyConstant().domain}/' +
+                                '${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
                             fit: BoxFit.cover,
                           ),
                           Align(
@@ -160,8 +183,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 5),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
@@ -169,13 +190,29 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
-                                                  color:
-                                                      MyStyle().coloroverlay),
-                                              MyStyle().txtstyle(
-                                                  '${foodModels[index].name}',
-                                                  Colors.white,
-                                                  14.0),
+                                                  color:MyStyle().coloroverlay),
                                               Row(
+                                                children: [
+                                                  Container(
+                                                    width: screen *.9,
+                                                    child: SingleChildScrollView(
+                                                      child: Row(
+                                                        mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          MyStyle().txtstyle(
+                                                              '${foodModels[index].name}',
+                                                              Colors.yellow,17.0),
+                                                          showBalQty(foodModels[index])
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Row(
                                                     children: [
@@ -186,37 +223,54 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                                                   index])),
                                                       showRating(
                                                           foodModels[index]),
-                                                      (foodModels[index]
-                                                                      .topbid ==
+                                                      Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 40.0),
+                                                          child: Row(
+                                                            children: [
+                                                              MyStyle().txtstyle(
+                                                                  '-',
+                                                                  Colors.white,
+                                                                  22),
+                                                              imageSubtToCart(
+                                                                  foodModels[
+                                                                      index]),
+                                                            ],
+                                                          )),
+                                                      Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 40.0),
+                                                          child: imageAddToCart(
+                                                              foodModels[
+                                                                  index]))
+                                                      /*
+                                                      (foodModels[index].topbid ==
                                                                   '' &&
                                                               foodModels[index]
                                                                       .topcid ==
                                                                   '')
                                                           ? Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left:
-                                                                          40.0),
+                                                              padding: const EdgeInsets.only(
+                                                                  left: 40.0),
                                                               child: imageAddToCart(
                                                                   foodModels[
-                                                                      index]),
-                                                            )
+                                                                      index]))
                                                           : Container(
                                                               child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        left:
-                                                                            10.0),
-                                                                child: MyStyle()
-                                                                    .txtstyle(
-                                                                        'สินค้ากดรูป',
-                                                                        Colors
-                                                                            .white,
-                                                                        10),
-                                                              ),
-                                                            )
+                                                                  padding:
+                                                                      const EdgeInsets.only(
+                                                                          left:
+                                                                              10.0),
+                                                                  child: MyStyle()
+                                                                      .txtstyle(
+                                                                          'สินค้ากดรูป',
+                                                                          Colors.white,
+                                                                          10))),
+                                                      */
                                                     ],
                                                   ),
                                                 ],
@@ -258,21 +312,70 @@ class _FoodListScreenState extends State<FoodListScreen> {
     ]);
   }
 
+  Row showBalQty(FoodModel fmodel) {
+    var qty = '';
+    var myFmt = NumberFormat('##0.##', 'en_US');
+    double remainQty = fmodel.reqty;
+    qty = myFmt.format(remainQty);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        MyStyle().txtstyle('เหลือ', Colors.white, 16.0),
+        SizedBox(width: 5),
+        MyStyle().txtstyle(qty, Color.fromARGB(255, 10, 214, 3), 18.0),
+        SizedBox(width: 5),
+        MyStyle().txtstyle(fmodel.uname, Colors.white, 16.0),
+      ],
+    );
+  }
+
   IconButton imageAddToCart(FoodModel fmodel) {
     return IconButton(
         onPressed: () {
-          cartStateController.addToCart(context, fmodel,
-              mainStateController.selectedRestaurant.value.restaurantId,
-              topBid: '0',
-              topCid: '0',
-              addonid: '0',
-              nameB: '',
-              nameC: '',
-              straddon: '');
+          if (fmodel.reqty > 0) {
+            cartStateCtl.addToCart(context, fmodel,
+                mainStateCtl.selectedRestaurant.value.restaurantId,
+                topBid: '0',
+                topCid: '0',
+                addonid: '0',
+                nameB: '',
+                nameC: '',
+                straddon: '');
+            setState(() {
+              clickItem = fmodel.id;
+              fmodel.reqty -= 1;
+            });
+          }
         },
         icon: Icon(
           Icons.add_shopping_cart,
           color: Colors.white,
+        ));
+  }
+
+  IconButton imageSubtToCart(FoodModel fmodel) {
+    return IconButton(
+        onPressed: () {
+          if (fmodel.reqty < fmodel.balqty) {
+            cartStateCtl.addToCart(context, fmodel,
+                mainStateCtl.selectedRestaurant.value.restaurantId,
+                quantity: -1,
+                topBid: '0',
+                topCid: '0',
+                addonid: '0',
+                nameB: '',
+                nameC: '',
+                straddon: '',
+                warning: false);
+            setState(() {
+              fmodel.reqty += 1;
+            });
+          }
+        },
+        icon: Icon(
+          Icons.remove_shopping_cart,
+          color: Color.fromARGB(255, 253, 42, 42),
         ));
   }
 

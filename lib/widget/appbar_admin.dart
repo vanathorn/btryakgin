@@ -1,9 +1,9 @@
 import 'package:badges/badges.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/menu/main_admin.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/screen/menu/main_admin.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toast/toast.dart';

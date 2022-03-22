@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
 
 class OrdModel extends ShopRestModel {
   String restaurantId = '';

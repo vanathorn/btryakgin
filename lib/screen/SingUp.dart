@@ -2,30 +2,39 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/SignIn.dart';
-import 'package:btryakgin/screen/home.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:location/location.dart';
+import 'package:sql_conn/sql_conn.dart';
+import 'package:yakgin/screen/SignIn.dart';
+import 'package:yakgin/screen/home.dart';
+import 'package:yakgin/state/prov_state.dart';
+import 'package:yakgin/utility/loader.dart';
+import 'package:yakgin/utility/sqlservice.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:get/get.dart' as dget;
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:btryakgin/model/addon_model.dart';
-import 'package:btryakgin/model/login_model.dart';
-import 'package:btryakgin/model/m_model.dart';
-import 'package:btryakgin/model/user_model.dart';
-import 'package:btryakgin/screen/menu/main_rider.dart';
-import 'package:btryakgin/screen/menu/main_shop.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/screen/menu/multi_home.dart';
-import 'package:btryakgin/state/memtype_detail_state.dart';
-import 'package:btryakgin/state/memtype_list_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
+import 'package:yakgin/model/addon_model.dart';
+import 'package:yakgin/model/login_model.dart';
+import 'package:yakgin/model/m_model.dart';
+import 'package:yakgin/model/user_model.dart';
+import 'package:yakgin/screen/menu/main_rider.dart';
+import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/screen/menu/multi_home.dart';
+import 'package:yakgin/state/memtype_detail_state.dart';
+import 'package:yakgin/state/memtype_list_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
 import 'package:toast/toast.dart';
 
+import '../model/ddl_model.dart';
+
+//https://docs.getwidget.dev/gf-radio-listtile/
+//https://blog.bajarangisoft.com/blog/how-to-use-radio-button-in-flutter-popup-menu-button
 //import 'package:http/http.dart' as http;
 
 class SignUp extends StatefulWidget {
@@ -37,9 +46,14 @@ class _SignUpState extends State<SignUp> {
   double screen;
   bool redeye = true;
   String _user, user, mobile = '', choosetype;
+  String addrno, vilage, province, ampher, tambun, zipcode;
+  String _addrno, _vilage, _zipcode;
   String txtmobile = '', txtencrypt = '', txtinput = '';
   String mode = 'MOBILE', pin1 = '', pin2 = '', txtpin1 = '', txtpin2 = '';
   String txtencryptpin1 = '', txtencryptpin2 = '';
+  //int _provno = 0, _ampherno = 0, _tambonno = 0;
+  //String _provname = '', _amphername = '', _tambonname = '';
+  double lat = 0.0, lng = 0.0;
   final int maxmobile = 10;
   final int maxpin = 4;
   final double hi = 17;
@@ -47,22 +61,34 @@ class _SignUpState extends State<SignUp> {
   //FocusNode myFocusNode;
   var isExpanProf = false;
   var isExpanType = false;
+
+  var isExpanP = false;
+  var isExpanA = false;
+  var isExpanT = false;
+
   bool valid = false;
-  LoginModel foodModel = new LoginModel();
+  LoginModel loginModel = new LoginModel();
 
   MemtypeListStateController listStateController;
   List<AddonModel> addons = List<AddonModel>.empty(growable: true);
-  MemTypeDetailStateController foodController =
+  MemTypeDetailStateController mbtypeController =
       dget.Get.put(MemTypeDetailStateController());
+
+  ProvDetailStateController provController =
+      dget.Get.put(ProvDetailStateController());
+  List<DDLModel> listProv = List<DDLModel>.empty(growable: true);
+  List<DDLModel> listAmpher = List<DDLModel>.empty(growable: true);
+  List<DDLModel> listTambon = List<DDLModel>.empty(growable: true);
 
   @override
   void initState() {
     super.initState();
-    foodModel.mbtid = 0;
-    foodModel.mbtname = 'Signup User';
+    loginModel.mbtid = 0;
+    loginModel.mbtname = 'Signup User';
     listStateController = dget.Get.put(MemtypeListStateController());
+    findLocation();
     getMemberType();
-    foodController.selectAddon.clear();
+    mbtypeController.selectAddon.clear();
     //myFocusNode = FocusNode();
   }
 
@@ -75,10 +101,28 @@ class _SignUpState extends State<SignUp> {
   }
   */
 
-  Future<Null> getMemberType() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
-        'getMbTypeList.aspx';
+  @override
+  void dispose() {
+    SQLService().clearConn();
+    super.dispose();
+  }
 
+  Future<Null> findLocation() async {
+    LocationData currentLocation = await findLocationData();
+    setState(() {
+      lat = currentLocation.latitude;
+      lng = currentLocation.longitude;
+    });
+  }
+
+  Future<LocationData> findLocationData() async {
+    Location location = Location();
+    return location.getLocation();
+  }
+
+  Future<Null> getMemberType() async {
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
+        'getMbTypeList.aspx';
     addons.clear();
     try {
       await Dio()
@@ -94,6 +138,7 @@ class _SignUpState extends State<SignUp> {
               ))
           .then((value) {
         //await Dio().get(url).then((value) {
+        //debugPrint('***** value = $value');
         if (value.toString() != 'null') {
           var result = json.decode(value.data);
           for (var map in result) {
@@ -110,17 +155,132 @@ class _SignUpState extends State<SignUp> {
               }
             }
             setState(() {
-              foodModel.mbtid = 0;
-              foodModel.mbtname = '';
-              foodModel.addonM = addons.toList();
+              loginModel.mbtid = 2;
+              loginModel.mbtname = 'ผู้ใช้งาน';
+              loginModel.addrno = '';
+              loginModel.vilage = '';
+              loginModel.province = '0';
+              loginModel.ampher = '0';
+              loginModel.tambon = '0';
+              loginModel.zipcode = '';
+              loginModel.addonM = addons.toList();
               listStateController = dget.Get.find();
-              listStateController.selectedMember.value = foodModel;
+              listStateController.selectedMember.value = loginModel;
+              getProvince();
             });
           }
         }
       });
     } catch (ex) {
-      //
+      debugPrint('***>>> ${ex.toString()}');
+    }
+  }
+
+  Future<void> getProvince() async {
+    listProv.clear();
+    listAmpher.clear();
+    listTambon.clear();
+    String query =
+        "select ProvinceNo,ProvinceName from dbo.Province where enbFlag='Y' " +
+            "order by ProvinceName";
+    try {
+      if (!SqlConn.isConnected) {
+        SQLService().connect();
+      }
+      var value = await SqlConn.readData(query);
+      if (value.toString() != 'null') {
+        value = value.toString().replaceAll('"', "");
+        var x = SQLService().myList(value);
+        for (int j = 0; j < x.length; j++) {
+          var y = x[j].split(',');
+          String _id = y[0].split(':')[1];
+          String _txtvalue = y[1].split(':')[1];
+          //debugPrint('$_id / $_txtvalue');
+
+          DDLModel ddl = new DDLModel();
+          ddl.id = int.parse(_id);
+          ddl.txtvalue = _txtvalue;
+          setState(() {
+            listProv.add(DDLModel(id: ddl.id, txtvalue: ddl.txtvalue));
+            provController.ampherno = 0;
+            provController.amphername = '';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error ' + e.toString());
+    } finally {
+      //SqlConn.disconnect();
+    }
+  }
+
+  Future<void> getAmpher() async {
+    listAmpher.clear();
+    String _provno = provController.provno.toString();
+    String query =
+        "select AmpherNo,AmpherName from dbo.Ampher where ProvinceNo=" +
+            "'$_provno' and enbFlag='Y' order by AmpherName";
+    try {
+      if (!SqlConn.isConnected) {
+        SQLService().connect();
+      }
+      var value = await SqlConn.readData(query);
+      if (value.toString() != 'null') {
+        value = value.toString().replaceAll('"', "");
+        var x = SQLService().myList(value);
+        for (int j = 0; j < x.length; j++) {
+          var y = x[j].split(',');
+          String _id = y[0].split(':')[1];
+          String _txtvalue = y[1].split(':')[1];
+          //debugPrint('$_id / $_txtvalue');
+          DDLModel ddl = new DDLModel();
+          ddl.id = int.parse(_id);
+          ddl.txtvalue = _txtvalue;
+          setState(() {
+            listAmpher.add(DDLModel(id: ddl.id, txtvalue: ddl.txtvalue));
+            provController.tambonno = 0;
+            provController.tambonname = '';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error ' + e.toString());
+    } finally {
+      //SqlConn.disconnect();
+    }
+  }
+
+  Future<void> getTumbon() async {
+    listTambon.clear();
+    String _ampherno = provController.ampherno.toString();
+    String query =
+        "select TumbonNo,TumbonName from dbo.Tumbon where AmpherNo=" +
+            "'$_ampherno' and enbFlag='Y' order by TumbonName";
+    try {
+      if (!SqlConn.isConnected) {
+        SQLService().connect();
+      }
+      var value = await SqlConn.readData(query);
+      if (value.toString() != 'null') {
+        value = value.toString().replaceAll('"', "");
+        var x = SQLService().myList(value);
+        for (int j = 0; j < x.length; j++) {
+          var y = x[j].split(',');
+          String _id = y[0].split(':')[1];
+          String _txtvalue = y[1].split(':')[1];
+          //debugPrint('$_id / $_txtvalue');
+          DDLModel ddl = new DDLModel();
+          ddl.id = int.parse(_id);
+          ddl.txtvalue = _txtvalue;
+          setState(() {
+            listTambon.add(DDLModel(id: ddl.id, txtvalue: ddl.txtvalue));
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error ' + e.toString());
+    } finally {
+      //SqlConn.disconnect();
     }
   }
 
@@ -128,6 +288,16 @@ class _SignUpState extends State<SignUp> {
     setState(() {
       isExpanProf = val;
       _user = user;
+      _addrno = addrno;
+      _vilage = vilage;
+      _zipcode = zipcode;
+      if (listProv == null || listProv.length < 1) getProvince();
+      // provController.provno = _provno;
+      // provController.ampherno = _ampherno;
+      // provController.tambonno = _tambonno;
+      // provController.provname = _provname;
+      // provController.amphername = _amphername;
+      // provController.tambonname = _tambonname;
       setMode('MOBILE');
     });
   }
@@ -165,7 +335,7 @@ class _SignUpState extends State<SignUp> {
                           MaterialPageRoute(builder: (value) => SignIn());
                       Navigator.push(context, route);
                     },
-                    child: MyStyle().titleDark('เข้าใช้ระบบ')))
+                    child: MyStyle().titleLight('เข้าใช้ระบบ')))
             //Container(child: new Center(child: MyStyle().tpadding: EdgeInsets.fromLTRB(1.0, 2.0, 3.0, 4.0)
             //ex. padding: EdgeInsetsDirectional.only(start: 100, top: 0)
             //ex. padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
@@ -193,7 +363,7 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               children: [
                 buildProfile(),
-                buildMTypeChoice(),
+                //buildMTypeChoice(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -265,21 +435,21 @@ class _SignUpState extends State<SignUp> {
             (mode == 'MOBILE')
                 ? MyStyle().txtTH20Dark('ระบุชื่อผู้ใช้และเบอร์โทรศัพท์')
                 : (mode == 'PIN1')
-                    ? MyStyle().txtTH20Dark('ระบุรหัสพิน 4 หลัก')
+                    ? MyStyle().txtTH20Dark('ระบุรหัส 4 หลัก')
                     : (mode == 'PIN2')
-                        ? MyStyle().txtTH20Dark('ทวนรหัสพินอีกครั้ง')
+                        ? MyStyle().txtTH20Dark('ทวนรหัสอีกครั้ง')
                         : Text('')
           ],
         ));
   }
 
   Container buildLogo() {
-    return Container(width: screen * 0.3, child: MyUtil().showLogo());
+    return Container(width: screen * 0.28, child: MyUtil().showLogo());
   }
 
   Container buildProfile() {
     return Container(
-        margin: const EdgeInsets.only(left: 5, right: 5),
+        margin: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -300,7 +470,26 @@ class _SignUpState extends State<SignUp> {
                     ),
                     title: MyStyle()
                         .txtstyle('ข้อมูลส่วนตัว', Colors.redAccent[700], 14.0),
-                    children: [buildUser()],
+                    children: [
+                      Column(
+                        children: [
+                          buildUser(),
+                          buildAddrno(),
+                          buildVilage(),
+                          buildProvince(),
+                          buildAmpher(),
+                          buildTambon(),
+                          provController.ampherno != 0
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    buildZipcode(),
+                                  ],
+                                )
+                              : Text('')
+                        ],
+                      )
+                    ],
                   ),
                 ],
               )),
@@ -340,7 +529,7 @@ class _SignUpState extends State<SignUp> {
                                     padding: const EdgeInsets.only(
                                         top: 5, left: 10, right: 5),
                                     child: ChoiceChip(
-                                        label: foodController.selectAddon
+                                        label: mbtypeController.selectAddon
                                                 .contains(e)
                                             ? MyStyle()
                                                 .subTitleDrawerLight(e.optname)
@@ -348,14 +537,14 @@ class _SignUpState extends State<SignUp> {
                                                 .subTitleDrawerDark(e.optname),
                                         selectedColor: Colors.black,
                                         disabledColor: Colors.grey[100],
-                                        selected: foodController.selectAddon
+                                        selected: mbtypeController.selectAddon
                                             .contains(e),
                                         onSelected: (selected) {
                                           setState(() {
                                             selected
-                                                ? foodController.selectAddon
+                                                ? mbtypeController.selectAddon
                                                     .add(e)
-                                                : foodController.selectAddon
+                                                : mbtypeController.selectAddon
                                                     .remove(e);
                                           });
                                         }),
@@ -440,6 +629,250 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  Container buildAddrno() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white70,
+      ),
+      margin: EdgeInsets.all(5),
+      width: screen * 0.9,
+      height: 54,
+      child: TextFormField(
+        keyboardType: TextInputType.emailAddress,
+        initialValue: _addrno,
+        onChanged: (value) => addrno = value
+            .trim()
+            .removeAllWhitespace
+            .replaceAll('"', "")
+            .replaceAll("'", ""),
+        autofocus: true,
+        decoration: InputDecoration(
+          labelStyle: MyStyle().myLabelStyle(),
+          labelText: 'เลขที่',
+          //prefixIcon: Icon(Icons.account_circle, color: MyStyle().darkcolor),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: MyStyle().lightcolor),
+              borderRadius: BorderRadius.circular(10)),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: MyStyle().darkcolor),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        cursorColor: Color(0xffffffff),
+        style: GoogleFonts.kanit(
+            fontStyle: FontStyle.normal,
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            color: Color(0xff000000)),
+      ),
+    );
+  }
+
+  Container buildVilage() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white70,
+      ),
+      margin: EdgeInsets.all(5),
+      width: screen * 0.9,
+      height: 54,
+      child: TextFormField(
+        keyboardType: TextInputType.emailAddress,
+        initialValue: _vilage,
+        onChanged: (value) => vilage = value
+            .trim()
+            .removeAllWhitespace
+            .replaceAll('"', "")
+            .replaceAll("'", ""),
+        autofocus: true,
+        decoration: InputDecoration(
+          labelStyle: MyStyle().myLabelStyle(),
+          labelText: 'หมู่บ้าน',
+          //prefixIcon: Icon(Icons.account_circle, color: MyStyle().darkcolor),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: MyStyle().lightcolor),
+              borderRadius: BorderRadius.circular(10)),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: MyStyle().darkcolor),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        cursorColor: Color(0xffffffff),
+        style: GoogleFonts.kanit(
+            fontStyle: FontStyle.normal,
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            color: Color(0xff000000)),
+      ),
+    );
+  }
+
+  Container buildZipcode() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white70,
+      ),
+      margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+      width: screen * 0.35,
+      height: 54,
+      child: TextFormField(
+        keyboardType: TextInputType.number,
+        initialValue: _zipcode,
+        onChanged: (value) => zipcode = value.trim(),
+        autofocus: true,
+        decoration: InputDecoration(
+          labelStyle: MyStyle().myLabelStyle(),
+          labelText: 'รหัสไปรษณีย์',
+          //prefixIcon: Icon(Icons.account_circle, color: MyStyle().darkcolor),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: MyStyle().lightcolor),
+              borderRadius: BorderRadius.circular(10)),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: MyStyle().darkcolor),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        cursorColor: Color(0xffffffff),
+        style: GoogleFonts.kanit(
+            fontStyle: FontStyle.normal,
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            color: Color(0xff000000)),
+      ),
+    );
+  }
+
+  Container buildProvince() {
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white70,
+        ),
+        margin: EdgeInsets.all(5),
+        width: screen * 0.9,
+        //child: PopupMenuItem(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              listProv.length > 0
+                  ? Obx(() => ExpansionTile(
+                      title: MyStyle().txtblack16TH('จังหวัด'),
+                      children: listProv
+                          .map(
+                            (e) => RadioListTile(
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [MyStyle().txtTH20Dark(e.txtvalue)],
+                                ),
+                                value: e,
+                                groupValue: provController.selectProv.value,
+                                onChanged: (value) {
+                                  setState(() {
+                                    //_province = e.id.toString();
+                                    provController.selectProv.value = value;
+                                    provController.provno = e.id;
+                                    provController.provname = e.txtvalue;
+                                    //_provno = e.id;
+                                    //_provname = e.txtvalue;
+                                    getAmpher();
+                                  });
+                                }),
+                          )
+                          .toList()))
+                  : Loader()
+            ])
+        //)
+        );
+  }
+
+  Container buildAmpher() {
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white70,
+        ),
+        margin: EdgeInsets.all(5),
+        width: screen * 0.9,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              listAmpher.length > 0
+                  ? Obx(() => ExpansionTile(
+                      title: MyStyle().txtblack16TH('อำเภอ'),
+                      children: listAmpher
+                          .map(
+                            (e) => RadioListTile(
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [MyStyle().txtTH20Dark(e.txtvalue)],
+                              ),
+                              value: e,
+                              groupValue: provController.selectAmpher.value,
+                              onChanged: (value) {
+                                setState(() {
+                                  provController.selectAmpher.value = value;
+                                  provController.ampherno = e.id;
+                                  provController.amphername = e.txtvalue;
+                                  //_ampherno = e.id;
+                                  //_amphername = e.txtvalue;
+                                  getTumbon();
+                                });
+                              },
+                            ),
+                          )
+                          .toList()))
+                  : Container()
+            ]));
+  }
+
+  Container buildTambon() {
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white70,
+        ),
+        margin: EdgeInsets.all(5),
+        width: screen * 0.9,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              listTambon.length > 0
+                  ? Obx(() => ExpansionTile(
+                      title: MyStyle().txtblack16TH('ตำบล'),
+                      children: listTambon
+                          .map(
+                            (e) => RadioListTile(
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [MyStyle().txtTH20Dark(e.txtvalue)],
+                              ),
+                              value: e,
+                              groupValue: provController.selectTambon.value,
+                              onChanged: (value) {
+                                setState(() {
+                                  provController.selectTambon.value = value;
+                                  provController.tambonno = e.id;
+                                  provController.tambonname = e.txtvalue;
+                                  //_tambonno = e.id;
+                                  //_tambonname = e.txtvalue;
+                                });
+                              },
+                            ),
+                          )
+                          .toList()))
+                  : Container()
+            ]));
+  }
+
   Container buildMobile() {
     return Container(
       width: screen * 0.75,
@@ -516,6 +949,14 @@ class _SignUpState extends State<SignUp> {
   }
 
   String validData() {
+    // pin1 = '1234';
+    // pin2 = '1234';
+    // mobile = '0863836099';
+    // user = 'vanathorn';
+    // addrno = '103/33';
+    // vilage = 'กลอรี่เฮาท์โครงการ1';
+    // provController.provno = 12;
+    //---------------------------------
     valid = false;
     String mess = '';
     String linefeed = '';
@@ -523,12 +964,28 @@ class _SignUpState extends State<SignUp> {
       mess = '! ระบุข้อมูลชื่อ';
       linefeed = '\r\n';
     }
-    choosetype = '';
-    List<AddonModel> addonItems = foodController.selectAddon;
-    if (addonItems != null && addonItems.length > 0) {
-      addonItems.forEach((addon) {
-        choosetype += (choosetype != '' ? '|' : '') + addon.optcode;
-      });
+    choosetype = 'U';
+    // List<AddonModel> addonItems = mbtypeController.selectAddon;
+    // if (addonItems != null && addonItems.length > 0) {
+    //   addonItems.forEach((addon) {
+    //     choosetype += (choosetype != '' ? '|' : '') + addon.optcode;
+    //   });
+    // }
+    if ((addrno?.isEmpty ?? true)) {
+      mess += linefeed + '! ระบุบ้านเลขที่';
+      linefeed = '\r\n';
+    }
+    if ((vilage?.isEmpty ?? true)) {
+      mess += linefeed + '! ระบุชื่อหมู่บ้าน';
+      linefeed = '\r\n';
+    }
+    if (provController.provno == 0) {
+      mess += linefeed + '! ระบุจังหวัด';
+      linefeed = '\r\n';
+    }
+    if (zipcode != null && zipcode != '' && zipcode.length != 5) {
+      mess += linefeed + '! รหัสไปรษณีย์ไม่ถูกต้อง';
+      linefeed = '\r\n';
     }
     if ((choosetype?.isEmpty ?? true)) {
       mess += linefeed + '! เลือกประเภทสมาชิก';
@@ -542,22 +999,21 @@ class _SignUpState extends State<SignUp> {
     //-------------------------
     if ((pin1.length == maxpin) && (pin2.length == maxpin)) {
       if (pin1 != pin2) {
-        mess += linefeed + '! รหัสพินไม่ตรงกัน';
+        mess += linefeed + '! รหัสไม่ตรงกัน';
       } else {
         valid = true;
         password = pin1;
         mess = '';
       }
     } else {
-      mess += linefeed + '! รหัสพินไม่ครบ ' + maxpin.toString() + ' หลัก';
+      mess += linefeed + '! รหัสไม่ครบ ' + maxpin.toString() + ' หลัก';
     }
     return mess;
   }
 
   Future<Null> checkUser() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'JsonCheckMobile.aspx?Mobile=$mobile';
-
     try {
       Response response = await Dio().get(url);
       if (response.toString().trim() == '[]') {
@@ -574,12 +1030,35 @@ class _SignUpState extends State<SignUp> {
   }
 
   Future<Null> registerTread() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'insertUser.aspx?Name=$user&Psw=$password&Mobile=$mobile&cType=$choosetype';
 
+    String _ampher = '';
+    String _tambon = '';
+    String _zipcode = '';
+    if (provController.ampherno != 0) _ampher = provController.amphername;
+    if (provController.tambonno != 0) _tambon = provController.tambonname;
+    if (zipcode != null && zipcode != '' && zipcode.length == 5) {
+      _zipcode = zipcode;
+    }
+    String strExec = "update dbo.MemberCustomer set addrno='$addrno'," +
+        "vilage='$vilage'," +
+        "lat='" +
+        lat.toString() +
+        "',lng='" +
+        lng.toString() +
+        "'," +
+        "province='${provController.provname}'";
+
+    if (_ampher != '') strExec += ",ampher='$_ampher' ";
+    if (_tambon != '') strExec += ",tambon='$_tambon' ";
+    if (_zipcode != '') strExec += ",zipcode='$_zipcode' ";
+    strExec += " where Mobile='$mobile' ";
+    //debugPrint('***** 2. strExec = $strExec');
     try {
       Response response = await Dio().get(url);
       if (response.toString() == '') {
+        SQLService().execute(strExec);
         checkAuthen(mobile, password);
       } else {
         alertDialog(context, response.toString());
@@ -587,11 +1066,13 @@ class _SignUpState extends State<SignUp> {
     } catch (e) {
       alertDialog(
           context, '!ไม่สามารถติดต่อ Serverได้'); //'!ไม่สามารถติดต่อ Serverได้'
+    } finally {
+      //SqlConn.disconnect();
     }
   }
 
   Future<Null> checkAuthen(String mobile, String password) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkLogin.aspx?Mobile=$mobile&Psw=$password';
 
     try {
@@ -820,7 +1301,7 @@ class _SignUpState extends State<SignUp> {
     }
     if (mobile.length == maxmobile) {
       Toast.show(
-        'ระบุรหัสพิน 4 หลัก',
+        'รหัส 4 หลัก',
         context,
         gravity: Toast.CENTER,
         backgroundColor: Colors.amber,
@@ -843,7 +1324,7 @@ class _SignUpState extends State<SignUp> {
     }
     if (pin1.length == maxpin) {
       Toast.show(
-        'ทบทวนระบุรหัสพินอีกครั้ง',
+        'ทบทวนรหัส 4 หลัก อีกครั้ง',
         context,
         gravity: Toast.CENTER,
         backgroundColor: Colors.amber,
@@ -886,7 +1367,7 @@ class _SignUpState extends State<SignUp> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            MySnackBar.showSnackBar('รหัสพินไม่ตรงกัน', Icons.memory,
+            MySnackBar.showSnackBar('รหัสไม่ตรงกัน', Icons.memory,
                 strDimiss: 'ลองใหม่'),
           );
         setState(() {
@@ -901,7 +1382,7 @@ class _SignUpState extends State<SignUp> {
     if (setmode == 'MOBILE') {
       stepInfo = 'มือถือ';
     } else if (setmode == 'PIN1') {
-      stepInfo = 'รหัสพิน 4 หลัก';
+      stepInfo = 'รหัส 4 หลัก';
       pin1 = '';
       pin2 = '';
       txtencryptpin1 = '';
@@ -909,12 +1390,16 @@ class _SignUpState extends State<SignUp> {
       txtpin1 = '';
       txtpin2 = '';
     } else if (setmode == 'PIN2') {
-      stepInfo = 'ทบทวนรหัสพิน';
+      stepInfo = 'ทบทวนรหัส 4 หลัก';
       pin2 = '';
       txtencryptpin2 = '';
       txtpin2 = '';
     } else {
       //
     }
+  }
+
+  Future<Null> clearConnection() async {
+    SQLService().clearConn();
   }
 }

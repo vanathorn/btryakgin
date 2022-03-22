@@ -17,7 +17,7 @@ class InfoSnackBar {
         ],      
       ),
       duration: const Duration(seconds: 5),
-      backgroundColor: (Colors.lightGreenAccent[700]),
+      backgroundColor: (Colors.amber),
       action: SnackBarAction(
         label: 'รับทราบ', 
         textColor: Colors.black,        

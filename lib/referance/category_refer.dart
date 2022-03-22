@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
 
 Future<List<CategoryModel>> getCategoryByRestaurantId(String ccode) async {
   var list = List<CategoryModel>.empty(growable: true);
   String url =
-      '${MyConstant().domain}/${MyConstant().apipath}/foodType.aspx?ccode=' +
+      '${MyConstant().apipath}.${MyConstant().domain}/foodType.aspx?ccode=' +
           ccode +
           '&strCondtion=&strOrder=';
   await Dio().get(url).then((value) {

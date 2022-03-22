@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/mbt_model.dart';
-import 'package:btryakgin/model/mtype_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:yakgin/model/mbt_model.dart';
+import 'package:yakgin/model/mtype_model.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +37,7 @@ class _GetNewMemberState extends State<GetNewMember> {
   Future<Null> findNewMember() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     mbid = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/admin/getNewMember.aspx';
     listMembers.clear();
     await Dio().get(url).then((value) {
@@ -264,7 +264,7 @@ class _GetNewMemberState extends State<GetNewMember> {
   // )
 
   Future<Null> actMember(MTypeModel listmember) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/admin/activateMember.aspx?mbid=${listmember.mbid}';
 
     try {

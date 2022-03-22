@@ -4,14 +4,14 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/prodslider_model.dart';
-import 'package:btryakgin/model/product_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/state/food_state.dart';
-import 'package:btryakgin/state/slide_sate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/prodslider_model.dart';
+import 'package:yakgin/model/product_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/state/food_state.dart';
+import 'package:yakgin/state/slide_sate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +54,7 @@ class _FoodByType extends State<FoodByType> {
 
   Future<Null> readShopName() async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/checkShop.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/checkShop.aspx?ccode=' +
             loginccode;
     await Dio().get(url).then((value) {
       var result = json.decode(value.data);
@@ -67,7 +67,7 @@ class _FoodByType extends State<FoodByType> {
   }
 
   Future<Null> readFoodByType() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodByType.aspx?loginccode=' +
         loginccode +
         '&itid=${foodStateController.selectedFoodType.value.itid}&strOrder=iName';
@@ -407,7 +407,7 @@ class _FoodByType extends State<FoodByType> {
 
   Future<Null> readFoodSlide(String iid, int index) async {
     sliderModels.clear();
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodSlide.aspx?ccode=$loginccode&iid=$iid';
 
     await Dio().get(url).then((value) {

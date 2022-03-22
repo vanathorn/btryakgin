@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/category_model.dart';
+import 'package:yakgin/model/category_model.dart';
 import 'package:get/get.dart';
 
 class CategoryStateContoller extends GetxController {

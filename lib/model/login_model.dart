@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/addon_model.dart';
+import 'package:yakgin/model/addon_model.dart';
 
 class LoginModel {
   String mbid;
@@ -16,6 +16,13 @@ class LoginModel {
   String mbtcode;
   String mbtname;
   String sendaddr;
+  //
+  String addrno;
+  String vilage;
+  String province;
+  String ampher;
+  String tambon;
+  String zipcode;
   List<AddonModel> addonM = List<AddonModel>.empty(growable: true);
 
   LoginModel(
@@ -34,6 +41,12 @@ class LoginModel {
       this.mbtcode,
       this.mbtname,
       this.sendaddr,
+      this.addrno,
+      this.vilage,
+      this.province,
+      this.ampher,
+      this.tambon,
+      this.zipcode,
       this.addonM});
 
   LoginModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +67,13 @@ class LoginModel {
     mbtcode = json['mbtcode'];
     mbtname = json['mbtname'];
     sendaddr = json['mbtname'];
+    addrno = json['addrno'];
+    vilage = json['vilage'];
+    province = json['province'];
+    ampher = json['ampher'];
+    tambon= json['tambon'];
+    zipcode = json['zipcode'];
+
     if (json['addonM'] != null) {
       addonM = List<AddonModel>.empty(growable: true);
       json['addonM'].forEach((v) {
@@ -79,6 +99,12 @@ class LoginModel {
     data['mbtcode'] = this.mbtcode;
     data['mbtname'] = this.mbtname;
     data['sendaddr'] = this.sendaddr;
+    data['addrno'] = this.addrno;
+    data['vilage'] = this.vilage;
+    data['province'] = this.province;
+    data['ampher'] = this.ampher;
+    data['tambon'] = this.tambon;
+    data['zipcode'] = this.zipcode;
     data['addonM'] = this.addonM.map((e) => e.toJson()).toList();
     return data;
   }

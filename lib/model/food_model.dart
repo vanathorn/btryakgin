@@ -1,13 +1,14 @@
-import 'package:btryakgin/model/addon_model.dart';
-import 'package:btryakgin/model/toppingb_model.dart';
-import 'package:btryakgin/model/toppingc_model.dart';
+import 'package:yakgin/model/addon_model.dart';
+import 'package:yakgin/model/toppingb_model.dart';
+import 'package:yakgin/model/toppingc_model.dart';
 
 class FoodModel {
   String ccode, description = '', id = '', name = '', image = '';
   double price = 0, priceSp = 0, favorite = 0, manfavor = 0, addprice = 0;
   int quantity = 0, quantitySp = 0;
   String topaid = '', topbid = '', topcid = '', topdid = '';
-  String flagSp = '', auto = '';
+  String flagSp = '', auto = '', uname = '';
+  double currqty = 0, reqty = 0, balqty = 0;
 
   List<ToppingBModel> toppingB = List<ToppingBModel>.empty(growable: true);
   List<ToppingCModel> toppingC = List<ToppingCModel>.empty(growable: true);
@@ -33,7 +34,11 @@ class FoodModel {
       this.topdid,
       this.addprice,
       this.flagSp,
-      this.auto});
+      this.auto,
+      this.currqty,
+      this.balqty,
+      this.reqty,
+      this.uname});
 
   FoodModel.fromJson(Map<String, dynamic> json) {
     ccode = json['ccode'];
@@ -53,6 +58,11 @@ class FoodModel {
     addprice = 0;
     flagSp = '';
     auto = '';
+    if (json['currqty'] != null && json['currqty'] != '') {
+      currqty = double.parse(json['currqty'].toString());
+      balqty = currqty;
+      reqty = currqty;
+    }
     //-------------------------------------------------------
     if (json['price'] != null && json['price'] != '') {
       price = double.parse(json['price'].toString());
@@ -96,6 +106,7 @@ class FoodModel {
     if (json['auto'] != null) {
       auto = json['auto'];
     }
+    uname = json['uname'];
   }
 
   Map<String, dynamic> toJson() {
@@ -120,6 +131,10 @@ class FoodModel {
     data['addprice'] = this.addprice;
     data['flagSp'] = this.flagSp;
     data['auto'] = this.auto;
+    data['currqty'] = this.currqty;
+    data['balqty'] = this.balqty;
+    data['reqty'] = this.reqty;
+    data['uname'] = this.uname;
     return data;
   }
 }

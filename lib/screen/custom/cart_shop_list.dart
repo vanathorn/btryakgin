@@ -1,16 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/custom/cart_screen.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
+import 'package:yakgin/screen/custom/cart_screen.dart';
+import 'package:yakgin/utility/my_calculate.dart';
 import 'package:get/get.dart';
 //*--  err-firebase import 'package:get_storage/get_storage.dart';
 import 'package:location/location.dart';
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/view/cart_vm/cart_view_model_imp.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/view/cart_vm/cart_view_model_imp.dart';
 
 class CartShopListScreen extends StatefulWidget {
   @override
@@ -142,7 +142,7 @@ class _CartShopListScreenState extends State<CartShopListScreen> {
                                             flex: 1,
                                             child: CachedNetworkImage(
                                               imageUrl:
-                                                  '${MyConstant().domain}/${MyConstant().shopimagepath}/${controller.getCartShop().toList()[index].shoppict}',
+                                                  'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${controller.getCartShop().toList()[index].shoppict}',
                                               fit: BoxFit.cover,
                                             ),
                                           ),

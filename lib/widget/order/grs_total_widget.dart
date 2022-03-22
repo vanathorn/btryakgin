@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -33,13 +33,11 @@ class GrsTotalWidget extends StatelessWidget {
       child: Container(
           height: 50,
           margin: const EdgeInsets.all(3),
-          //margin : EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/footer.jpg"),
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.topCenter,
-            ),
+           decoration: BoxDecoration(
+            gradient: RadialGradient(
+                center: Alignment(0, 0),
+                radius: 3.0,
+                colors: <Color>[Colors.white, Colors.blueAccent]),
           ),
           child: Column(
             //marginSymmetric : EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
@@ -50,7 +48,7 @@ class GrsTotalWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    MyStyle().txtTitle('Grs Amount'),
+                    MyStyle().txtshadowsIntoLight('Grs Amount'),
                     TotalItemWidget(
                         text: 'มูลค่าสุทธิ', value: grsamount, isSubTotal: true)
                   ],

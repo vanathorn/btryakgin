@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/count_model.dart';
-import 'package:btryakgin/model/reserve_model.dart';
-import 'package:btryakgin/model/rider_model.dart';
-import 'package:btryakgin/model/rider_order.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
+import 'package:yakgin/model/count_model.dart';
+import 'package:yakgin/model/reserve_model.dart';
+import 'package:yakgin/model/rider_model.dart';
+import 'package:yakgin/model/rider_order.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
 import 'package:get/get.dart' as dget;
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -41,7 +41,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
 
   Future<Null> countOrderNo() async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/rider/countOrdRider.aspx';
+        '${MyConstant().apipath}.${MyConstant().domain}/rider/countOrdRider.aspx';
     //&condition=convert(varchar,OrderDate,112)='20211127';
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -60,7 +60,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
   Future<Null> findOrder() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     mbid = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/rider/riderOrderList.aspx';
     //[Status]=1 and riderid=0
     listOrders.clear();
@@ -128,7 +128,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              MyStyle().txtTitle("Order for Booking."),
+              MyStyle().txtshadowsIntoLight("Order for Booking."),
               FloatingActionButton.extended(
                 backgroundColor: Colors.lightGreenAccent[700],
                 onPressed: findOrder,
@@ -162,7 +162,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MyStyle().txtTitle("Order for Booking."),
+            MyStyle().txtshadowsIntoLight("Order for Booking."),
             FloatingActionButton.extended(
               backgroundColor: Colors.lightGreenAccent[700],
               onPressed: findOrder,
@@ -241,7 +241,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
 
   Container detailTable(int index) {
     return Container(
-        margin: const EdgeInsets.only(left: 5, right: 5),
+        margin: const EdgeInsets.only(left: 5, right: 3),
         child: ListView.builder(
             shrinkWrap: true,
             physics: ScrollPhysics(),
@@ -253,7 +253,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
                         Container(
                           margin:
                               const EdgeInsets.only(top: 5, bottom: 0, left: 0),
-                          width: screen * 0.73,
+                          width: screen * 0.75,
                           child: Column(
                             children: [
                               Padding(
@@ -272,13 +272,14 @@ class _RiderOrderListState extends State<RiderOrderList> {
                           top: 5,
                           bottom: 5,
                         ),
-                        width: screen * 0.23,
+                        width: screen * 0.2,
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               FloatingActionButton.extended(
+                                backgroundColor: Color.fromARGB(255, 26, 26, 199),
                                 label: MyStyle()
-                                    .txtstyle('Book', Colors.white, 11),
+                                    .txtstyle('Book', Colors.white, 10),
                                 icon: Icon(Icons.shop),
                                 onPressed: () async {
                                   reserveOrder(listOrders[index],
@@ -337,7 +338,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
   Container headTable() {
     return Container(
       padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(color: MyStyle().primarycolor),
+      decoration: BoxDecoration(color: MyStyle().secondarycolor),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -357,7 +358,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
     String riderId = preferences.getString(MyConstant().keymbid);
     String riderName = preferences.getString(MyConstant().keymbname);
 
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/rider/reserveOrder.aspx?resturantId=' +
         listord.restaurantId +
         '&ccode=' +
@@ -410,7 +411,7 @@ class _RiderOrderListState extends State<RiderOrderList> {
   /*
   Future<Null> checkReserve(RiderModel listord) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/shop/checkOrdStatus.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
             listord
                 .ccode; // +'&olid='+listord.olid+'&orderno='+listord.orderNo;
     try {

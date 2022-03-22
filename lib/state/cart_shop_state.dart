@@ -1,9 +1,9 @@
 //import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-//*--  err-firebase import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+//*--  err-firebase import 'package:yakgin/utility/my_constant.dart';
 import 'package:get/get.dart';
 //*--  err-firebase import 'package:get_storage/get_storage.dart';
 import 'package:toast/toast.dart';

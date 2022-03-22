@@ -1,11 +1,11 @@
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-//import 'package:btryakgin/screen/menu_screen.dart';
-import 'package:btryakgin/state/food_state.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/view/shopmenu_view.dart';
-import 'package:btryakgin/view/shopmenu_view_imp.dart';
+//import 'package:yakgin/screen/menu_screen.dart';
+import 'package:yakgin/state/food_state.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/view/shopmenu_view.dart';
+import 'package:yakgin/view/shopmenu_view_imp.dart';
 import 'package:get/get.dart';
 
 class ShopHomeDetail extends StatefulWidget {

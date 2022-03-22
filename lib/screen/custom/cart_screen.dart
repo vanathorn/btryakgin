@@ -3,33 +3,36 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+//import 'package:flutter/services.dart';
 import 'package:flutter_elegant_number_button/flutter_elegant_number_button.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:btryakgin/model/account_model.dart';
-import 'package:btryakgin/model/login_model.dart';
-import 'package:btryakgin/model/send_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/model/sum_value.dart';
-import 'package:btryakgin/screen/custom/send_order.dart';
-import 'package:btryakgin/state/accbk_detail_state.dart';
-import 'package:btryakgin/state/accbk_list_state.dart';
+import 'package:yakgin/model/account_model.dart';
+import 'package:yakgin/model/login_model.dart';
+import 'package:yakgin/model/send_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/sum_value.dart';
+import 'package:yakgin/screen/custom/send_order.dart';
+import 'package:yakgin/screen/custom/user_select_shoptype.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/state/accbk_detail_state.dart';
+import 'package:yakgin/state/accbk_list_state.dart';
 import 'package:get/get.dart';
 //*--  err-firebase import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/view/cart_vm/cart_view_model_imp.dart';
-import 'package:btryakgin/widget/cart/cart_image_widget.dart';
-import 'package:btryakgin/widget/cart/cart_total_widget.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/view/cart_vm/cart_view_model_imp.dart';
+import 'package:yakgin/widget/cart/cart_image_widget.dart';
+import 'package:yakgin/widget/cart/cart_total_widget.dart';
 
 class CartDetailScreen extends StatefulWidget {
   @override
@@ -43,7 +46,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   final MainStateController mainStateController = Get.find();
 
   String loginName = '', loginMobile = '';
-  double screen;
+  double screen, screenH;
   String strPrice;
 
   String restLat, restLng;
@@ -51,6 +54,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   String strDistance;
   Location location = Location();
   final int startLogist = 30;
+  final double iwidth = 130;
+  final double iEle = 20;
   int logistCost;
   String strKeyVal = '', nameBVal = '', nameCVal = '', straddonVal = '';
 
@@ -66,6 +71,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       Get.put(AccbkDetailStateController());
   //
 
+  Widget currentWidget = UserSelectShoptype();
+  String mbimage = 'userlogo.png';
+  //----------------------------------------------
   _onExpanAccChanged(bool val) {
     setState(() {
       isExpanAcc = val;
@@ -90,7 +98,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   }
 
   Future<Null> getExistSend() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getSendLocation.aspx?mobile=$loginMobile';
 
     await Dio().get(url).then((value) {
@@ -132,7 +140,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     String restaurantid =
         mainStateController.selectedRestaurant.value.restaurantId;
     String ccode = mainStateController.selectedRestaurant.value.ccode;
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getShopBank.aspx?ccode=' +
         ccode;
     listAccbks.clear();
@@ -154,7 +162,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   }
 
   Future<Null> findLatLngofShop() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getShopByType.aspx?ccode=${mainStateController.selectedRestaurant.value.ccode}';
 
     await Dio().get(url).then((value) {
@@ -190,15 +198,37 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   Widget build(BuildContext context) {
     findLatLngofShop();
     screen = MediaQuery.of(context).size.width;
+    screenH = 42;
     listStateController = Get.find();
     listStateController.selectedAccount.value = shopModel;
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: MyStyle().headcolor,
           title: Row(
             children: [
               Container(
-                width: screen * 0.6,
+                height: 38.0,
+                width: 38,
+                child: FloatingActionButton(
+                  backgroundColor: MyStyle().primarycolor,
+                  onPressed: () {
+                    MaterialPageRoute route = MaterialPageRoute(
+                      builder: (context) => MainUser(),
+                    );
+                    Navigator.pushAndRemoveUntil(context, route, (route) => false);
+                    //MaterialPageRoute route = MaterialPageRoute(builder: (context) => MainUser());
+                    //Navigator.push(context, route);
+                  },
+                  child: Icon(
+                    Icons.home,
+                    color: Colors.white,
+                    size: 32.0,
+                  ),
+                ),
+              ),
+              Container(
+                width: screen * 0.7,
                 child: ListTile(
                     title: Center(
                       child: MyStyle().txtstyle(
@@ -345,7 +375,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                               ),
                                             ),
                                             Expanded(
-                                              flex: 10,
+                                              flex:
+                                                  7, //** ยิ่งตัวเลขมาก รูปยิ่งเล็กลง
                                               child: Column(
                                                 children: [
                                                   //normal price
@@ -389,6 +420,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                   ),
                                 ),
                                 actionPane: SlidableDrawerActionPane(),
+                                
                                 actionExtentRatio: 0.2,
                                 secondaryActions: [
                                   IconSlideAction(
@@ -402,24 +434,29 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                                 .value
                                                 .restaurantId)
                                             .toList()[index];
-                                        strKeyVal = '${cModel.strKey}';
+                                        strKeyVal = '${cModel.id}';
 
                                         cartViewModel.deleteCart(
                                             controller,
+
                                             mainStateController
                                                 .selectedRestaurant
                                                 .value
                                                 .restaurantId,
+
                                             controller
                                                 .getCart(mainStateController
                                                     .selectedRestaurant
                                                     .value
                                                     .restaurantId)
                                                 .toList()[index],
-                                            strKeyVal);
+
+                                            strKeyVal
+                                        );
                                         setState(() {});
                                       })
                                 ],
+                                
                               ))),
                   CartTotalWidget(
                       controller: controller,
@@ -448,14 +485,14 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     return Row(
       children: [
         Container(
-          width: 40,
+          width: iEle,
           child: Padding(
             padding: const EdgeInsets.only(left: 5, right: 3),
-            child: MyStyle().txtstyle('ปกติ ', Colors.black, 10),
+            child: MyStyle().txtstyle('', Colors.black, 10),
           ),
         ),
         Container(
-          width: 100,
+          width: iwidth,
           child: controller
                       .getCart(mainStateController
                           .selectedRestaurant.value.restaurantId)
@@ -483,7 +520,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     return Row(
       children: [
         Container(
-          width: 40,
+          width: iEle,
           child: Padding(
               padding: const EdgeInsets.only(left: 5, right: 5),
               child: Icon(
@@ -492,7 +529,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
               )),
         ),
         Container(
-          width: 100,
+          width: iwidth,
           child: specialAmount(controller
               .getCart(
                   mainStateController.selectedRestaurant.value.restaurantId)
@@ -537,7 +574,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         ElegantNumberButton(
           initialValue: cartModelCtl.quantity,
           minValue: 0,
-          maxValue: 100,
+          maxValue: cartModelCtl.balqty,
           onChanged: (value) {
             cartViewModel.updateQuantity(
                 controller,
@@ -596,7 +633,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         ElegantNumberButton(
           initialValue: cartModelCtl.quantitySp,
           minValue: 0,
-          maxValue: 100,
+          maxValue: cartModelCtl.balqty,
           onChanged: (value) {
             cartViewModel.updateQuantitySp(
                 controller,
@@ -796,17 +833,17 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         },
         icon: Icon(
           Icons.house_outlined,
-          color: Colors.black,
+          color: Colors.white,
           size: 32.0,
         ),
-        label: MyStyle().txtstyle('สถานที่จัดส่ง', Colors.black, 14.0),
+        label: MyStyle().txtstyle('สถานที่จัดส่ง', Colors.white, 14.0),
         style: ButtonStyle(
           padding: MaterialStateProperty.all(EdgeInsets.all(2)),
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
             (Set<MaterialState> states) {
               if (states.contains(MaterialState.pressed))
                 return Color(0xffBFB372);
-              return MyStyle().primarycolor; // Use the component's default.
+              return MyStyle().savecolor; // Use the component's default.
             },
           ),
         ),
@@ -890,5 +927,32 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                 ],
               )),
         ));
+  }
+
+  ListTile userSelectShoptypeMenu() => ListTile(
+        leading: Icon(Icons.fastfood),
+        title: MyStyle().titleDark('ร้านค้า'),
+        subtitle: MyStyle().subtitleDark('ร้านค้าที่ร่วมโครงการ'),
+        onTap: () {
+          setState(() {
+            currentWidget = UserSelectShoptype(); //UserResturantMenu();
+          });
+          Navigator.pop(context);
+        },
+      );
+
+  Widget homeMenu() {
+    return Container(
+      decoration: BoxDecoration(color: MyStyle().bgsignout),
+      child: ListTile(
+        leading: Icon(
+          Icons.exit_to_app,
+          color: Colors.white,
+        ),
+        title: MyStyle().titleLight('โฮมเมนู'),
+        subtitle: MyStyle().subtitleLight('Back to home page.'),
+        onTap: () => MainUser(),
+      ),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/sumdaily_detail_model.dart';
+import 'package:yakgin/model/sumdaily_detail_model.dart';
 
 class SumDailyModel {
   String restaurantId;

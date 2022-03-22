@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/category_model.dart';
+import 'package:yakgin/model/category_model.dart';
 
 abstract class CategoryViewModel {
   Future<List<CategoryModel>> displayCategoryByRestaurantById(String ccode);

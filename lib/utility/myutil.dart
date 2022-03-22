@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/model/login_model.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/model/login_model.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'my_constant.dart';
@@ -45,7 +45,7 @@ class MyUtil {
     String mystrConn;
     SharedPreferences prefer = await SharedPreferences.getInstance();
     String loginMobile = prefer.getString('pmobile');
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'checkMobile.aspx?Mobile=$loginMobile';
 
     try {
@@ -123,7 +123,7 @@ class MyUtil {
   );
 
   Future<Null> sendNoticToAdmin(String txtTitle, String txtBody) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'notictoAdmin.aspx?title=$txtTitle&body=$txtBody';
     try {
       Response response = await Dio().get(url);
@@ -137,7 +137,7 @@ class MyUtil {
 
   Future<Null> sendNoticToShop(
       String resturantid, String txtTitle, String txtBody) async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'notictoShop.aspx?resturantid=$resturantid&title=$txtTitle&body=$txtBody';
     try {
       Response response = await Dio().get(url);
@@ -152,7 +152,7 @@ class MyUtil {
   Future<Null> sendNoticToCustom(
       String mbid, String txtTitle, String txtBody) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/notictoCustom.aspx?mbid=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/notictoCustom.aspx?mbid=' +
             mbid +
             '&title=' +
             txtTitle +
@@ -171,7 +171,7 @@ class MyUtil {
   Future<Null> sendNoticToCustRider(
       String mbid, String txtTitle, String txtBody) async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/notictoCustRider.aspx?mbid=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/notictoCustRider.aspx?mbid=' +
             mbid +
             '&title=' +
             txtTitle +

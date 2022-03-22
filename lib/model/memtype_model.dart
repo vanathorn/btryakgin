@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/addon_model.dart';
+import 'package:yakgin/model/addon_model.dart';
 
 class MemTypeModel {
   int mbtid = 0;

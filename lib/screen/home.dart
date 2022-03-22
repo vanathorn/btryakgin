@@ -4,25 +4,25 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/map_sample.dart';
-import 'package:btryakgin/screen/menu/main_admin.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/myutil.dart';
+import 'package:yakgin/map_sample.dart';
+import 'package:yakgin/screen/menu/main_admin.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/myutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:btryakgin/screen/SignIn.dart';
-import 'package:btryakgin/screen/SingUp.dart'; //
-import 'package:btryakgin/screen/menu/main_rider.dart';
-import 'package:btryakgin/screen/menu/main_shop.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/screen/menu/multi_home.dart';
-import 'package:btryakgin/state/cart_shop_state.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/screen/SignIn.dart';
+import 'package:yakgin/screen/SingUp.dart'; //
+import 'package:yakgin/screen/menu/main_rider.dart';
+import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/screen/menu/multi_home.dart';
+import 'package:yakgin/state/cart_shop_state.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:flutter/foundation.dart';
 
 class Home extends StatefulWidget {
@@ -89,7 +89,7 @@ class HomeState extends State<Home> {
       String loginId = prefer.getString('pid');
       print('************ loginId=$loginId --- token=$token');
       if (loginId != null && loginId.isNotEmpty && token != "") {
-        String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+        String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
             'updateToken.aspx?mbid=$loginId&token=$token';
         await Dio().get(url).then((value) => print('Update Token Success'));
       }
@@ -126,7 +126,7 @@ class HomeState extends State<Home> {
         appBar: AppBar(
           backgroundColor: MyStyle().primarycolor,
         ),
-        drawer: buildHomeDrawer('Wellcome', 'Guest', 'guest.jpg'),
+        drawer: buildHomeDrawer('Wellcome', 'Guest', 'guest.png'),
         body: Container(
           decoration: BoxDecoration(
             gradient: RadialGradient(
@@ -140,7 +140,7 @@ class HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 buildLogo(),
-                MyStyle().txtbrand('Yakgin'),
+                //MyStyle().txtbrand('Yakgin'),
                 signinBar(),
                 signupBar(),
               ],
@@ -169,7 +169,7 @@ class HomeState extends State<Home> {
 
   Container buildLogo() {
     return Container(
-        width: !kIsWeb ? (screen * 0.3) : (screen * 0.08),
+        width: !kIsWeb ? (screen * 0.28) : (screen * 0.08),
         margin: const EdgeInsets.only(top: 3),
         child: MyUtil().showLogo());
   }

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:btryakgin/model/menu_model.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/screen/menu/main_user.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/signOut.dart';
-import 'package:btryakgin/view/menu_vm/menu_viewmodel_imp.dart';
-import 'package:btryakgin/widget/home_menuclass.dart';
+import 'package:yakgin/model/menu_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/screen/menu/main_user.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/signOut.dart';
+import 'package:yakgin/view/menu_vm/menu_viewmodel_imp.dart';
+import 'package:yakgin/widget/home_menuclass.dart';
 
 class MenuScreen extends StatelessWidget {
   final ShopModel shopModel;
@@ -52,7 +52,7 @@ class MenuScreen extends StatelessWidget {
                           CircleAvatar(
                               maxRadius:64, minRadius: 64,
                               backgroundImage: NetworkImage(
-                                '${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}',
+                                'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${shopModel.shoppict}',
                               ),
                               backgroundColor: Colors.transparent,                                                            
                               // child:Icon(
@@ -105,7 +105,7 @@ class MenuScreen extends StatelessWidget {
                                   child: CircleAvatar(
                                     maxRadius: 32, minRadius: 32,
                                     backgroundImage: NetworkImage(
-                                        '${MyConstant().domain}/${MyConstant().apipath}/' +
+                                        '${MyConstant().apipath}.${MyConstant().domain}/' +
                                             'Image/${listChooseType.toList()[index].menuImage}'),
                                     // child:Icon(
                                     //   Icons.shop, color:MyStyle().icondrawercolor, size: 30,
@@ -169,7 +169,7 @@ class MenuScreen extends StatelessWidget {
 
   Widget signOutMenu(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.red[600]),
+      decoration: BoxDecoration(color:MyStyle().bgsignout),
       child: ListTile(
           leading: Icon(
             Icons.exit_to_app,
@@ -209,7 +209,7 @@ class MenuScreen extends StatelessWidget {
                   maxRadius: 38,
                   minRadius: 38,
                   backgroundImage: NetworkImage(
-                      '${MyConstant().domain}/${MyConstant().apipath}/Image/user.jpg'),
+                      '${MyConstant().apipath}.${MyConstant().domain}/Image/user.jpg'),
                 ),
               )
             ],

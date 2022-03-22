@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/delivery_model.dart';
-import 'package:btryakgin/model/rider_order.dart';
-import 'package:btryakgin/screen/rider/rider_location_screen.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
+import 'package:yakgin/model/delivery_model.dart';
+import 'package:yakgin/model/rider_order.dart';
+import 'package:yakgin/screen/rider/rider_location_screen.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
 import 'package:get/get.dart' as dget;
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -74,7 +74,7 @@ class _RiderOrderDeliveryState extends State<RiderOrderDelivery> {
     listOrders.clear();
     String condName = getCondName();
     String condPhone = getCondPhone();
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/rider/orderDelivery.aspx?riderId=$riderId&condition=' +
         '&condName=' +
         condName +
@@ -134,7 +134,7 @@ class _RiderOrderDeliveryState extends State<RiderOrderDelivery> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyStyle().txtTitle("Order Delivery."),
+                    MyStyle().txtshadowsIntoLight("Order Delivery."),
                     FloatingActionButton.extended(
                       backgroundColor: Colors.lightGreenAccent[700],
                       onPressed: findOrder,
@@ -342,7 +342,7 @@ class _RiderOrderDeliveryState extends State<RiderOrderDelivery> {
                 child: Row(
                   children: [
                     FloatingActionButton(
-                        backgroundColor: Color(0xffBFB372),
+                        backgroundColor: Colors.redAccent[700],
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -354,7 +354,7 @@ class _RiderOrderDeliveryState extends State<RiderOrderDelivery> {
                             color: Colors.white, size: 32.0)),
                     Icon(
                       Icons.delivery_dining,
-                      color: MyStyle().primarycolor,
+                      color: Colors.black,
                       size: 28,
                     ),
                     MyStyle().txtbodyTH('${listOrders[index].distianceR}'),
@@ -365,6 +365,7 @@ class _RiderOrderDeliveryState extends State<RiderOrderDelivery> {
         Padding(
           padding: const EdgeInsets.only(right: 8),
           child: FloatingActionButton.extended(
+            backgroundColor: Color.fromARGB(255, 26, 26, 199),
             label: MyStyle().txtstyle('ส่งสินค้า', Colors.white, 11),
             icon: Icon(Icons.fastfood),
             onPressed: () async {
@@ -381,7 +382,7 @@ class _RiderOrderDeliveryState extends State<RiderOrderDelivery> {
     riderId = preferences.getString(MyConstant().keymbid);
     String riderName = preferences.getString(MyConstant().keymbname);
 
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/rider/sendDelivery.aspx?mbordid=' +
         listord.mbordid +
         '&ccode=' +

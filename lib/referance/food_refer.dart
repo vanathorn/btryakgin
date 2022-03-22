@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:btryakgin/model/foodtype_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/model/foodtype_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<FoodTypeModel>> getFoodList() async {
@@ -9,7 +9,7 @@ Future<List<FoodTypeModel>> getFoodList() async {
   SharedPreferences prefer = await SharedPreferences.getInstance();
   String ccode = prefer.getString('pccode');
   var foodTypeModels = List<FoodTypeModel>.empty(growable: true);
-  String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+  String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
       'foodType.aspx?ccode=' +
       ccode +
       '&strCondtion=&strOrder=';

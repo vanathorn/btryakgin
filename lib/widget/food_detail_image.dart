@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
 
 class FoodDetailImage extends StatefulWidget {
   final ShopRestModel restModel;
@@ -41,7 +41,7 @@ class _FoodDetailImageState extends State<FoodDetailImage> {
               tag: foodModel.name,
               child: CachedNetworkImage(
                 imageUrl:
-                    '${MyConstant().domain}/$webPath/${MyConstant().imagepath}/$ccode/${foodModel.image}',
+                    'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModel.image}',
                 fit: BoxFit.cover,
               ),
             )),

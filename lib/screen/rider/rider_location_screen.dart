@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/delivery_model.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/delivery_model.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 

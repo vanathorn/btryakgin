@@ -7,17 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:btryakgin/model/count_model.dart';
-import 'package:btryakgin/model/mess_model.dart';
-import 'package:btryakgin/screen/user_edit_info.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/dialig.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/signOut.dart';
-import 'package:btryakgin/widget/appbar_withrider.dart';
-import 'package:btryakgin/widget/rider/rider_order_delivery.dart';
-import 'package:btryakgin/widget/rider/rider_order_list.dart';
+import 'package:yakgin/model/count_model.dart';
+import 'package:yakgin/model/mess_model.dart';
+import 'package:yakgin/screen/user_edit_info.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/dialig.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/signOut.dart';
+import 'package:yakgin/widget/appbar_withrider.dart';
+import 'package:yakgin/widget/rider/rider_order_delivery.dart';
+import 'package:yakgin/widget/rider/rider_order_list.dart';
 
 class MainRider extends StatefulWidget {
   @override
@@ -127,7 +127,7 @@ class _MainRiderState extends State<MainRider> {
   }
 
   Future<Null> getMemberPict() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'getMbpict.aspx?mbid=$mbid';
 
     await Dio().get(url).then((value) {
@@ -145,7 +145,7 @@ class _MainRiderState extends State<MainRider> {
 
   Future<Null> countOrderNo() async {
     String url =
-        '${MyConstant().domain}/${MyConstant().apipath}/rider/countOrdRider.aspx';
+        '${MyConstant().apipath}.${MyConstant().domain}/rider/countOrdRider.aspx';
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
@@ -239,7 +239,7 @@ class _MainRiderState extends State<MainRider> {
               child: logoimage == ''
                   ? Image.asset('userlogo.png')
                   : Image.network(
-                      '${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
+                      'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                       fit: BoxFit.cover,
                     )),
         ),
@@ -290,7 +290,7 @@ class _MainRiderState extends State<MainRider> {
 
   Widget signOutMenu() {
     return Container(
-      decoration: BoxDecoration(color: Colors.red[600]),
+      decoration: BoxDecoration(color: MyStyle().bgsignout),
       child: ListTile(
         leading: Icon(
           Icons.exit_to_app,

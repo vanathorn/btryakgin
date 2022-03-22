@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/food_model.dart';
+import 'package:yakgin/model/food_model.dart';
 
 class CategoryModel {
   String key = '', name = '', image = '', ttlitem = '0';

@@ -1,6 +1,6 @@
 //vtr after upgrade  import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/mystyle.dart';
 
 class HomeScreen extends StatelessWidget {
   final zoomDrawerController;

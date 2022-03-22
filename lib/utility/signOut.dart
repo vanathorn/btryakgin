@@ -1,8 +1,8 @@
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/screen/home.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/view/cart_vm/cart_view_model_imp.dart';
+import 'package:yakgin/screen/home.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/view/cart_vm/cart_view_model_imp.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

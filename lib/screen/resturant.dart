@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/product_model.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/product_model.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ResturantScreen extends StatefulWidget {
@@ -45,7 +45,7 @@ class _ResturantScreen extends State<ResturantScreen> {
 
   Future<Null> readFoodByType() async {
     //var foodStateController;
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'shopList.aspx?strOrder=Seq';
 
     await Dio().get(url).then((value) {

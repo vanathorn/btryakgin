@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 
 class CartTotalWidget extends StatelessWidget {

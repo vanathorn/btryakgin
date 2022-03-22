@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/food_model.dart';
+import 'package:yakgin/model/food_model.dart';
 
 class CartModel extends FoodModel {
   String strKey = '';
@@ -9,6 +9,7 @@ class CartModel extends FoodModel {
   String restaurantId = '';
   String shopName = '';
   String flagSp = '';
+  double balqty = 0;
 
   CartModel(
       {strKey,
@@ -32,7 +33,9 @@ class CartModel extends FoodModel {
       straddon,
       shopName,
       this.restaurantId,
-      flagSp})
+      flagSp,
+      balqty
+      })
       : super(
             ccode: ccode,
             id: id,
@@ -43,7 +46,9 @@ class CartModel extends FoodModel {
             toppingB: toppingB,
             toppingC: toppingC,
             addon: addon,
-            description: description);
+            description: description
+            //ต้องระบุหรือเปล่า ? balqty:balqty
+      );
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
     final strKey = json['strKey'];
@@ -81,7 +86,9 @@ class CartModel extends FoodModel {
         nameB: nameB,
         nameC: nameC,
         straddon: straddon,
-        flagSp: food.flagSp);
+        flagSp: food.flagSp,
+        balqty:food.balqty
+    );        
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +115,7 @@ class CartModel extends FoodModel {
     data['straddon'] = this.straddon;
     data['shopName'] = this.shopName;
     data['flagSp'] = this.flagSp;
+    data['maxqty'] = this.balqty;
     return data;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/order_detail_model.dart';
+import 'package:yakgin/model/order_detail_model.dart';
 import 'package:get/get.dart';
 
 class OrderDetailStateController extends GetxController {

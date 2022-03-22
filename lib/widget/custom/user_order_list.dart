@@ -8,13 +8,13 @@ import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_indicator/steps_indicator.dart';
 
-import 'package:btryakgin/model/order_detail_model.dart';
-import 'package:btryakgin/model/order_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/order/grs_total_widget.dart';
+import 'package:yakgin/model/order_detail_model.dart';
+import 'package:yakgin/model/order_model.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/order/grs_total_widget.dart';
 
 class UserOrderList extends StatefulWidget {
   @override
@@ -44,7 +44,7 @@ class _UserOrderListState extends State<UserOrderList> {
   Future<Null> findOrder() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     mbid = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/custom/customOrderList.aspx?mbid=$mbid&condition=' +
         '[Status] not in (2,3)&strorder=olid asc';
 
@@ -105,7 +105,7 @@ class _UserOrderListState extends State<UserOrderList> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              MyStyle().txtTitle('Your Order'),
+              MyStyle().txtshadowsIntoLight('Your Order'),
               Container(
                 width: 90,
                 child: FloatingActionButton.extended(
@@ -254,19 +254,19 @@ class _UserOrderListState extends State<UserOrderList> {
       children: [
         Container(
           child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-                margin: const EdgeInsets.only(left: 5),
-                //width: screen * 0.48,
-                child: SingleChildScrollView(
-                  child: MyStyle().txtstyle(
-                    listOrders[index].shopName +
-                        ' ' +
-                        listOrders[index].contactphone,
-                    Colors.blueAccent[700],
-                    12.0,
-                  ),
-                )),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  //width: screen * 0.48,
+                  child: SingleChildScrollView(
+                    child: MyStyle().txtstyle(
+                      listOrders[index].shopName +
+                          ' ' +
+                          listOrders[index].contactphone,
+                      Colors.blueAccent[700],
+                      12.0,
+                    ),
+                  )),
             /*
             Container(
               margin: const EdgeInsets.only(left: 5),
@@ -290,8 +290,8 @@ class _UserOrderListState extends State<UserOrderList> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Container(
-          margin: const EdgeInsets.only(left: 5),
-          width: screen * 0.335,
+          //margin: const EdgeInsets.only(left: 3),
+          width: screen * 0.35,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -306,7 +306,7 @@ class _UserOrderListState extends State<UserOrderList> {
           ),
         ),
         Container(
-          width: screen * 0.28,
+          width: screen * 0.29,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -315,7 +315,7 @@ class _UserOrderListState extends State<UserOrderList> {
           ),
         ),
         Container(
-          width: screen * 0.33,
+          //width: screen * 0.33,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

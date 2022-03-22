@@ -1,18 +1,20 @@
+import 'dart:convert';
 import 'dart:io' as io;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/shop_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
+import 'package:yakgin/model/phyimg_model.dart';
+import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:btryakgin/screen/home.dart';
-import 'package:btryakgin/state/upimage/image_state.dart' as imgstate;
-import 'package:btryakgin/state/upimage/imageapi_call.dart';
-//import 'package:btryakgin/state/upimage/upload_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/utility/myutil.dart';
-import 'package:btryakgin/widget/infosnackbar.dart';
-import 'package:btryakgin/widget/mysnackbar.dart';
+import 'package:yakgin/screen/home.dart';
+import 'package:yakgin/state/upimage/image_state.dart' as imgstate;
+import 'package:yakgin/state/upimage/imageapi_call.dart';
+//import 'package:yakgin/state/upimage/upload_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/utility/myutil.dart';
+import 'package:yakgin/widget/infosnackbar.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 import 'package:image_picker/image_picker.dart';
 //https://codingwithdhrumil.com/2020/10/image-picker-flutter-example.html
 
@@ -40,8 +42,8 @@ class UserEditInfoState extends State<UserEditInfo> {
   String txtName, txtMobile;
   String _txtName, _txtMobile;
   String _userImage;
-  String physicalpath = 
-    'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\member\\';
+  String physicalpath =
+      'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\member\\';
 
   PickedFile _imageFile;
   String gllery = 'N';
@@ -50,7 +52,7 @@ class UserEditInfoState extends State<UserEditInfo> {
 
   @override
   void initState() {
-    super.initState();
+    super.initState();    
     findUser();
   }
 
@@ -64,6 +66,7 @@ class UserEditInfoState extends State<UserEditInfo> {
       txtName = _txtName;
       txtMobile = _txtMobile;
       _userImage = widget.pictname;
+      getPhycicalImagefolder();
     });
   }
 
@@ -81,8 +84,8 @@ class UserEditInfoState extends State<UserEditInfo> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       buildLogo(),
-                      SizedBox(width: 5),
-                      MyStyle().txtbrandsmall('Yakgin'),
+                      //SizedBox(width: 5),
+                      //MyStyle().txtbrandsmall('Yakgin'),
                     ],
                   ),
                   buildTitle(),
@@ -99,9 +102,9 @@ class UserEditInfoState extends State<UserEditInfo> {
                             children: [
                               Container(
                                 width: screen * 0.58,
-                                child: (_imageFile == null)
-                                    ? Image.network('${MyConstant().domain}/' +
-                                        '${MyConstant().memberimagepath}/$_userImage')
+                                child: 
+                                (_imageFile == null)
+                                    ? Image.network('https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$_userImage')
                                     : displayImage(),
                               ),
                               Column(
@@ -128,7 +131,7 @@ class UserEditInfoState extends State<UserEditInfo> {
 
   Container buildLogo() {
     return Container(
-        width: !kIsWeb ? (screen * 0.15) : (screen * 0.08),
+        width: !kIsWeb ? (screen * 0.22) : (screen * 0.08),
         margin: const EdgeInsets.only(top: 3),
         child: MyUtil().showLogo());
   }
@@ -325,7 +328,7 @@ class UserEditInfoState extends State<UserEditInfo> {
   }
 
   Future<Null> checkUser() async {
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'profileMobile.aspx?mbid=${widget.mbid}&mobile=$txtMobile';
 
     try {
@@ -364,7 +367,7 @@ class UserEditInfoState extends State<UserEditInfo> {
       //print('**** gllery=$gllery  / filePath=$filePath  _picttype=$_picttype');
     }
     try {
-      String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+      String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
           'updateMbInfo.aspx?mbid=$mbid&mbname=$txtName';
       if (_picttype != '') url += '&mbpict=$mbid.$_picttype';
 
@@ -510,4 +513,27 @@ class UserEditInfoState extends State<UserEditInfo> {
           )
         ],
       );
+
+  Future<Null> getPhycicalImagefolder() async {
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
+        '/getfolderimage.aspx';
+
+    physicalpath =
+        'D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\member\\';
+    await Dio().get(url).then((value) {
+      var result = json.decode(value.data);
+      if (result != null && result != '') {
+        for (var map in result) {
+          setState(() {
+            PhyImgModel pModel = PhyImgModel.fromJson(map);
+            physicalpath = pModel.imageMember;
+          });
+        }
+      } else {
+        setState(() {
+          //
+        });
+      }
+    });
+  }
 }

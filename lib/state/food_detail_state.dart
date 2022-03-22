@@ -1,6 +1,6 @@
-import 'package:btryakgin/model/addon_model.dart';
-import 'package:btryakgin/model/toppingb_model.dart';
-import 'package:btryakgin/model/toppingc_model.dart';
+import 'package:yakgin/model/addon_model.dart';
+import 'package:yakgin/model/toppingb_model.dart';
+import 'package:yakgin/model/toppingc_model.dart';
 import 'package:get/get.dart';
 
 class FoodDetailStateController extends GetxController {

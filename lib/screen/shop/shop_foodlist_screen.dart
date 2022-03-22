@@ -4,21 +4,21 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:btryakgin/screen/shop/shop_fooddetail_screen.dart';
-import 'package:btryakgin/widget/appbar_withorder.dart';
+import 'package:yakgin/screen/shop/shop_fooddetail_screen.dart';
+import 'package:yakgin/widget/appbar_withorder.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
-import 'package:btryakgin/model/category_model.dart';
-import 'package:btryakgin/model/food_model.dart';
-import 'package:btryakgin/model/shoprest_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/state/category_state.dart';
-import 'package:btryakgin/state/food_list_state.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/commonwidget.dart';
+import 'package:yakgin/model/category_model.dart';
+import 'package:yakgin/model/food_model.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/state/category_state.dart';
+import 'package:yakgin/state/food_list_state.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/commonwidget.dart';
 
 class ShopFoodlistScreen extends StatefulWidget {
   final ShopRestModel restModel;
@@ -62,7 +62,7 @@ class _ShopFoodlistScreenState extends State<ShopFoodlistScreen> {
 
   Future<Null> getFoodByType() async {
     String itid = '${categoryStateContoller.selectCategory.value.key}';
-    String url = '${MyConstant().domain}/${MyConstant().apipath}/' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'foodByType.aspx?ccode=$ccode&itid=$itid&strOrder=iName';
 
     //food_Addprice
@@ -153,8 +153,7 @@ class _ShopFoodlistScreenState extends State<ShopFoodlistScreen> {
                               Container(
                                   width: screen,
                                   child: Image.network(
-                                    '${MyConstant().domain}/${MyConstant().fixwebpath}/' +
-                                        '${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
+                                    'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
                                     fit: BoxFit.cover,
                                   )),
                               Row(

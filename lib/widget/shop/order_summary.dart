@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:btryakgin/model/sumdaily_detail_model.dart';
-import 'package:btryakgin/model/sumdaily_model.dart';
-import 'package:btryakgin/state/main_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/my_constant.dart';
-import 'package:btryakgin/utility/mystyle.dart';
-import 'package:btryakgin/widget/order/grs_total_widget.dart';
+import 'package:yakgin/model/sumdaily_detail_model.dart';
+import 'package:yakgin/model/sumdaily_model.dart';
+import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/my_constant.dart';
+import 'package:yakgin/utility/mystyle.dart';
+import 'package:yakgin/widget/order/grs_total_widget.dart';
 import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,7 +49,7 @@ class _OrderSummaryState extends State<OrderSummary> {
         .getString(MyConstant().keymbid); //เอา mbid ไปหา cid(cid=resturantId)
     String sDate = mydate112(startDate);
     String eDate = mydate112(endDate);
-    String url = '${MyConstant().domain}/${MyConstant().apipath}' +
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
         '/shop/getDailySum.aspx?mbid=' +
         mbid +
         '&startdate=$sDate&enddate=$eDate';
@@ -141,7 +141,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyStyle().txtTitle('Order Summary'),
+                    MyStyle().txtshadowsIntoLight('Order Summary'),
                     SizedBox(width: 10),
                     MyStyle().txtblack16TH('กำหนดวันที่'),
                   ],
@@ -447,7 +447,7 @@ class _OrderSummaryState extends State<OrderSummary> {
             (Set<MaterialState> states) {
               if (states.contains(MaterialState.pressed))
                 return Color(0xffBFB372);
-              return MyStyle().primarycolor; // Use the component's default.
+              return Colors.lightGreenAccent[700]; // Use the component's default.
             },
           ),
         ),

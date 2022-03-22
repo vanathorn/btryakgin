@@ -1,4 +1,4 @@
-import 'package:btryakgin/model/food_model.dart';
+import 'package:yakgin/model/food_model.dart';
 import 'package:get/get.dart';
 
 class FoodListStateController extends GetxController {

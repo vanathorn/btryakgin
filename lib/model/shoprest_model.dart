@@ -1,6 +1,6 @@
-import 'package:btryakgin/model/account_model.dart';
-import 'package:btryakgin/model/addon_model.dart';
-import 'package:btryakgin/model/size_model.dart';
+import 'package:yakgin/model/account_model.dart';
+import 'package:yakgin/model/addon_model.dart';
+import 'package:yakgin/model/size_model.dart';
 
 class ShopRestModel {
   String restaurantId = '';

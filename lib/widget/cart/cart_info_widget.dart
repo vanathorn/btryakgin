@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_elegant_number_button/flutter_elegant_number_button.dart';
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
-import 'package:btryakgin/utility/my_calculate.dart';
-import 'package:btryakgin/utility/mystyle.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/state/cart_state.dart';
+import 'package:yakgin/utility/my_calculate.dart';
+import 'package:yakgin/utility/mystyle.dart';
 
 class CartInfoWidget extends StatelessWidget {
   const CartInfoWidget(

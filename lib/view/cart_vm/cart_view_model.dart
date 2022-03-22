@@ -1,5 +1,5 @@
-import 'package:btryakgin/model/cart_model.dart';
-import 'package:btryakgin/state/cart_state.dart';
+import 'package:yakgin/model/cart_model.dart';
+import 'package:yakgin/state/cart_state.dart';
 
 abstract class CartViewModel {
   void updateQuantity(CartStateController controller, String restaurantId,
