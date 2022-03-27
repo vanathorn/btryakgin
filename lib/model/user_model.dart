@@ -10,6 +10,8 @@ class UserModel {
   String ccode;
   String strconn;
   String webpath;
+  String brcode;
+  String brname;
 
   UserModel(
       {this.mbid,
@@ -22,8 +24,9 @@ class UserModel {
       this.mbtname,
       this.ccode,
       this.strconn,
-      this.webpath}
-  );
+      this.webpath,
+      this.brcode,
+      this.brname});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     mbid = json['mbid'];
@@ -37,6 +40,8 @@ class UserModel {
     ccode = json['ccode'];
     strconn = json['strconn'];
     webpath = json['webpath'];
+    brcode = json['brcode'];
+    brname = json['brname'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +57,7 @@ class UserModel {
     data['ccode'] = this.ccode;
     data['strconn'] = this.strconn;
     data['webpath'] = this.webpath;
+    data['brcode'] = this.brcode;
     return data;
   }
 }

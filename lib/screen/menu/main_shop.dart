@@ -8,6 +8,8 @@ import 'package:yakgin/model/mess_model.dart';
 import 'package:yakgin/model/ord_model.dart';
 import 'package:yakgin/model/shop_model.dart';
 import 'package:yakgin/screen/shop/shop_food_category.dart';
+import 'package:yakgin/screen/shop/shop_recive_item.dart';
+import 'package:yakgin/screen/shop/shop_select_branch.dart';
 import 'package:yakgin/screen/user_edit_info.dart';
 import 'package:yakgin/state/main_state.dart';
 import 'package:yakgin/utility/dialig.dart';
@@ -30,12 +32,12 @@ class MainShop extends StatefulWidget {
 
 class _MainShopState extends State<MainShop> {
   bool loading = true;
-  String _shopName;
+  String _shopName, brcode, brname;
   String mbid, loginName, loginMobile, ccode, mbimage = 'userlogo.png';
-  Widget currentWidget = GetNewOrder(); //ShopFoodCategoryScreen();
+  Widget currentWidget = GetNewOrder();
 
   final MainStateController mainStateController = Get.find();
-
+  double hi = 45;
   //final orderStateController = Get.put(OrderStateController());  //count-order
   //OrderStateController ordController = new OrderStateController(); //count-order
 
@@ -51,8 +53,11 @@ class _MainShopState extends State<MainShop> {
     setState(() {
       ccode = prefer.getString('pccode');
       loginName = prefer.getString('pname');
+      brcode = prefer.getString('pbrcode');
+      brname = prefer.getString('pbrname');
       loginMobile = prefer.getString(MyConstant().keymoblie);
       mbid = prefer.getString(MyConstant().keymbid);
+      hi = (brcode == '000') ? 45 : 55;
       findShop();
       getMemberPict();
     });
@@ -205,8 +210,10 @@ class _MainShopState extends State<MainShop> {
       //   ],
       // ),
       appBar: AppBarWithOrderButton(
-          title: (_shopName != null ? _shopName : ''),
-          subtitle: '',
+          title: (loginName != null) ? loginName : '',
+          subtitle: (brname != null)
+              ? brname
+              : '', //+ (brcode !='' ? ' ('+brcode+')' :'') : ''),
           ttlordno: '0'),
       /*
       appBar: AppBar(
@@ -253,17 +260,21 @@ class _MainShopState extends State<MainShop> {
           Column(
             children: [
               Container(
-                height: 180,
+                height: 175,
                 margin: EdgeInsets.all(0.0),
                 padding: EdgeInsets.all(0.0),
                 child: shopDrawerHeader(name, email, imgwall, mbimage),
                 //MyStyle().builderUserAccountsDrawerHeader(name,email,imgwall,mbimage),
               ),
-              Container(height: 65, child: newOrderMenu()),
-              Container(height: 65, child: orderListMenu()),
-              Container(height: 65, child: orderSumMenu()),
-              Container(height: 65, child: foodCatMenu()),
-              Container(height: 65, child: shopInfoMenu()),
+              Container(height: hi, child: newOrderMenu()),
+              Container(height: hi, child: orderListMenu()),
+              Container(height: hi, child: orderSumMenu()),
+              Container(height: hi, child: foodCatMenu()),
+              Container(height: hi, child: shopInfoMenu()),
+              Container(height: hi, child: reciveItemMenu()),
+              (brcode=='000') 
+                ? Container(height: hi, child: balItemMenu())
+                :Container(),
             ],
           ),
           Column(
@@ -307,13 +318,16 @@ class _MainShopState extends State<MainShop> {
                       pictname: mbimage);
                 });
                 Navigator.pop(context);
-              },
+              },             
               child: logoimage == ''
                   ? Image.asset('userlogo.png')
-                  : Image.network(
+                  : Image.network(    
                       'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                       fit: BoxFit.cover,
-                    )),
+                      //width: 30,
+                      //height: 30
+                  )
+          ),
         ),
       ),
     );
@@ -377,6 +391,30 @@ class _MainShopState extends State<MainShop> {
         onTap: () {
           setState(() {
             currentWidget = ShopInfo();
+          });
+          Navigator.pop(context);
+        },
+      );
+
+  ListTile reciveItemMenu() => ListTile(
+        leading: Icon(Icons.auto_stories),
+        title: MyStyle().titleDark('รับสินค้า'),
+        subtitle: MyStyle().subtitleDark('รับสินค้าเข้าร้านสาขา'),
+        onTap: () {
+          setState(() {
+            currentWidget = ShopReciveItem();
+          });
+          Navigator.pop(context);
+        },
+      );
+      
+   ListTile balItemMenu() => ListTile(
+        leading: Icon(Icons.auto_stories),
+        title: MyStyle().titleDark('ปรับยอดสินค้า'),
+        subtitle: MyStyle().subtitleDark('ปรับยอดสินค้าคงเหลือ'),
+        onTap: () {
+          setState(() {
+            currentWidget = ShopSelectBranch();
           });
           Navigator.pop(context);
         },

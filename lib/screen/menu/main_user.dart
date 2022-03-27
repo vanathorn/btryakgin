@@ -191,7 +191,7 @@ class _MainUserState extends State<MainUser> {
               child: logoimage == ''
                   ? Image.asset('userlogo.png')
                   : Image.network(
-                     'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
+                      'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                       fit: BoxFit.cover,
                     )),
         ),
@@ -279,7 +279,7 @@ class _MainUserState extends State<MainUser> {
 
   Widget signOutMenu() {
     return Container(
-      decoration: BoxDecoration(color:MyStyle().bgsignout),
+      decoration: BoxDecoration(color: MyStyle().bgsignout),
       child: ListTile(
         leading: Icon(
           Icons.exit_to_app,

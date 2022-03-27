@@ -54,7 +54,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   String strDistance;
   Location location = Location();
   final int startLogist = 30;
-  final double iwidth = 130;
+  final double iwidth = 100;
   final double iEle = 20;
   int logistCost;
   String strKeyVal = '', nameBVal = '', nameCVal = '', straddonVal = '';
@@ -228,7 +228,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                 ),
               ),
               Container(
-                width: screen * 0.7,
+                width: screen * 0.66,
                 child: ListTile(
                     title: Center(
                       child: MyStyle().txtstyle(
@@ -243,8 +243,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                             10.0))),
               ),
               controller.getQuantity(mainStateController
-                          .selectedRestaurant.value.restaurantId) >
-                      0
+                          .selectedRestaurant.value.restaurantId)>0
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

@@ -179,8 +179,6 @@ class _SendOrderState extends State<SendOrder> {
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'custom/item_remain.aspx?ccode=$ccode&idlist=$keyList';
 
-    print('$url');
-
     itemsList.clear();
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -223,16 +221,17 @@ class _SendOrderState extends State<SendOrder> {
         notEnoughList(),
         Divider(thickness: 2),
         FloatingActionButton.extended(
-          backgroundColor: MyStyle().primarycolor,
+          backgroundColor: Colors.red,
           label: Text('สั่งตามจำนวนคงเหลือ',
               style: TextStyle(
                   fontFamily: 'thaisanslite',
                   fontSize: 13,
                   fontWeight: FontWeight.normal,
                   color: Colors.white)),
-          icon: Icon(Icons.mark_chat_read),
+          icon: Icon(Icons.mark_chat_read, color: Colors.white,),
           onPressed: () async {
-            //
+            Navigator.pop(context);
+            sendData();
           },
         ),
       ]);
@@ -345,7 +344,7 @@ class _SendOrderState extends State<SendOrder> {
                       }))
               : Container(),
           (!isWeb) ? buildMap() : Text(''),
-          buildAttach(),
+          //**** buildAttach(),
           buildSaveButton()
         ],
       ),
@@ -611,10 +610,6 @@ class _SendOrderState extends State<SendOrder> {
         for (int k = 0; k < itemsList.length; k++) {
           if (itemsList[k].iid.toString() == cartList[j].id) {
             if (ttlqty > itemsList[k].currqty) {
-              // mess += dilim +
-              //     '${itemsList[k].iname} เหลือ ' +
-              //     myFmt.format(itemsList[k].currqty);
-              // dilim = '\r\n';
               notenoughList.add(itemsList[k]);
               cartList[j].balqty =
                   double.parse(itemsList[k].currqty.toString());
@@ -673,11 +668,6 @@ class _SendOrderState extends State<SendOrder> {
     String orddetail = '';
     //'restaurantId+'_'+'iid'+ '_'+topBid+'_'+topCid+'_'+addonid_qty_unitprice_spFlag;';
 
-    // cartList.clear();
-    // cartList = controller
-    //     .getCart(mainStateController.selectedRestaurant.value.restaurantId)
-    //     .toList();
-
     int qty = 0;
     int qtySp = 0;
     String strKey = '', delimiter = '';
@@ -716,6 +706,7 @@ class _SendOrderState extends State<SendOrder> {
     try {
       Response response = await Dio().get(url);
       if (response.toString() == '') {
+        //*----- clear cart ----*/
         cartViewModel.clearCart(
             controller,
             mainStateController.selectedRestaurant.value.restaurantId,
@@ -723,6 +714,7 @@ class _SendOrderState extends State<SendOrder> {
                 .getCart(
                     mainStateController.selectedRestaurant.value.restaurantId)
                 .toList());
+                
         MyUtil().sendNoticToShop(resturantid, '!มีคำสั่งซื้อเข้ามา',
             'จากลูกค้า $loginName ($loginMobile)');
         checkOrder(resturantid, ccode, mbid, createdDT);

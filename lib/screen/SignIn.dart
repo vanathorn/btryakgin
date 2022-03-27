@@ -712,6 +712,8 @@ class _SignInState extends State<SignIn> {
       prefs.setString('pname', userModel.mbname);
       prefs.setString('pmobile', userModel.mobile);
       prefs.setString('pccode', userModel.ccode);
+      prefs.setString('pbrcode', userModel.brcode);
+      prefs.setString('pbrname', userModel.brname);
       prefs.setString('pstrconn', userModel.strconn);
       prefs.setString('pwebpath', webpath);
 

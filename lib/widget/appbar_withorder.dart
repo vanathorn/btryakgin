@@ -22,9 +22,10 @@ class AppBarWithOrderButton extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       title: subtitle != ''
-          ? ListTile(
-              title: MyStyle().txtstyle(title, Colors.white, 14.0),
-              subtitle: MyStyle().titleDrawerDark(subtitle))
+          ? MyStyle().subTitleDrawerDark('$title $subtitle')
+            // ListTile(
+            //   title: MyStyle().titleTH (title, Colors.white),
+            //   subtitle: MyStyle().titleDrawerDark(subtitle))
           : MyStyle().subTitleDrawerLight(title),
 
       //elevation: 10,

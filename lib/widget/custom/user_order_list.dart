@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_indicator/steps_indicator.dart';
+import 'package:yakgin/model/item_bybranch_model.dart';
 
 import 'package:yakgin/model/order_detail_model.dart';
 import 'package:yakgin/model/order_model.dart';
 import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/state/order_list_state.dart';
 import 'package:yakgin/utility/my_calculate.dart';
 import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
@@ -22,7 +24,7 @@ class UserOrderList extends StatefulWidget {
 }
 
 class _UserOrderListState extends State<UserOrderList> {
-  bool havedata = true;
+  bool havedata = true, havebranch = true;
   String mbid;
   double screen,
       ttlGrsAmount,
@@ -34,6 +36,11 @@ class _UserOrderListState extends State<UserOrderList> {
 
   List<OrderModel> listOrders = List<OrderModel>.empty(growable: true);
   List<OrdDetailModel> listDetails = List<OrdDetailModel>.empty(growable: true);
+  List<ItemByBranchModel> itembrList =
+      List<ItemByBranchModel>.empty(growable: true);
+  var isExpan = false;
+
+  OrderListStateController orderStateCtrl;
 
   @override
   void initState() {
@@ -85,6 +92,7 @@ class _UserOrderListState extends State<UserOrderList> {
             ttlGrsAmount += double.parse(mModel.ttlGrsAmount);
 
             havedata = true;
+            orderStateCtrl = dget.Get.put(OrderListStateController());
           });
         }
       } else {
@@ -174,6 +182,8 @@ class _UserOrderListState extends State<UserOrderList> {
       ));
 
   Column orderData(int index) {
+    orderStateCtrl = dget.Get.find(); //vtr
+    orderStateCtrl.selectedOrder.value = listOrders[index];
     return Column(children: [
       Container(
         child: Container(
@@ -187,6 +197,12 @@ class _UserOrderListState extends State<UserOrderList> {
         ),
       ),
       ExpansionTile(
+        onExpansionChanged: (bool expanding) =>
+            _onExpanChanged(expanding, index), //_onExpanChanged,
+        trailing: Switch(
+          value: isExpan,
+          onChanged: (_) {},
+        ),
         title: orderTitle(index),
         children: [
           orderDetail(index),
@@ -195,9 +211,40 @@ class _UserOrderListState extends State<UserOrderList> {
             child: orderFooter(index),
           ),
           orderStep(index),
+          branchDetail(),
         ],
       )
     ]);
+  }
+
+  Column branchDetail() {
+    return Column(
+        children: itembrList
+            .map((e) => Padding(
+                padding: const EdgeInsets.only(left: 8, right: 10, bottom: 8.0),
+                child: Column(children: [
+                  // Row(
+                  //   children: [
+                  //     Text('${e.}')
+                  //   ],
+                  // ),
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Expanded(
+                        flex: 4,
+                        child: MyStyle().txtblack16TH('${e.shopname}')),
+                    Expanded(
+                        flex: 4,
+                        child: MyStyle().txtTH(
+                            '${e.seq}. ${e.iname}', MyStyle().primarycolor)),
+                    Expanded(
+                        flex: 1,
+                        child: MyStyle()
+                            .txtblack16TH('${MyCalculate().fmtNumber(e.qty)}')),
+                    Expanded(
+                        flex: 1, child: MyStyle().txtblack16TH('${e.uname}')),
+                  ]),
+                ])))
+            .toList());
   }
 
   Column orderStep(int index) {
@@ -254,19 +301,19 @@ class _UserOrderListState extends State<UserOrderList> {
       children: [
         Container(
           child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Container(
-                  margin: const EdgeInsets.only(left: 5),
-                  //width: screen * 0.48,
-                  child: SingleChildScrollView(
-                    child: MyStyle().txtstyle(
-                      listOrders[index].shopName +
-                          ' ' +
-                          listOrders[index].contactphone,
-                      Colors.blueAccent[700],
-                      12.0,
-                    ),
-                  )),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Container(
+                margin: const EdgeInsets.only(left: 5),
+                //width: screen * 0.48,
+                child: SingleChildScrollView(
+                  child: MyStyle().txtstyle(
+                    listOrders[index].shopName +
+                        ' ' +
+                        listOrders[index].contactphone,
+                    Colors.blueAccent[700],
+                    12.0,
+                  ),
+                )),
             /*
             Container(
               margin: const EdgeInsets.only(left: 5),
@@ -438,5 +485,50 @@ class _UserOrderListState extends State<UserOrderList> {
         ),
       ],
     );
+  }
+
+  _onExpanChanged(bool val, int index) {
+    setState(() async {
+      isExpan = val;
+      if (isExpan) {
+        //String _olid = '${orderStateCtrl.selectedOrder.value.olid}';
+        await getItemBranch(listOrders[index].ccode, listOrders[index].olid);
+      }
+    });
+  }
+
+  Future<Null> getItemBranch(String _ccode, String _olid) async {
+    itembrList.clear();
+    // String _ccode = '${orderStateCtrl.selectedOrder.value.ccode}';
+    // String _olid = '${orderStateCtrl.selectedOrder.value.olid}';
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
+        '/custom/getItemByBranch.aspx?ccode=$_ccode&olid=$_olid';
+    print('***************** $url');
+    await Dio().get(url).then((value) {
+      var result = json.decode(value.data);
+      if (result != null) {
+        String oldshop = '';
+        int j = 0;
+        for (var map in result) {
+          setState(() {
+            ItemByBranchModel mModel = ItemByBranchModel.fromJson(map);
+            if (mModel.shopname != oldshop) {
+              oldshop = mModel.shopname;
+              j = 1;
+            } else {
+              mModel.shopname = '';
+            }
+            mModel.seq = j.toString();
+            itembrList.add(mModel);
+            havebranch = true;
+            j++;
+          });
+        }
+      } else {
+        setState(() {
+          havebranch = false;
+        });
+      }
+    });
   }
 }

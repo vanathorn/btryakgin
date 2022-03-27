@@ -198,14 +198,14 @@ class MyStyle {
   Widget subTitleDrawerLight(String strtxt) => Text(strtxt,
       style: TextStyle(
           fontFamily: 'thaisanslite',
-          fontSize: 18.0,
+          fontSize: 14.0,
           fontWeight: FontWeight.normal,
           color: Colors.white));
 
   Widget titleDrawerDark(String strtxt) => Text(strtxt,
       style: TextStyle(
           fontFamily: 'thaisanslite',
-          fontSize: 20.0,
+          fontSize: 14.0,
           fontWeight: FontWeight.normal,
           color: Colors.black));
 
@@ -367,6 +367,14 @@ class MyStyle {
         color: txtcolor,
       ));
 
+   Widget txtTH18(String strtxt, Color txtcolor) => Text(strtxt,
+      style: TextStyle(
+        fontFamily: 'thaisanslite',
+        fontSize: 18,
+        fontWeight: FontWeight.normal,
+        color: txtcolor,
+      ));
+
   Widget txtbodyTH(String strtxt) => Text(strtxt,
       style: TextStyle(
         fontFamily: 'thaisanslite',
@@ -415,7 +423,7 @@ class MyStyle {
         fontFamily: 'thaisanslite',
         fontSize: 18,
         fontWeight: FontWeight.normal,
-        color: Colors.black54,
+        color: Colors.black87,
       );
 
   BoxDecoration boxDecoration() => BoxDecoration(

@@ -194,14 +194,14 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                               Row(
                                                 children: [
                                                   Container(
-                                                    width: screen *.9,
+                                                    width: screen *.95,
                                                     child: SingleChildScrollView(
                                                       child: Row(
                                                         mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                         children: [
-                                                          MyStyle().txtstyle(
+                                                          MyStyle().txtTH18(
                                                               '${foodModels[index].name}',
-                                                              Colors.yellow,17.0),
+                                                              Colors.white),
                                                           showBalQty(foodModels[index])
                                                         ],
                                                       ),
@@ -210,9 +210,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                                 ],
                                               ),
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Row(
                                                     children: [
@@ -222,18 +220,18 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                                               foodModels[
                                                                   index])),
                                                       showRating(
-                                                          foodModels[index]),
+                                                           foodModels[index]),
                                                       Padding(
                                                           padding:
                                                               const EdgeInsets
                                                                       .only(
-                                                                  left: 40.0),
+                                                                  left: 0),
                                                           child: Row(
                                                             children: [
                                                               MyStyle().txtstyle(
                                                                   '-',
                                                                   Colors.white,
-                                                                  22),
+                                                                  20),
                                                               imageSubtToCart(
                                                                   foodModels[
                                                                       index]),
@@ -243,7 +241,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                                           padding:
                                                               const EdgeInsets
                                                                       .only(
-                                                                  left: 40.0),
+                                                                  left: 3.0),
                                                           child: imageAddToCart(
                                                               foodModels[
                                                                   index]))
@@ -321,11 +319,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        MyStyle().txtstyle('เหลือ', Colors.white, 16.0),
+        MyStyle().txtTH18('เหลือ', Colors.white54),
         SizedBox(width: 5),
         MyStyle().txtstyle(qty, Color.fromARGB(255, 10, 214, 3), 18.0),
         SizedBox(width: 5),
-        MyStyle().txtstyle(fmodel.uname, Colors.white, 16.0),
+        MyStyle().txtTH18(fmodel.uname, Colors.white54),
       ],
     );
   }
@@ -350,7 +348,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
         },
         icon: Icon(
           Icons.add_shopping_cart,
-          color: Colors.white,
+          color: Color.fromARGB(255, 10, 214, 3)
         ));
   }
 
@@ -375,7 +373,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
         },
         icon: Icon(
           Icons.remove_shopping_cart,
-          color: Color.fromARGB(255, 253, 42, 42),
+          color: Colors.white,
         ));
   }
 
