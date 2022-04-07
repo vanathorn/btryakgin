@@ -5,10 +5,12 @@ import 'package:yakgin/model/menu_model.dart';
 import 'package:yakgin/model/shop_model.dart';
 import 'package:yakgin/screen/menu/home_screen.dart';
 import 'package:yakgin/screen/menu/main_rider.dart';
-import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_shop_branch.dart';
+import 'package:yakgin/screen/menu/main_shop_head.dart';
 import 'package:yakgin/screen/menu/main_user.dart';
 import 'package:yakgin/screen/menu/menu_screen.dart';
 import 'package:yakgin/state/food_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/view/food_view_imp.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,6 +51,7 @@ class _MultiHomeState extends State<MultiHome> {
       loginccode = prefer.getString('pccode');
       loginName = prefer.getString('pname');
       chooseCode = prefer.getString('pchooseCode');
+      String brcode = prefer.getString('${MyConstant().keybrcode}');
       var ctype = chooseCode.split("|");
       String menuName = '', menuImage = '';
       Widget menuWidget;
@@ -60,7 +63,11 @@ class _MultiHomeState extends State<MultiHome> {
         } else if (ctype[i] == 'S') {
           menuName = 'เมนููร้านค้า';
           menuImage = 'shop.png';
-          menuWidget = MainShop();
+          if (brcode == '${MyConstant().headBranch}') {
+            menuWidget = MainShopHead();
+          } else {
+            menuWidget = MainShopBranch();
+          }
         } else if (ctype[i] == 'R') {
           menuName = 'เมนููผู้ส่งสินค้า';
           menuImage = 'rider.jpg';

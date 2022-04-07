@@ -26,7 +26,7 @@ class ShopFoodCategoryScreen extends StatefulWidget {
 
 class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
   double screen;
-  String ccode, loginName, strDistance;
+  String ccode, loginName, strDistance, brcode;
   Location location = Location();
   bool loadding = true;
   bool havemenu = true;
@@ -52,6 +52,7 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
     setState(() {
       loginName = prefer.getString('pname');
       ccode = prefer.getString('pccode');
+      brcode = prefer.getString(MyConstant().keybrcode);
       getRestutant();
     });
     getCategory();
@@ -130,7 +131,8 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
                   MaterialPageRoute route = MaterialPageRoute(
                       builder: (context) => ShopFoodlistScreen(
                           restModel: restModels[0],
-                          categoryModel: categoryModels[index]));
+                          categoryModel: categoryModels[index], 
+                          brcode: brcode));
                   Navigator.push(context, route);
 
                   //.then((value) => getCategory());<- มี error (index)

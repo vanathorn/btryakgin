@@ -6,12 +6,8 @@ class OrdModel extends ShopRestModel {
   int countord = 0;
 
   OrdModel({this.restaurantId, shopName, countord})
-      : super(
-          restaurantId: restaurantId,
-          cntord: countord,
-        );
+      : super(restaurantId: restaurantId,cntord: countord);
 
-  //factory
   OrdModel.fromJson(Map<String, dynamic> json) {
     restaurantId = json['restaurantId'];
     shopName = json['shopName'];
@@ -20,11 +16,6 @@ class OrdModel extends ShopRestModel {
     if (json['countord'] != null && json['countord'] != '') {
       countord = int.parse(json['countord'].toString());
     }
-    // return OrdModel(
-    //    restaurantId: restaurantId,
-    //    shopName: shopName,
-    //    countord: countord,
-    // );
   }
 
   Map<String, dynamic> toJson() {

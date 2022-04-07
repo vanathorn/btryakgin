@@ -6,6 +6,7 @@ import 'package:location/location.dart';
 import 'package:sql_conn/sql_conn.dart';
 import 'package:yakgin/screen/SignIn.dart';
 import 'package:yakgin/screen/home.dart';
+import 'package:yakgin/screen/menu/main_shop_branch.dart';
 import 'package:yakgin/state/prov_state.dart';
 import 'package:yakgin/utility/loader.dart';
 import 'package:yakgin/utility/sqlservice.dart';
@@ -20,7 +21,7 @@ import 'package:yakgin/model/login_model.dart';
 import 'package:yakgin/model/m_model.dart';
 import 'package:yakgin/model/user_model.dart';
 import 'package:yakgin/screen/menu/main_rider.dart';
-import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_shop_head.dart';
 import 'package:yakgin/screen/menu/main_user.dart';
 import 'package:yakgin/screen/menu/multi_home.dart';
 import 'package:yakgin/state/memtype_detail_state.dart';
@@ -1094,7 +1095,11 @@ class _SignUpState extends State<SignUp> {
             } else if (chooseType == 'R') {
               routeToService(MainRider(), usermodel);
             } else if (chooseType == 'S') {
-              routeToService(MainShop(), usermodel);
+              if (usermodel.brcode == '${MyConstant().headBranch}') {
+                routeToService(MainShopHead(), usermodel);
+              } else {
+                routeToService(MainShopBranch(), usermodel);
+              }     
             } else {
               //='M'
               routeToService(MultiHome(), usermodel);

@@ -89,7 +89,7 @@ class _ShopAdjustBal extends State<ShopAdjustBal> {
           subtitle: (branchModel.branchname != null)
               ? branchModel.branchname
               : '', //+ (brcode !='' ? ' ('+brcode+')' :'') : ''),
-          ttlordno: '0'),
+          ttlordno: '0', brcode: brcode),
       body: Container(
         padding: const EdgeInsets.all(5),
         child: Column(

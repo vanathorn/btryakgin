@@ -12,23 +12,26 @@ const recive_order_status = '1';
 const cancel_order_status = '3';
 const reserve_order_status = '1'; //riderStatus
 
-class MyConstant{
+class MyConstant {
   MyConstant();
 
-  String domain = 'yakgin.com';//=> D:\\Inetpub\\vhosts\\yakgin.com //'http://27.254.206.234';
+  String domain =
+      'yakgin.com'; //=> D:\\Inetpub\\vhosts\\yakgin.com //'http://27.254.206.234';
   String memberimagepath = 'Images/member';
   String shoptypeimagepath = 'Image/ShopType';
   String shopimagepath = 'Images/shop';
- 
+
   String imagepath = 'Images/product';
   String fixwebpath = ''; // = \httpdocs ???
   String apipath = 'https://yakginapi';
-  String imageapi = 'https://imageapi.yakgin.com';  //'https://27.254.206.234/imageapi';
+  String imageapi =
+      'https://imageapi.yakgin.com'; //'https://27.254.206.234/imageapi';
+  String headBranch = '000';
 
-  String keymbid='pid';
-  String keymoblie='pmobile';
-  String keymbname='pname';
-  String keymbtcode='pchooseCode';
-  String keymbtname='pchooseType';  
-
+  String keymbid = 'pid';
+  String keymoblie = 'pmobile';
+  String keymbname = 'pname';
+  String keymbtcode = 'pchooseCode';
+  String keymbtname = 'pchooseType';
+  String keybrcode = 'pbrcode';
 }

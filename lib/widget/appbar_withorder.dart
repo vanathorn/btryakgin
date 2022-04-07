@@ -1,31 +1,33 @@
 import 'package:badges/badges.dart';
 //vtr after upgrade import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_shop_branch.dart';
+import 'package:yakgin/screen/menu/main_shop_head.dart';
 import 'package:yakgin/state/main_state.dart';
+import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toast/toast.dart';
 
 class AppBarWithOrderButton extends StatelessWidget
-    implements PreferredSizeWidget {
+  implements PreferredSizeWidget {
   final String title;
   final String subtitle;
   final String ttlordno;
+  final String brcode;
   //* final OrderStateController orderStateController = Get.find();
   final MainStateController mainStateController = Get.find();
-
-  AppBarWithOrderButton({this.title, this.subtitle, this.ttlordno});
+  AppBarWithOrderButton({this.title, this.subtitle, this.ttlordno, this.brcode});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       title: subtitle != ''
           ? MyStyle().subTitleDrawerDark('$title $subtitle')
-            // ListTile(
-            //   title: MyStyle().titleTH (title, Colors.white),
-            //   subtitle: MyStyle().titleDrawerDark(subtitle))
+          // ListTile(
+          //   title: MyStyle().titleTH (title, Colors.white),
+          //   subtitle: MyStyle().titleDrawerDark(subtitle))
           : MyStyle().subTitleDrawerLight(title),
 
       //elevation: 10,
@@ -65,8 +67,12 @@ class AppBarWithOrderButton extends StatelessWidget
                     //MaterialPageRoute route = MaterialPageRoute(builder: (context) => ShopOrderList(),);
                     //Navigator.pushAndRemoveUntil(context, route, (route) => false);
                     //
+                    Widget currentWidget =
+                        (brcode == '${MyConstant().keybrcode}')
+                            ? MainShopHead()
+                            : MainShopBranch();
                     MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => MainShop(),
+                      builder: (context) => currentWidget,
                     );
                     Navigator.push(context, route);
                   } else {

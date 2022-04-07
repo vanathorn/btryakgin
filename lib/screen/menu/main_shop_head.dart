@@ -17,6 +17,8 @@ import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
 import 'package:yakgin/utility/signOut.dart';
 import 'package:yakgin/widget/appbar_withorder.dart';
+import 'package:yakgin/widget/branch/branch_order_list.dart';
+import 'package:yakgin/widget/branch/new_ord_branch.dart';
 import 'package:yakgin/widget/shop/get_neworder.dart';
 import 'package:yakgin/widget/shop/order_summary.dart';
 import 'package:yakgin/widget/shop/shop_info.dart';
@@ -25,12 +27,12 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //*** https://mui.com/components/material-icons/
 
-class MainShop extends StatefulWidget {
+class MainShopHead extends StatefulWidget {
   @override
-  _MainShopState createState() => _MainShopState();
+  _MainShopHeadState createState() => _MainShopHeadState();
 }
 
-class _MainShopState extends State<MainShop> {
+class _MainShopHeadState extends State<MainShopHead> {
   bool loading = true;
   String _shopName, brcode, brname;
   String mbid, loginName, loginMobile, ccode, mbimage = 'userlogo.png';
@@ -53,11 +55,11 @@ class _MainShopState extends State<MainShop> {
     setState(() {
       ccode = prefer.getString('pccode');
       loginName = prefer.getString('pname');
-      brcode = prefer.getString('pbrcode');
+      brcode = prefer.getString(MyConstant().keybrcode);
       brname = prefer.getString('pbrname');
       loginMobile = prefer.getString(MyConstant().keymoblie);
       mbid = prefer.getString(MyConstant().keymbid);
-      hi = (brcode == '000') ? 45 : 55;
+      hi = (brcode == MyConstant().headBranch) ? 45 : 55;
       findShop();
       getMemberPict();
     });
@@ -135,8 +137,7 @@ class _MainShopState extends State<MainShop> {
 
   Future<Null> countOrderNo() async {
     String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/shop/countOrder.aspx?ccode=' +
-            '$ccode&condition=[Status]=0';
+      '${MyConstant().apipath}.${MyConstant().domain}/branch/countOrdBranch.aspx?mbid=$mbid&condition=';
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
@@ -214,7 +215,7 @@ class _MainShopState extends State<MainShop> {
           subtitle: (brname != null)
               ? brname
               : '', //+ (brcode !='' ? ' ('+brcode+')' :'') : ''),
-          ttlordno: '0'),
+          ttlordno: '0', brcode: brcode,),
       /*
       appBar: AppBar(
         backgroundColor: MyStyle().primarycolor,
@@ -266,15 +267,17 @@ class _MainShopState extends State<MainShop> {
                 child: shopDrawerHeader(name, email, imgwall, mbimage),
                 //MyStyle().builderUserAccountsDrawerHeader(name,email,imgwall,mbimage),
               ),
-              Container(height: hi, child: newOrderMenu()),
-              Container(height: hi, child: orderListMenu()),
+              // Container(height: hi, child: newOrderMenu()),
+              // Container(height: hi, child: orderListMenu()),
+              Container(height: hi, child: newOrderBranchMenu()),
+              Container(height: hi, child: orderBranchListMenu()),
               Container(height: hi, child: orderSumMenu()),
               Container(height: hi, child: foodCatMenu()),
               Container(height: hi, child: shopInfoMenu()),
               Container(height: hi, child: reciveItemMenu()),
-              (brcode=='000') 
-                ? Container(height: hi, child: balItemMenu())
-                :Container(),
+              (brcode == MyConstant().headBranch)
+                  ? Container(height: hi, child: balItemMenu())
+                  : Container(),
             ],
           ),
           Column(
@@ -318,16 +321,15 @@ class _MainShopState extends State<MainShop> {
                       pictname: mbimage);
                 });
                 Navigator.pop(context);
-              },             
+              },
               child: logoimage == ''
                   ? Image.asset('userlogo.png')
-                  : Image.network(    
+                  : Image.network(
                       'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$logoimage',
                       fit: BoxFit.cover,
                       //width: 30,
                       //height: 30
-                  )
-          ),
+                    )),
         ),
       ),
     );
@@ -356,6 +358,33 @@ class _MainShopState extends State<MainShop> {
           Navigator.pop(context);
         },
       );
+
+  ListTile newOrderBranchMenu() => ListTile(
+        leading: Icon(Icons.fastfood),
+        title: MyStyle().titleDark('คำสั่งซื้อใหม่'),
+        subtitle: MyStyle().subtitleDark('ลูกค้าสั่งซื้อเข้ามาใหม่' +
+            (brname != null ? ' (' + brname + ')' : '')),
+        onTap: () {
+          setState(() {
+            currentWidget = GetNewOrderBranch();
+          });
+          Navigator.pop(context);
+        },
+      );
+
+  ListTile orderBranchListMenu() => ListTile(
+        leading: Icon(Icons.restaurant_menu),
+        title: MyStyle().titleDark('รายการที่ลูกค้าสั่ง'),
+        subtitle: MyStyle().subtitleDark(
+            'คำสั่งซื้อทั้งหมด' + (brname != null ? ' (' + brname + ')' : '')),
+        onTap: () {
+          setState(() {
+            currentWidget = BranchOrderList();
+          });
+          Navigator.pop(context);
+        },
+      );
+
 
   ListTile orderSumMenu() => ListTile(
         leading: Icon(Icons.photo_filter_outlined), //developer_board
@@ -407,8 +436,8 @@ class _MainShopState extends State<MainShop> {
           Navigator.pop(context);
         },
       );
-      
-   ListTile balItemMenu() => ListTile(
+
+  ListTile balItemMenu() => ListTile(
         leading: Icon(Icons.auto_stories),
         title: MyStyle().titleDark('ปรับยอดสินค้า'),
         subtitle: MyStyle().subtitleDark('ปรับยอดสินค้าคงเหลือ'),

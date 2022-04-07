@@ -23,7 +23,8 @@ import 'package:yakgin/widget/commonwidget.dart';
 class ShopFoodlistScreen extends StatefulWidget {
   final ShopRestModel restModel;
   final CategoryModel categoryModel;
-  ShopFoodlistScreen({Key key, this.restModel, this.categoryModel})
+  final String brcode;
+  ShopFoodlistScreen({Key key, this.restModel, this.categoryModel, this.brcode})
       : super(key: key);
   @override
   _ShopFoodlistScreenState createState() => _ShopFoodlistScreenState();
@@ -32,7 +33,7 @@ class ShopFoodlistScreen extends StatefulWidget {
 class _ShopFoodlistScreenState extends State<ShopFoodlistScreen> {
   ShopRestModel restModel;
   CategoryModel categoryModel;
-  String strConn, ccode, webPath;
+  String strConn, ccode, webPath, brcode;
   double screen;
   String strDistance;
   Location location = Location();
@@ -57,6 +58,7 @@ class _ShopFoodlistScreenState extends State<ShopFoodlistScreen> {
     webPath = restModel.webpath;
     categoryStateContoller = Get.find();
     categoryStateContoller.selectCategory.value = categoryModel;
+    brcode = widget.brcode;
     getFoodByType();
   }
 
@@ -90,9 +92,10 @@ class _ShopFoodlistScreenState extends State<ShopFoodlistScreen> {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBarWithOrderButton(
-            title: 'สินค้าประเภท ${categoryModel.name}',
-            subtitle: '',
-            ttlordno: '0'),
+          title: 'สินค้าประเภท ${categoryModel.name}',
+          subtitle: '',
+          ttlordno: '0',
+          brcode: brcode),
         body: (loadding)
             ? MyStyle().showProgress()
             : (loadding == false && foodModels.length > 0)

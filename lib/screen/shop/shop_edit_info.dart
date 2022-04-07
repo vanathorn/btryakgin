@@ -390,10 +390,6 @@ class ShopEditInfoState extends State<ShopEditInfo> {
             await saveImage(physicalpath);
             await saveData();
             readExistDataShop();
-            // MaterialPageRoute route = MaterialPageRoute(
-            //           builder: (context) => MainShop());
-            //           Navigator.push(context, route);
-            //Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
@@ -431,7 +427,6 @@ class ShopEditInfoState extends State<ShopEditInfo> {
             // MaterialPageRoute route = MaterialPageRoute(
             //           builder: (context) => MainShop());
             //           Navigator.push(context, route);
-
             //Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context)

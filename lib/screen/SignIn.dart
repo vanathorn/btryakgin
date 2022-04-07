@@ -7,7 +7,8 @@ import 'package:yakgin/screen/SingUp.dart';
 import 'package:yakgin/screen/home.dart';
 import 'package:yakgin/screen/menu/main_admin.dart';
 import 'package:yakgin/screen/menu/main_rider.dart';
-import 'package:yakgin/screen/menu/main_shop.dart';
+import 'package:yakgin/screen/menu/main_shop_branch.dart';
+import 'package:yakgin/screen/menu/main_shop_head.dart';
 import 'package:yakgin/screen/menu/main_user.dart';
 import 'package:yakgin/screen/menu/multi_home.dart';
 import 'package:yakgin/utility/dialig.dart';
@@ -661,8 +662,12 @@ class _SignInState extends State<SignIn> {
               } else if (chooseCode == 'R') {
                 routeToService(MainRider(), usermodel);
               } else if (chooseCode == 'S') {
-                routeToService(MainShop(), usermodel);
-              } else if (chooseCode == 'A') {
+                if (usermodel.brcode == '${MyConstant().headBranch}') {
+                  routeToService(MainShopHead(), usermodel);
+                }else{
+                  routeToService(MainShopBranch(), usermodel);
+                }               
+              } else if (chooseCode == 'A') {                
                 routeToService(MainAdmin(), usermodel);
               } else {
                 routeToService(MultiHome(), usermodel);
