@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class AppBarWithCartButton extends StatelessWidget
-  implements PreferredSizeWidget {
+    implements PreferredSizeWidget {
   final String title;
   final String subtitle;
   final CartStateController cartStateController = Get.find();
@@ -55,7 +55,7 @@ class AppBarWithCartButton extends StatelessWidget
                 margin: EdgeInsets.only(right: 40.0),
                 child: IconButton(
                     icon: Icon(
-                      Icons.restaurant_menu_outlined,
+                      Icons.shopping_basket_outlined,
                       color: Colors.black,
                     ),
                     onPressed: () {

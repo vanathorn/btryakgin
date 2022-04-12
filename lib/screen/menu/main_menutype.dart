@@ -128,7 +128,7 @@ class _MainMenuTypeState extends State<MainMenuType> {
       );
 
   ListTile userOrderMenu() => ListTile(
-        leading: Icon(Icons.restaurant_menu),
+        leading: Icon(Icons.shopping_basket),
         title: MyStyle().titleDark('การซื้อของคุณ'),
         subtitle: MyStyle().subtitleDark('รายการที่คุณสั่งซื้อแล้ว'),
         onTap: () {

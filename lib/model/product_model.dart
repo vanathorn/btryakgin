@@ -8,11 +8,9 @@ class ProductModel {
   String price='';
   String uname='';
   String foodpict='';
-  String slidepict1='';
-  String slidepict2='';
 
-  ProductModel({
-      this.itid,
+  ProductModel(
+      {this.itid,
       this.itname,
       this.iid,
       this.icode,
@@ -20,10 +18,7 @@ class ProductModel {
       this.idescription,
       this.price,
       this.uname,
-      this.foodpict,
-      this.slidepict1,
-      this.slidepict2}
-  );
+      this.foodpict});
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     itid = json['itid'];
@@ -35,8 +30,6 @@ class ProductModel {
     price = json['price'];
     uname = json['uname'];
     foodpict = json['foodpict'];
-    slidepict1 = json['slidepict1'];
-    slidepict2 = json['slidepict2'];
   }
 
   Map<String, dynamic> toJson() {
@@ -50,8 +43,6 @@ class ProductModel {
     data['price'] = this.price;
     data['uname'] = this.uname;
     data['foodpict'] = this.foodpict;
-    data['slidepict1'] = this.slidepict1;
-    data['slidepict2'] = this.slidepict2;
     return data;
   }
 }

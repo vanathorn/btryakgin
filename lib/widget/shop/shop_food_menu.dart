@@ -111,7 +111,7 @@ class _ShopFoodMenuState extends State<ShopFoodMenu> {
     return havemenu
         ? showListFoodType()
         : MyStyle()
-            .titleCenterTH(context, 'ไม่มีรายประเภทอาหาร', 22, Colors.red);
+            .titleCenterTH(context, 'ไม่มีรายการประเภทสินค้า', 22, Colors.red);
   }
 
   Widget xxxshowListFood() => ListView.builder(

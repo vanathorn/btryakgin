@@ -433,35 +433,15 @@ class _GetNewOrderBranchState extends State<GetNewOrderBranch> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      /*
                                       FloatingActionButton.extended(
-                                        label: Text('ไม่รับออร์เดอร์',
-                                            style: TextStyle(
-                                              fontFamily: 'thaisanslite',
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.white,
-                                            )),
-                                        icon: Icon(Icons.cancel),
-                                        backgroundColor: Colors.redAccent[700],
-                                        onPressed: () {
-                                          txtReason = '';
-                                          confirmCancel(listOrders[index]);
-                                          setState(() {
-                                            findNewOrder();
-                                          });
-                                        },
-                                      ),
-                                      SizedBox(width: 5),
-                                      */
-                                      FloatingActionButton.extended(
+                                        backgroundColor: Colors.black,
                                         label: Text('รับออร์เดอร์',
                                             style: TextStyle(
                                                 fontFamily: 'thaisanslite',
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 color: Colors.white)),
-                                        icon: Icon(Icons.mark_chat_read),
+                                        icon: Icon(Icons.check),
                                         onPressed: () async {
                                           reciveOrder(listOrders[index]);
                                         },
@@ -475,15 +455,6 @@ class _GetNewOrderBranchState extends State<GetNewOrderBranch> {
                         )
                       ])))),
           Divider(thickness: 2),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.start,
-          //   children: [
-          //     Padding(
-          //       padding: const EdgeInsets.only(left: 10),
-          //       child: MyStyle().txtTitle('GRS Amount'),
-          //     ),
-          //   ],
-          // ),
           GrsTotalWidget(
               netamount: ttlNetAmount,
               discount: ttlDiscount,
@@ -494,24 +465,17 @@ class _GetNewOrderBranchState extends State<GetNewOrderBranch> {
       ));
 
   Future<Null> reciveOrder(OrderModel listord) async {
-    //mbid =  mbid ของ Customer
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'shop/setOrderStatus.aspx?mbordid=' +
-        listord.mbordid +
-        '&ccode=' +
-        listord.ccode +
-        '&mbid=' +
-        listord.mbid +
-        '&olid=' +
-        listord.olid +
-        '&reason=&shopname=' +
-        listord.shopName +
-        '&orderno=' +
-        listord.orderNo;
+        'branch/setOrderStatus.aspx?ccode=${listord.ccode}' +
+        '&mbid=$mbid&olid=${listord.olid}';
+      
     try {
       Response response = await Dio().get(url);
-      if (response.toString() == '') {
-        checkReciveStatus(listord);
+      if (response.toString() == 'Success') {
+        setState(() {
+          findNewOrder();
+        });
+        //sendNotic(listord);
       } else {
         alertDialog(context, response.toString());
       }
@@ -520,9 +484,9 @@ class _GetNewOrderBranchState extends State<GetNewOrderBranch> {
     }
   }
 
-  Future<Null> checkReciveStatus(OrderModel listord) async {
+  Future<Null> sendNotic(OrderModel listord) async {
     String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
+        '${MyConstant().apipath}.${MyConstant().domain}/branch/checkOrdStatus.aspx?ccode=' +
             listord.ccode +
             '&olid=' +
             listord.olid +
@@ -567,159 +531,4 @@ class _GetNewOrderBranchState extends State<GetNewOrderBranch> {
           '!ตรวจสอบสถานะคำสั่งซื้อไม่ได้\r\n(ไม่สามารถติดต่อ Serverได้)');
     }
   }
-
-  Future<Null> checkCancelStatus(OrderModel listord) async {
-    String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/shop/checkOrdStatus.aspx?ccode=' +
-            listord.ccode +
-            '&olid=' +
-            listord.olid +
-            '&orderno=' +
-            listord.orderNo;
-    try {
-      await Dio().get(url).then((value) {
-        var result = json.decode(value.data);
-        if (result != null) {
-          for (var map in result) {
-            StatusModel mModel = StatusModel.fromJson(map);
-            if (mModel.status == cancel_order_status) {
-              MyUtil().sendNoticToCustom(
-                  listord.mbid,
-                  '*ยกเลิกคำสั่งซื้อ*' + '${listord.orderNo}',
-                  'จากร้าน:' + listord.shopName);
-              //Toast.show('ยกเลิกคำสั่งซื้อ:'+ listord.orderNo +' เรียบร้อย', context);
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  InfoSnackBar.infoSnackBar(
-                      'ยกเลิกคำสั่งซื้อ:' + listord.orderNo, Icons.cancel),
-                );
-              setState(() {
-                findNewOrder();
-              });
-            } else {
-              alertDialog(
-                  context,
-                  '!สถานะคำสั่งซื้อ ' +
-                      listord.orderNo +
-                      '\r\nผิดพลาดกรุณาตรวจสอบ');
-            }
-          }
-        } else {
-          alertDialog(context, '!ไม่พบคำสั่งซื้อ ' + listord.orderNo);
-        }
-      });
-    } catch (e) {
-      alertDialog(context,
-          '!ตรวจสอบสถานะคำสั่งซื้อไม่ได้\r\n(ไม่สามารถติดต่อ Serverได้)');
-    }
-  }
-
-  Future<Null> cancelOrder(OrderModel listord) async {
-    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
-        '/shop/setOrderStatus.aspx?mbordid=' +
-        listord.mbordid +
-        '&ccode=' +
-        listord.ccode +
-        '&mbid=' +
-        listord.mbid +
-        '&olid=' +
-        listord.olid +
-        '&reason=' +
-        txtReason +
-        '&shopname=' +
-        listord.shopName +
-        '&orderno=' +
-        listord.orderNo;
-    try {
-      Response response = await Dio().get(url);
-      if (response.toString() == '') {
-        checkCancelStatus(listord);
-      } else {
-        alertDialog(context, response.toString());
-      }
-    } catch (e) {
-      alertDialog(context, '!ยกเลิกคำสั่งซื้อไม่สำเร็จ');
-    }
-  }
-
-  Future<Null> confirmCancel(OrderModel listord) async {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Center(
-            child: MyStyle().txtstyle(
-                'ยกเลิกคำสั่งซื้อ:${listord.orderNo} ?', Colors.red, 12.0)),
-        children: <Widget>[
-          Column(
-            children: [inputReason()],
-          ),
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Container(
-                          width: screen * 0.28,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child: MyStyle().titleCenter(
-                              context, 'ยกเลิก', 12.0, Colors.black))),
-                  TextButton(
-                      onPressed: () async {
-                        if (txtReason?.isEmpty ?? true) {
-                          alertDialog(context, '!กรุณาระบุเหตผล');
-                        } else {
-                          Navigator.pop(context);
-                          cancelOrder(listord);
-                        }
-                      },
-                      child: Container(
-                          width: screen * 0.28,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.redAccent[700],
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child: MyStyle().titleCenter(
-                              context, 'ยืนยัน', 12.0, Colors.white))),
-                ],
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget inputReason() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            width: screen * 0.7,
-            child: TextFormField(
-              initialValue: ' ',
-              onChanged: (value) => txtReason = value.trim(),
-              decoration: InputDecoration(
-                labelStyle: MyStyle().myLabelStyle(),
-                labelText: 'ระบุเหตผล',
-                prefixIcon: Icon(Icons.note, color: MyStyle().darkcolor),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().lightcolor),
-                    borderRadius: BorderRadius.circular(10)),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: MyStyle().darkcolor),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          )
-        ],
-      );
 }

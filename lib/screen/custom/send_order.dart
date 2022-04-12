@@ -177,7 +177,9 @@ class _SendOrderState extends State<SendOrder> {
     }
     keyList = strKey;
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'custom/item_remain.aspx?ccode=$ccode&idlist=$keyList';
+      'custom/item_remain.aspx?ccode=$ccode&idlist=$keyList&custlat=$lat&custlng=$lng';
+
+    print('*********** url=$url');
 
     itemsList.clear();
     await Dio().get(url).then((value) {
@@ -228,7 +230,10 @@ class _SendOrderState extends State<SendOrder> {
                   fontSize: 13,
                   fontWeight: FontWeight.normal,
                   color: Colors.white)),
-          icon: Icon(Icons.mark_chat_read, color: Colors.white,),
+          icon: Icon(
+            Icons.mark_chat_read,
+            color: Colors.white,
+          ),
           onPressed: () async {
             Navigator.pop(context);
             sendData();
@@ -300,13 +305,13 @@ class _SendOrderState extends State<SendOrder> {
           Container(
             height: 38,
             margin: const EdgeInsets.only(left: 10),
-            child: Row(              
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 MyStyle().txtbody('วันที่ส่งสินค้า'),
                 SizedBox(width: 25),
                 Text('$txtSelectDate',
-                    style: TextStyle(fontSize: 15, color: Colors.black)),               
+                    style: TextStyle(fontSize: 15, color: Colors.black)),
                 //Text(txthhmm != '' ? ('$txthhmm') : '',
                 //    style: TextStyle(fontSize: 12, color: Colors.black)),
                 //*** specifyTime(),
@@ -627,19 +632,20 @@ class _SendOrderState extends State<SendOrder> {
       }
     }
     for (int index = cartList.length - 1; index > -1; index--) {
-      if (cartList[index].balqty == 0) {        
+      if (cartList[index].balqty == 0) {
         setState(() {
-           //cartList.removeAt(index);
+          //cartList.removeAt(index);
           cartViewModel.deleteCart(
-          controller,
-          mainStateController.selectedRestaurant.value.restaurantId,
-          controller
-              .getCart(mainStateController.selectedRestaurant.value.restaurantId)
-              .toList()[index],
-          cartList[index].id);
+              controller,
+              mainStateController.selectedRestaurant.value.restaurantId,
+              controller
+                  .getCart(
+                      mainStateController.selectedRestaurant.value.restaurantId)
+                  .toList()[index],
+              cartList[index].id);
         });
       }
-    }   
+    }
   }
 
   Future<Null> sendData() async {
@@ -714,7 +720,7 @@ class _SendOrderState extends State<SendOrder> {
                 .getCart(
                     mainStateController.selectedRestaurant.value.restaurantId)
                 .toList());
-                
+
         MyUtil().sendNoticToShop(resturantid, '!มีคำสั่งซื้อเข้ามา',
             'จากลูกค้า $loginName ($loginMobile)');
         checkOrder(resturantid, ccode, mbid, createdDT);

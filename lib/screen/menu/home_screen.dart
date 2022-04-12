@@ -46,11 +46,7 @@ class HomeScreen extends StatelessWidget {
                         MyStyle().txtTH('-รายการสินค้าในร้านค้า', Colors.black),
                         MyStyle().txtTH('-รายละเอียดร้านของคุณ', Colors.black),
                         SizedBox(height: 15.0),
-                        MyStyle().txtTH(
-                            'เมนูผู้ส่งอาหารประกอบด้วยประกอบด้วย', Colors.red),
-                        MyStyle().txtTH('-1.', Colors.black),
-                        MyStyle().txtTH('-2.', Colors.black),
-                      ],
+                            ],
                     ))
               ]),
             ),

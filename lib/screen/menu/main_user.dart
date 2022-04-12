@@ -234,7 +234,7 @@ class _MainUserState extends State<MainUser> {
       );
 
   ListTile userOrderMenu() => ListTile(
-        leading: Icon(Icons.restaurant_menu),
+        leading: Icon(Icons.shopping_basket),
         title: MyStyle().titleDark('การซื้อของคุณ'),
         subtitle: MyStyle().subtitleDark('สินค้าที่สั่งซื้อแล้วรอการส่ง'),
         onTap: () {

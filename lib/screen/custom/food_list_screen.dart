@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:yakgin/model/category_model.dart';
 import 'package:yakgin/model/food_model.dart';
 import 'package:yakgin/model/shoprest_model.dart';
@@ -33,7 +34,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   ShopRestModel restModel;
   CategoryModel categoryModel;
   String strConn, ccode, webPath;
-  double screen;
+  double screen, custlat, custlng;
   CategoryStateContoller categoryStateContoller;
   List<FoodModel> foodModels = List<FoodModel>.empty(growable: true);
   String oldItem = '0';
@@ -54,14 +55,16 @@ class _FoodListScreenState extends State<FoodListScreen> {
     strConn = restModel.strconn;
     webPath = restModel.webpath;
     categoryStateContoller = Get.find();
-    categoryStateContoller.selectCategory.value = categoryModel;
+    categoryStateContoller.selectCategory.value = categoryModel;    
     getFoodByType();
   }
 
   Future<Null> getFoodByType() async {
+    await getLocation();
     String itid = '${categoryStateContoller.selectCategory.value.key}';
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'foodRemain_ByType.aspx?ccode=$ccode&itid=$itid&strOrder=iName';
+        'foodRemain_ByType.aspx?ccode=$ccode&custlat=$custlat&custlng=$custlng' +
+        '&itid=$itid&strOrder=iName';
 
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -76,7 +79,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
           double balqty = fModels.balqty;
           int qtyincart = cartStateCtl.qtyIncart(
               mainStateCtl.selectedRestaurant.value.restaurantId, fModels.id);
-          print('***** >>>> qtyincart= $qtyincart');
+          //print('***** >>>> qtyincart= $qtyincart');
           double remainQty = balqty - double.parse(qtyincart.toString());
           fModels.reqty = remainQty;
           //--------------------------------
@@ -106,8 +109,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBarWithCartButton(
-            title:' ร้าน ${restModel.thainame}', 
-            subtitle: ''),
+            title: ' ร้าน ${restModel.thainame}', subtitle: ''),
         body: (loadding == false && foodModels.length > 0) //
             ? showFoodByType()
             : Container(
@@ -190,19 +192,24 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
-                                                  color:MyStyle().coloroverlay),
+                                                  color:
+                                                      MyStyle().coloroverlay),
                                               Row(
                                                 children: [
                                                   Container(
-                                                    width: screen *.95,
-                                                    child: SingleChildScrollView(
+                                                    width: screen * .95,
+                                                    child:
+                                                        SingleChildScrollView(
                                                       child: Row(
-                                                        mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                         children: [
                                                           MyStyle().txtTH18(
                                                               '${foodModels[index].name}',
                                                               Colors.white),
-                                                          showBalQty(foodModels[index])
+                                                          showBalQty(
+                                                              foodModels[index])
                                                         ],
                                                       ),
                                                     ),
@@ -210,7 +217,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                                 ],
                                               ),
                                               Row(
-                                                mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Row(
                                                     children: [
@@ -220,7 +229,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                                               foodModels[
                                                                   index])),
                                                       showRating(
-                                                           foodModels[index]),
+                                                          foodModels[index]),
                                                       Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -346,10 +355,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
             });
           }
         },
-        icon: Icon(
-          Icons.add_shopping_cart,
-          color: Color.fromARGB(255, 10, 214, 3)
-        ));
+        icon: Icon(Icons.add_shopping_cart,
+            color: Color.fromARGB(255, 10, 214, 3)));
   }
 
   IconButton imageSubtToCart(FoodModel fmodel) {
@@ -393,6 +400,21 @@ class _FoodListScreenState extends State<FoodListScreen> {
         ),
       ],
     );
+  }
+
+  Future<Null> getLocation() async {
+    var location = Location();
+    var currentLocation;
+    try {
+      currentLocation = await location.getLocation();      
+    } catch (ex) {
+      //
+    }
+    setState(() {
+      custlat = currentLocation.latitude;
+      custlng = currentLocation.longitude;
+      print('***** currentLocation = $custlat $custlng');
+    });
   }
 
   /*

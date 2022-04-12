@@ -41,13 +41,13 @@ class _ShopOrderListState extends State<ShopOrderList> {
   // var checkBox2Value = true;
   // var checkBox3Value = true;
   final double cboxScale = 2.5;
-  var cboxValue = [true, true, true, true];
+  var cboxValue = [true, true, false, true];
 
   var checkboxListlabels = [
     'ลูกค้า ส่งคำสั่งซื้อ', //status=0
-    'ร้านค้า รับคำสั่งซื้อ', //status=1
+    'ร้านค้า แพคสินค้า', //status=1
     'Rider จองนำส่ง', //status=1 and rider=1
-    'Rider ระหว่างนำส่ง' //status=5
+    'นำส่งสินค้า' //status=5
   ];
   /* checkbox list
   Map<String, bool> checkboxListValues = {};
@@ -172,7 +172,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
         var result = json.decode(value.data);
         havedata = true;
         for (var map in result) {
-          setState(() {
+          //setState(() {
             OrderModel mModel = OrderModel.fromJson(map);
             listDetails.clear();
 
@@ -181,10 +181,10 @@ class _ShopOrderListState extends State<ShopOrderList> {
             double qty;
             double unitprice;
             double netamount;
-//iName+'|'+topnameA+'|'+topnameB+'|'+topnameC+'|'+topdText+'|'+special+'|'
-//ex. สตอเบอร์รี่|1|2|3|4|5|
-// 6=qty 1.00|7=unitprice 35.00|8=DiscPerc 0.00|9=DiscAmount 0.00|
-//10=amount 35.00|11=netamount 35.00|12=ถ้วย
+            //iName+'|'+topnameA+'|'+topnameB+'|'+topnameC+'|'+topdText+'|'+special+'|'
+            //ex. สตอเบอร์รี่|1|2|3|4|5|
+            // 6=qty 1.00|7=unitprice 35.00|8=DiscPerc 0.00|9=DiscAmount 0.00|
+            //10=amount 35.00|11=netamount 35.00|12=ถ้วย
             for (int i = 0; i < detailList.length; i++) {
               var tmp = detailList[i].split('|');
               iname = tmp[0] +
@@ -210,8 +210,11 @@ class _ShopOrderListState extends State<ShopOrderList> {
             ttlGrsAmount += double.parse(mModel.ttlGrsAmount);
 
             havedata = true;
-          });
+          //});
         }
+        setState(() {
+          havedata = true;
+        });
       } else {
         setState(() {
           havedata = false;
@@ -344,10 +347,10 @@ class _ShopOrderListState extends State<ShopOrderList> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                MyStyle().txtblack12TH('Order'),
-                MyStyle().txtblack12TH('Cooking'),
-                MyStyle().txtblack12TH('Delivery'),
-                MyStyle().txtblack12TH('Finish')
+                MyStyle().txtblack12TH(MyConstant().step1),
+                MyStyle().txtblack12TH(MyConstant().step2),
+                MyStyle().txtblack12TH(MyConstant().step3),
+                MyStyle().txtblack12TH(MyConstant().step4)
               ],
             ),
           ),
@@ -638,7 +641,7 @@ class _ShopOrderListState extends State<ShopOrderList> {
                 Column(children: [
                   selectBox0(),
                   selectBox1(),
-                  selectBox2(),
+                  //*** selectBox2(),
                   selectBox3(),
                 ]
                     /*                     /*  sample check box ***** ตัวอย่าง ห้ามลบ ***** */

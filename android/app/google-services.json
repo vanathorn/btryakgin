@@ -4,14 +4,21 @@
     "project_id": "butironyakgin",
     "storage_bucket": "butironyakgin.appspot.com"
   },
+  "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.butiron.yakgin",
+      "sha256_cert_fingerprints":
+        ["D3:4A:83:6B:93:2A:BD:72:13:DE:CA:CB:3C:1F:C0:EE:CA:26:0F:FD:9A:9F:D2:49:E1:9A:13:45:E5:B6:87:DB"]
+  },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:506419221580:android:2d73104dbd370b330310e9",
         "android_client_info": {
-          "package_name": "com.butiron.yakgin"
-        }
-      },
+          "package_name": "com.butiron.yakgin"           
+        }        
+      },      
       "oauth_client": [
         {
           "client_id": "506419221580-527j87hha3cqoukiuu7m163scherles0.apps.googleusercontent.com",
@@ -32,7 +39,7 @@
             }
           ]
         }
-      }
+      }      
     }
   ],
   "configuration_version": "1"

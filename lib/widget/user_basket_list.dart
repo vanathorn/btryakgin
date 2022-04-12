@@ -85,7 +85,7 @@ class _UserBasketListState extends State<UserBasketList> {
     return havedata
         ? showListBasket()
         : MyStyle().titleCenterTH(
-            context, 'ไม่มีรายการอาหาร ในตะกร้าของคุณ', 22, Colors.red);
+            context, 'ไม่มีรายการสินค้า ในตะกร้าของคุณ', 22, Colors.red);
   }
 
   Widget showListBasket() {

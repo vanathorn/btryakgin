@@ -52,7 +52,7 @@ class _EditFoodTypeState extends State<EditFoodType> {
     return Scaffold(
       appBar: AppBar(
         title: MyStyle().txtTH(
-            'แก้ไขข้อมูลประเภทอาหาร ${foodTypeModel.itname}', Colors.white),
+            'แก้ไขข้อมูลประเภทสินค้า ${foodTypeModel.itname}', Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(

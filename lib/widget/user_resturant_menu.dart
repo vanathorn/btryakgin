@@ -88,7 +88,7 @@ class _UserResturantMenuState extends State<UserResturantMenu> {
     return havemenu
         ? showListResturant()
         : MyStyle().titleCenterTH(
-            context, 'ไม่มีร้านอาหารที่อยู่ในโครงการ', 22, Colors.red);
+            context, 'ไม่มีร้านค้าที่อยู่ในโครงการ', 22, Colors.red);
   }
 
   Widget showListResturant() {

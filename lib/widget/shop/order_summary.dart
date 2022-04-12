@@ -50,10 +50,8 @@ class _OrderSummaryState extends State<OrderSummary> {
     String sDate = mydate112(startDate);
     String eDate = mydate112(endDate);
     String url = '${MyConstant().apipath}.${MyConstant().domain}' +
-        '/shop/getDailySum.aspx?mbid=' +
-        mbid +
-        '&startdate=$sDate&enddate=$eDate';
-    print('****sDate= $sDate   *** $url *****');
+        '/branch/getDailySumBr.aspx?mbid=$mbid&startdate=$sDate&enddate=$eDate';
+
     listOrders.clear();
     ttlVatAmount = 0;
     ttlLogist = 0;
@@ -211,15 +209,14 @@ class _OrderSummaryState extends State<OrderSummary> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            margin: const EdgeInsets.only(left: 10),
-                            width: screen * 0.25,
+                            margin: const EdgeInsets.only(left: 3),
+                            width: screen * 0.27,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 MyStyle().txtstyle(
                                   listOrders[index].strorderDate,
-                                  Colors.redAccent[700],
-                                  12.0,
+                                  Colors.redAccent[700], 11.0,
                                 ),
                               ],
                             ),
@@ -248,7 +245,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                             ),
                           ),
                           Container(
-                            margin: const EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 3),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -268,14 +265,14 @@ class _OrderSummaryState extends State<OrderSummary> {
                               //mainAxisAlignment:MainAxisAlignment.end,
                               children: [
                                 Expanded(
-                                    flex: 5,
+                                    flex: 6,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [rowHead('คำสั่งซื้อ')],
                                     )),
-                                Expanded(flex: 2, child: rowHead('มูลค่า')),
-                                Expanded(flex: 2, child: rowHead('ขนส่ง')),
+                                Expanded(flex: 3, child: rowHead('มูลค่า')),
+                                Expanded(flex: 4, child: rowHead('ขนส่ง')),
                                 Expanded(flex: 2, child: rowHead('ภษ.')),
                                 Expanded(flex: 2, child: rowHead('สุทธิ')),
                               ])
@@ -302,7 +299,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                                                     MyStyle().txtstyle(
                                                       '${e.seq}. ${e.orderNo}',
                                                       Colors.black,
-                                                      10,
+                                                      9.5,
                                                     )
                                                   ],
                                                 )),
@@ -447,7 +444,8 @@ class _OrderSummaryState extends State<OrderSummary> {
             (Set<MaterialState> states) {
               if (states.contains(MaterialState.pressed))
                 return Color(0xffBFB372);
-              return Colors.lightGreenAccent[700]; // Use the component's default.
+              return Colors
+                  .lightGreenAccent[700]; // Use the component's default.
             },
           ),
         ),

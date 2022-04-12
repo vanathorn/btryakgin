@@ -18,6 +18,7 @@ import 'package:yakgin/utility/mystyle.dart';
 import 'package:yakgin/utility/signOut.dart';
 import 'package:yakgin/widget/appbar_withorder.dart';
 import 'package:yakgin/widget/branch/branch_order_list.dart';
+import 'package:yakgin/widget/branch/branch_order_ship.dart';
 import 'package:yakgin/widget/branch/new_ord_branch.dart';
 import 'package:yakgin/widget/shop/get_neworder.dart';
 import 'package:yakgin/widget/shop/order_summary.dart';
@@ -137,7 +138,8 @@ class _MainShopHeadState extends State<MainShopHead> {
 
   Future<Null> countOrderNo() async {
     String url =
-      '${MyConstant().apipath}.${MyConstant().domain}/branch/countOrdBranch.aspx?mbid=$mbid&condition=';
+        '${MyConstant().apipath}.${MyConstant().domain}/branch/countNewOrdBr.aspx?mbid=$mbid&condition=';
+
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
@@ -211,11 +213,12 @@ class _MainShopHeadState extends State<MainShopHead> {
       //   ],
       // ),
       appBar: AppBarWithOrderButton(
-          title: (loginName != null) ? loginName : '',
-          subtitle: (brname != null)
-              ? brname
-              : '', //+ (brcode !='' ? ' ('+brcode+')' :'') : ''),
-          ttlordno: '0', brcode: brcode,),
+        title: (loginName != null) ? loginName : '',
+        subtitle: (brname != null)
+            ? brname
+            : '', //+ (brcode !='' ? ' ('+brcode+')' :'') : ''),
+        ttlordno: '0', brcode: brcode,
+      ),
       /*
       appBar: AppBar(
         backgroundColor: MyStyle().primarycolor,
@@ -267,10 +270,11 @@ class _MainShopHeadState extends State<MainShopHead> {
                 child: shopDrawerHeader(name, email, imgwall, mbimage),
                 //MyStyle().builderUserAccountsDrawerHeader(name,email,imgwall,mbimage),
               ),
-              // Container(height: hi, child: newOrderMenu()),
+              //Container(height: hi, child: newOrderMenu()),
               // Container(height: hi, child: orderListMenu()),
               Container(height: hi, child: newOrderBranchMenu()),
               Container(height: hi, child: orderBranchListMenu()),
+              //Container(height: hi, child: shipOrdBrListMenu()),
               Container(height: hi, child: orderSumMenu()),
               Container(height: hi, child: foodCatMenu()),
               Container(height: hi, child: shopInfoMenu()),
@@ -348,7 +352,7 @@ class _MainShopHeadState extends State<MainShopHead> {
       );
 
   ListTile orderListMenu() => ListTile(
-        leading: Icon(Icons.restaurant_menu),
+        leading: Icon(Icons.shopping_basket),
         title: MyStyle().titleDark('รายการที่ลูกค้าสั่ง'),
         subtitle: MyStyle().subtitleDark('คำสั่งซื้อทั้งหมด'),
         onTap: () {
@@ -373,7 +377,7 @@ class _MainShopHeadState extends State<MainShopHead> {
       );
 
   ListTile orderBranchListMenu() => ListTile(
-        leading: Icon(Icons.restaurant_menu),
+        leading: Icon(Icons.shopping_basket),
         title: MyStyle().titleDark('รายการที่ลูกค้าสั่ง'),
         subtitle: MyStyle().subtitleDark(
             'คำสั่งซื้อทั้งหมด' + (brname != null ? ' (' + brname + ')' : '')),
@@ -385,6 +389,18 @@ class _MainShopHeadState extends State<MainShopHead> {
         },
       );
 
+  ListTile shipOrdBrListMenu() => ListTile(
+        leading: Icon(Icons.shopping_basket),
+        title: MyStyle().titleDark('ส่งสินค้าให้ลูกค้า'),
+        subtitle: MyStyle().subtitleDark(
+            'สินค้าที่แพคแล้ว' + (brname != null ? ' (' + brname + ')' : '')),
+        onTap: () {
+          setState(() {
+            currentWidget = BranchOrderShip();
+          });
+          Navigator.pop(context);
+        },
+      );
 
   ListTile orderSumMenu() => ListTile(
         leading: Icon(Icons.photo_filter_outlined), //developer_board
@@ -402,8 +418,8 @@ class _MainShopHeadState extends State<MainShopHead> {
   ListTile foodCatMenu() => ListTile(
         leading: Icon(
             Icons.auto_stories), //menu CircleNotifications FormatIndentIncrease
-        title: MyStyle().titleDark('รายการอาหาร'),
-        subtitle: MyStyle().subtitleDark('แสดงรายการอาหาร'),
+        title: MyStyle().titleDark('รายการสินค้า'),
+        subtitle: MyStyle().subtitleDark('แสดงรายการสินค้า'),
         onTap: () {
           setState(() {
             currentWidget = ShopFoodCategoryScreen();

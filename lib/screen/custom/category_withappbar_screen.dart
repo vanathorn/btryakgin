@@ -24,7 +24,8 @@ class CategoryWithAppbarScreen extends StatefulWidget {
   final ShopRestModel restModel;
   CategoryWithAppbarScreen({Key key, this.restModel}) : super(key: key);
   @override
-  _CategoryWithAppbarScreenState createState() => _CategoryWithAppbarScreenState();
+  _CategoryWithAppbarScreenState createState() =>
+      _CategoryWithAppbarScreenState();
 }
 
 class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
@@ -34,8 +35,9 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
   double screen;
   String strDistance;
   Location location = Location();
-  final viewModel = CategoryViewImp(); 
-  List<CategoryModel> categoryModels = List<CategoryModel>.empty(growable: true);
+  final viewModel = CategoryViewImp();
+  List<CategoryModel> categoryModels =
+      List<CategoryModel>.empty(growable: true);
   CategoryStateContoller categoryStateContoller;
 
   AccbkListStateController listStateController;
@@ -48,10 +50,10 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
     super.initState();
     restModel = widget.restModel;
     ccode = restModel.ccode;
-    strConn = restModel.strconn; 
-    webPath = restModel.webpath; 
-    listStateController = Get.put(AccbkListStateController());    
-    getCategory();  
+    strConn = restModel.strconn;
+    webPath = restModel.webpath;
+    listStateController = Get.put(AccbkListStateController());
+    getCategory();
   }
 
   Future<Null> getCategory() async {
@@ -64,7 +66,7 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
         var result = json.decode(value.data);
         for (var map in result) {
           CategoryModel fModels = CategoryModel.fromJson(map);
-          categoryModels.add(fModels);         
+          categoryModels.add(fModels);
         }
         setState(() {
           categoryStateContoller = Get.put(CategoryStateContoller());
@@ -84,12 +86,9 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
         body: Container(
             child: (categoryModels != null && categoryModels.length > 0)
                 ? showCategory()
-                : MyStyle().showProgress())
-        
-    );
+                : MyStyle().showProgress()));
   }
 
-  
   Widget showCategory() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -145,5 +144,4 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
       ],
     );
   }
-
 }

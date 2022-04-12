@@ -433,6 +433,7 @@ class _GetNewOrderState extends State<GetNewOrder> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
+                                      /*
                                       FloatingActionButton.extended(
                                         label: Text('ไม่รับออร์เดอร์',
                                             style: TextStyle(
@@ -452,14 +453,16 @@ class _GetNewOrderState extends State<GetNewOrder> {
                                         },
                                       ),
                                       SizedBox(width: 5),
+                                      */
                                       FloatingActionButton.extended(
+                                        backgroundColor: Colors.black,
                                         label: Text('รับออร์เดอร์',
                                             style: TextStyle(
                                                 fontFamily: 'thaisanslite',
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 color: Colors.white)),
-                                        icon: Icon(Icons.mark_chat_read),
+                                        icon: Icon(Icons.check),
                                         onPressed: () async {
                                           reciveOrder(listOrders[index]);
                                         },
@@ -492,14 +495,12 @@ class _GetNewOrderState extends State<GetNewOrder> {
       ));
 
   Future<Null> reciveOrder(OrderModel listord) async {
-    //mbid =  mbid ของ Customer
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'shop/setOrderStatus.aspx?mbordid=' +
         listord.mbordid +
         '&ccode=' +
         listord.ccode +
-        '&mbid=' +
-        listord.mbid +
+        '&mbid=$mbid' + 
         '&olid=' +
         listord.olid +
         '&reason=&shopname=' +

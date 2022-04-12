@@ -91,7 +91,7 @@ class _ResturantScreen extends State<ResturantScreen> {
                 child: (loadding)
                     ? MyStyle().showProgress()
                     : MyStyle().titleCenterTH(context,
-                        'ร้านอาหารที่ร่วมโครงการ', 20, MyStyle().headcolor),
+                        'ร้านค้าที่ร่วมโครงการ', 20, MyStyle().headcolor),
               ),
             ])));
   }

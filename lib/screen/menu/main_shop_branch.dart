@@ -18,8 +18,8 @@ import 'package:yakgin/utility/mystyle.dart';
 import 'package:yakgin/utility/signOut.dart';
 import 'package:yakgin/widget/appbar_withorder.dart';
 import 'package:yakgin/widget/branch/branch_order_list.dart';
+import 'package:yakgin/widget/branch/branch_order_ship.dart';
 import 'package:yakgin/widget/branch/new_ord_branch.dart';
-import 'package:yakgin/widget/shop/get_neworder.dart';
 import 'package:yakgin/widget/shop/order_summary.dart';
 import 'package:yakgin/widget/shop/shop_info.dart';
 import 'package:get/get.dart';
@@ -35,7 +35,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
   bool loading = true;
   String _shopName, brcode, brname;
   String mbid, loginName, loginMobile, ccode, mbimage = 'userlogo.png';
-  Widget currentWidget = GetNewOrder();
+  Widget currentWidget = GetNewOrderBranch();
 
   final MainStateController mainStateController = Get.find();
   double hi = 45;
@@ -134,7 +134,8 @@ class _MainShopBranchState extends State<MainShopBranch> {
 
   Future<Null> countOrderNo() async {
     String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/branch/countOrdBranch.aspx?mbid=$mbid&condition=';
+        '${MyConstant().apipath}.${MyConstant().domain}/branch/countNewOrdBr.aspx?mbid=$mbid&condition=';
+
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
@@ -202,6 +203,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
               ),
               Container(height: hi, child: newOrderBranchMenu()),
               Container(height: hi, child: orderBranchListMenu()),
+              //Container(height: hi, child: shipOrdBrListMenu()),
               Container(height: hi, child: orderSumMenu()),
               Container(height: hi, child: foodCatMenu()),
               Container(height: hi, child: shopInfoMenu()),
@@ -280,13 +282,26 @@ class _MainShopBranchState extends State<MainShopBranch> {
       );
 
   ListTile orderBranchListMenu() => ListTile(
-        leading: Icon(Icons.restaurant_menu),
+        leading: Icon(Icons.shopping_basket),
         title: MyStyle().titleDark('รายการที่ลูกค้าสั่ง'),
         subtitle: MyStyle().subtitleDark(
             'คำสั่งซื้อทั้งหมด' + (brname != null ? ' (' + brname + ')' : '')),
         onTap: () {
           setState(() {
             currentWidget = BranchOrderList();
+          });
+          Navigator.pop(context);
+        },
+      );
+
+  ListTile shipOrdBrListMenu() => ListTile(
+        leading: Icon(Icons.shopping_basket),
+        title: MyStyle().titleDark('ส่งสินค้าให้ลูกค้า'),
+        subtitle: MyStyle().subtitleDark(
+            'สินค้าที่แพคแล้ว' + (brname != null ? ' (' + brname + ')' : '')),
+        onTap: () {
+          setState(() {
+            currentWidget = BranchOrderShip();
           });
           Navigator.pop(context);
         },
@@ -308,8 +323,8 @@ class _MainShopBranchState extends State<MainShopBranch> {
   ListTile foodCatMenu() => ListTile(
         leading: Icon(
             Icons.auto_stories), //menu CircleNotifications FormatIndentIncrease
-        title: MyStyle().titleDark('รายการอาหาร'),
-        subtitle: MyStyle().subtitleDark('แสดงรายการอาหาร'),
+        title: MyStyle().titleDark('รายการสินค้า'),
+        subtitle: MyStyle().subtitleDark('แสดงรายการสินค้า'),
         onTap: () {
           setState(() {
             currentWidget = ShopFoodCategoryScreen();
@@ -332,7 +347,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
       );
 
   ListTile reciveItemMenu() => ListTile(
-        leading: Icon(Icons.auto_stories),
+        leading: Icon(Icons.add_shopping_cart),
         title: MyStyle().titleDark('รับสินค้า'),
         subtitle: MyStyle().subtitleDark('รับสินค้าเข้าร้านสาขา'),
         onTap: () {

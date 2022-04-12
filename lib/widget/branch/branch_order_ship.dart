@@ -17,12 +17,12 @@ import 'package:get/get.dart' as dget;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_indicator/steps_indicator.dart';
 
-class BranchOrderList extends StatefulWidget {
+class BranchOrderShip extends StatefulWidget {
   @override
-  _BranchOrderListState createState() => _BranchOrderListState();
+  _BranchOrderShipState createState() => _BranchOrderShipState();
 }
 
-class _BranchOrderListState extends State<BranchOrderList> {
+class _BranchOrderShipState extends State<BranchOrderShip> {
   bool havedata = true;
   String mbid, txtReason = '';
   double screen,
@@ -37,13 +37,13 @@ class _BranchOrderListState extends State<BranchOrderList> {
   List<OrdDetailModel> listDetails = List<OrdDetailModel>.empty(growable: true);
 
   final double cboxScale = 2.5;
-  var cboxValue = [true, true, true, false];
+  var cboxValue = [true, true, false, true];
 
   var checkboxListlabels = [
     'ลูกค้า ส่งคำสั่งซื้อ', //status=0
     'ร้านค้า แพคสินค้า', //status=1
-    'ระหว่าง นำส่ง', //status=5
-    'จบคำสั่งซื้อ' //status=9
+    'Rider จองนำส่ง', //status=1 and rider=1
+    'นำส่งสินค้า' //status=5
   ];
 
   var isExpanH = false;
@@ -60,7 +60,7 @@ class _BranchOrderListState extends State<BranchOrderList> {
   }
 
   String getCondition() {
-    String condStr = '[Status] not in (3)';
+    String condStr = '[Status] not in (3,9)';
     bool cbox0 = cboxValue[0];
     bool cbox1 = cboxValue[1];
     bool cbox2 = cboxValue[2];
@@ -71,17 +71,17 @@ class _BranchOrderListState extends State<BranchOrderList> {
         cbox1 == false &&
         cbox2 == false &&
         cbox3 == true) {
-      condStr += ' and [Status]=9';
+      condStr += ' and [Status]=5';
     } else if (cbox0 == false &&
         cbox1 == false &&
         cbox2 == true &&
         cbox3 == false) {
-      condStr += ' and ([Status]=5 and [riderStatus]=2)';
+      condStr += ' and ([Status]=1 and [riderStatus]=1)';
     } else if (cbox0 == false &&
         cbox1 == false &&
         cbox2 == true &&
         cbox3 == true) {
-      condStr += ' and (([Status]=5 and [riderStatus]=2) or ([Status]=9))';
+      condStr += ' and ([Status]=5 or ([Status]=1 and [riderStatus]=1))';
     } else if (cbox0 == false &&
         cbox1 == true &&
         cbox2 == false &&
@@ -91,38 +91,38 @@ class _BranchOrderListState extends State<BranchOrderList> {
         cbox1 == true &&
         cbox2 == false &&
         cbox3 == true) {
-      condStr += ' and [Status] in (1,9)';
+      condStr += ' and [Status] in (1,5)';
     } else if (cbox0 == false &&
         cbox1 == true &&
         cbox2 == true &&
         cbox3 == false) {
-      condStr += ' and ([Status]=1 or ([Status]=5 and [riderStatus]=2))';
+      condStr += ' and ([Status]=1 or ([Status]=1 and [riderStatus]=1))';
     } else if (cbox0 == false &&
         cbox1 == true &&
         cbox2 == true &&
         cbox3 == true) {
-      condStr += ' and ([Status] in (1,9) or ([Status]=5 and [riderStatus]=2))';
+      condStr += ' and ([Status] in (1,5) or ([Status]=1 and [riderStatus]=1))';
       //---------------------------
     } else if (cbox0 == true &&
         cbox1 == false &&
         cbox2 == false &&
         cbox3 == false) {
-      condStr += ' and [Status]=0 ';
+      condStr += ' and [Status]=0';
     } else if (cbox0 == true &&
         cbox1 == false &&
         cbox2 == false &&
         cbox3 == true) {
-      condStr += ' and [Status] in (0,9)';
+      condStr += ' and [Status] in (0,5)';
     } else if (cbox0 == true &&
         cbox1 == false &&
         cbox2 == true &&
         cbox3 == false) {
-      condStr += ' and ([Status]=0 or ([Status]=5 and [riderStatus]=2))';
+      condStr += ' and ([Status]=0 or ([Status]=1 and [riderStatus]=1))';
     } else if (cbox0 == true &&
         cbox1 == false &&
         cbox2 == true &&
         cbox3 == true) {
-      condStr += ' and ([Status] in (0,9) or ([Status]=5 and [riderStatus]=2))';
+      condStr += ' and ([Status] in (0,5) or ([Status]=1 and [riderStatus]=1))';
     } else if (cbox0 == true &&
         cbox1 == true &&
         cbox2 == false &&
@@ -132,12 +132,12 @@ class _BranchOrderListState extends State<BranchOrderList> {
         cbox1 == true &&
         cbox2 == false &&
         cbox3 == true) {
-      condStr += ' and [Status] in (0,1,9)';
+      condStr += ' and [Status] in (0,1,5)';
     } else if (cbox0 == true &&
         cbox1 == true &&
         cbox2 == true &&
         cbox3 == false) {
-      condStr += ' and ([Status] in (0,1) or ([Status]=5 and [riderStatus]=2))';
+      condStr += ' and ([Status] in (0,1) or ([Status]=1 and [riderStatus]=1))';
     } else {
       //
     }
@@ -161,48 +161,48 @@ class _BranchOrderListState extends State<BranchOrderList> {
     await Dio().get(url).then((value) {
       if (value != null && value.toString().toString() != '') {
         var result = json.decode(value.data);
+        havedata = true;
         for (var map in result) {
-          //setState(() {
-          OrderModel mModel = OrderModel.fromJson(map);
-          listDetails.clear();
+          setState(() {
+            OrderModel mModel = OrderModel.fromJson(map);
+            listDetails.clear();
 
-          var detailList = mModel.detailList.split('*').toList();
-          String iname = '';
-          double qty;
-          double unitprice;
-          double netamount;
-          //iName+'|'+topnameA+'|'+topnameB+'|'+topnameC+'|'+topdText+'|'+special+'|'
-          //ex. สตอเบอร์รี่|1|2|3|4|5|
-          // 6=qty 1.00|7=unitprice 35.00|8=DiscPerc 0.00|9=DiscAmount 0.00|
-          //10=amount 35.00|11=netamount 35.00|12=ถ้วย
-          for (int i = 0; i < detailList.length; i++) {
-            var tmp = detailList[i].split('|');
-            iname = tmp[0] +
-                tmp[1] +
-                tmp[2] +
-                tmp[3] +
-                tmp[4] +
-                (tmp[5] != '' ? '_' + tmp[5] : '');
-            qty = double.parse(tmp[6]);
-            unitprice = double.parse(tmp[7]);
-            netamount = double.parse(tmp[11]);
-            listDetails.add(OrdDetailModel(mModel.restaurantId,
-                (i + 1).toString(), iname, qty, unitprice, netamount));
-          }
+            var detailList = mModel.detailList.split('*').toList();
+            String iname = '';
+            double qty;
+            double unitprice;
+            double netamount;
+//iName+'|'+topnameA+'|'+topnameB+'|'+topnameC+'|'+topdText+'|'+special+'|'
+//ex. สตอเบอร์รี่|1|2|3|4|5|
+// 6=qty 1.00|7=unitprice 35.00|8=DiscPerc 0.00|9=DiscAmount 0.00|
+//10=amount 35.00|11=netamount 35.00|12=ถ้วย
+            for (int i = 0; i < detailList.length; i++) {
+              var tmp = detailList[i].split('|');
+              iname = tmp[0] +
+                  tmp[1] +
+                  tmp[2] +
+                  tmp[3] +
+                  tmp[4] +
+                  (tmp[5] != '' ? '_' + tmp[5] : '');
+              qty = double.parse(tmp[6]);
+              unitprice = double.parse(tmp[7]);
+              netamount = double.parse(tmp[11]);
+              listDetails.add(OrdDetailModel(mModel.restaurantId,
+                  (i + 1).toString(), iname, qty, unitprice, netamount));
+            }
 
-          mModel.orddtl = listDetails.toList();
-          listOrders.add(mModel);
+            mModel.orddtl = listDetails.toList();
+            listOrders.add(mModel);
 
-          ttlDiscount += double.parse(mModel.ttlDiscount);
-          ttlLogist += double.parse(mModel.ttlLogist);
-          ttlNetAmount += double.parse(mModel.ttlNetAmount);
-          ttlVatAmount += double.parse(mModel.ttlVatAmount);
-          ttlGrsAmount += double.parse(mModel.ttlGrsAmount);
-          //});
+            ttlDiscount += double.parse(mModel.ttlDiscount);
+            ttlLogist += double.parse(mModel.ttlLogist);
+            ttlNetAmount += double.parse(mModel.ttlNetAmount);
+            ttlVatAmount += double.parse(mModel.ttlVatAmount);
+            ttlGrsAmount += double.parse(mModel.ttlGrsAmount);
+
+            havedata = true;
+          });
         }
-        setState(() {
-          havedata = true;
-        });
       } else {
         setState(() {
           havedata = false;
@@ -211,7 +211,7 @@ class _BranchOrderListState extends State<BranchOrderList> {
     });
   }
 
-  //shop/BranchOrderListList.aspx?mbid=70&orderdate=20211114&condition=[Status]=0
+  //shop/BranchOrderShipList.aspx?mbid=70&orderdate=20211114&condition=[Status]=0
   //DateTime now = DateTime.now();
   //createdDT= DateFormat('MM-dd-yyyy HH:mm:ss.ms').format(now); //'11/10/2021 08:44:00.000'
 
@@ -225,14 +225,15 @@ class _BranchOrderListState extends State<BranchOrderList> {
   }
 
   Container showData(BuildContext context) => Container(
-      child: Column(children: [
+          child: Column(children: [
         ListView.builder(
             shrinkWrap: true,
             physics: ScrollPhysics(),
             itemCount: listOrders.length,
             itemBuilder: (context, index) => Card(
                 elevation: 5.0,
-                margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                 child: orderData(index))),
         /*
       Divider(thickness: 2),
@@ -364,15 +365,17 @@ class _BranchOrderListState extends State<BranchOrderList> {
                     child: reciveAction(index),
                   )
                 : Container(),
-            (listOrders[index].odStatus =='1')//&&listOrders[index].rdStatus=='1'
-                ? buildShipping(index)
+            (listOrders[index].odStatus == '1' &&
+                    listOrders[index].rdStatus == '1')
+                ? buildRider(index)
                 : Container(),
-            (listOrders[index].odStatus == '5')
+            /*
+            (listOrders[index].odStatus == '1')
                 ? Padding(
                     padding: const EdgeInsets.only(left: 5),
-                    child: buildDelivery(index))
+                    child: buildCustom(index))
                 : Container()
-            
+            */
           ],
         ),
       ],
@@ -554,12 +557,11 @@ class _BranchOrderListState extends State<BranchOrderList> {
                 children: [
                   MyStyle().txtstyle(
                     listOrders[index].strOrderDate,
-                    Colors.redAccent[700],
-                    11.0,
+                    Colors.redAccent[700],11.0,
                   ),
                   MyStyle().txtblack12TH(listOrders[index].ordTime)
                 ],
-              ),
+              ),             
             ],
           ),
         ),
@@ -633,7 +635,7 @@ class _BranchOrderListState extends State<BranchOrderList> {
                 Column(children: [
                   selectBox0(),
                   selectBox1(),
-                  selectBox2(),
+                  //*** selectBox2(),
                   selectBox3(),
                 ]
                     /*                     /*  sample check box ***** ตัวอย่าง ห้ามลบ ***** */
@@ -802,9 +804,9 @@ class _BranchOrderListState extends State<BranchOrderList> {
       onPressed: () {
         txtReason = '';
         confirmCancel(listOrders[index]);
-        //setState(() {
-        findOrder();
-        //});
+        setState(() {
+          findOrder();
+        });
       },
     );
   }
@@ -825,11 +827,10 @@ class _BranchOrderListState extends State<BranchOrderList> {
     );
   }
 
-  Container buildShipping(int index) {
+  Container buildRider(int index) {
     return Container(
         child: Column(
       children: [
-        /*
         MyStyle().txtTH18Dark(
             listOrders[index].ridercode + ' ' + listOrders[index].ridername),
         Container(
@@ -840,28 +841,26 @@ class _BranchOrderListState extends State<BranchOrderList> {
           ),
         ),
         SizedBox(height: 3),
-        */
         FloatingActionButton.extended(
-            label: Text('ส่งสินค้า',
+            label: Text('นำส่ง',
                 style: TextStyle(
                     fontFamily: 'thaisanslite',
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
                     color: Colors.white)),
             icon: Icon(Icons.delivery_dining),
-            backgroundColor: MyStyle().primarycolor,
+            backgroundColor: Colors.black,
             onPressed: () async {
-              shipOrder(listOrders[index]);
+              riderOrder(listOrders[index]);
             }),
       ],
     ));
   }
 
-  Container buildDelivery(int index) {
+  Container buildCustom(int index) {
     return Container(
         child: Column(
       children: [
-        /*
         MyStyle().txtstyle(listOrders[index].mbcode, Colors.redAccent[700], 14),
         Container(
           child: CircleAvatar(
@@ -871,9 +870,8 @@ class _BranchOrderListState extends State<BranchOrderList> {
           ),
         ),
         SizedBox(height: 3),
-        */
         FloatingActionButton.extended(
-          label: Text('ส่งให้ลูกค้า',
+          label: Text('ลูกค้ารับ',
               style: TextStyle(
                   fontFamily: 'thaisanslite',
                   fontSize: 13,
@@ -883,53 +881,74 @@ class _BranchOrderListState extends State<BranchOrderList> {
             Icons.face_retouching_natural,
             color: Colors.white,
           ),
-          backgroundColor: Color.fromARGB(255, 199, 3, 68), //Colors.lime[700],
+          backgroundColor: MyStyle().primarycolor, //Colors.lime[700],
           onPressed: () async {
-            deliveryOrder(listOrders[index]);
+            finishOrder(listOrders[index]);
           },
         )
       ],
     ));
   }
 
-  Future<Null> shipOrder(OrderModel listord) async {
-    //SharedPreferences preferences = await SharedPreferences.getInstance();
-    //String resturantId = preferences.getString(MyConstant().keymbid);
-    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'branch/setOrderShip.aspx?ccode=${listord.ccode}' +
-        '&mbid=$mbid&olid=${listord.olid}';
+  Future<Null> riderOrder(OrderModel listord) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String resturantId = preferences.getString(MyConstant().keymbid);
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
+        '/shop/setStatusRider.aspx?mbordid=' +
+        listord.mbordid +
+        '&resturantId=' +
+        resturantId +
+        '&ccode=' +
+        listord.ccode +
+        '&olid=' +
+        listord.olid;
     try {
       Response response = await Dio().get(url);
-      if (response.toString() == 'Success') {
-        //setState(() {
-        findOrder();
-        //});
-      } else {
+      if (response != null && response.toString() != '') {
         alertDialog(context, response.toString());
+      } else {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            InfoSnackBar.infoSnackBar(
+                'Rider รับนำส่ง:' + listord.orderNo, Icons.delivery_dining),
+          );
+        setState(() {
+          findOrder();
+        });
       }
     } catch (e) {
       alertDialog(context, '!ติดต่อServer ไม่ได้');
     }
   }
 
-  Future<Null> deliveryOrder(OrderModel listord) async {
-    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'branch/setOrderDelivery.aspx?ccode=${listord.ccode}' +
-        '&mbid=$mbid&olid=${listord.olid}';
+  Future<Null> finishOrder(OrderModel listord) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String resturantId = preferences.getString(MyConstant().keymbid);
+    String url = '${MyConstant().apipath}.${MyConstant().domain}' +
+        '/shop/setStatusFinish.aspx?mbordid=' +
+        listord.mbordid +
+        '&resturantId=' +
+        resturantId +
+        '&ccode=' +
+        listord.ccode +
+        '&olid=' +
+        listord.olid +
+        '&remark=ลูกค้ามารับเอง';
     try {
       Response response = await Dio().get(url);
-      if (response.toString() == 'Success') {
+      if (response != null && response.toString() != '') {
+        alertDialog(context, response.toString());
+      } else {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
             InfoSnackBar.infoSnackBar(
                 'จบคำสั่งซื้อ:' + listord.orderNo, Icons.favorite),
-        );
-        //setState(() {          
-        findOrder();
-        //});
-      } else {
-        alertDialog(context, response.toString());
+          );
+        setState(() {
+          findOrder();
+        });
       }
     } catch (e) {
       alertDialog(context, '!ติดต่อServer ไม่ได้');
@@ -943,9 +962,9 @@ class _BranchOrderListState extends State<BranchOrderList> {
     try {
       Response response = await Dio().get(url);
       if (response.toString() == 'Success') {
-        //setState(() {
-        findOrder();
-        //});
+        setState(() {
+          findOrder();
+        });
         //sendNotic(listord);
       } else {
         alertDialog(context, response.toString());
@@ -981,9 +1000,9 @@ class _BranchOrderListState extends State<BranchOrderList> {
                   InfoSnackBar.infoSnackBar(
                       'รับคำสั่งซื้อ:' + listord.orderNo, Icons.mark_chat_read),
                 );
-              //setState(() {
-              findOrder();
-              //});
+              setState(() {
+                findOrder();
+              });
             } else {
               alertDialog(
                   context,
@@ -1029,9 +1048,9 @@ class _BranchOrderListState extends State<BranchOrderList> {
                   InfoSnackBar.infoSnackBar(
                       'ยกเลิกคำสั่งซื้อ:' + listord.orderNo, Icons.cancel),
                 );
-              //setState(() {
-              findOrder();
-              //});
+              setState(() {
+                findOrder();
+              });
             } else {
               alertDialog(
                   context,

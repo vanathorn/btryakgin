@@ -1,3 +1,4 @@
+import 'package:yakgin/model/br_item_model.dart';
 import 'package:yakgin/model/order_detail_model.dart';
 
 class OrderModel {
@@ -33,7 +34,9 @@ class OrderModel {
   String ttlNetAmount;
   String ttlGrsAmount;
   String detailList;
+  String britemList;
   List<OrdDetailModel> orddtl = List<OrdDetailModel>.empty(growable: true);
+  List<BrItemModel> brdtl = List<BrItemModel>.empty(growable: true);
 
   OrderModel(
       {this.mbordid,
@@ -68,7 +71,9 @@ class OrderModel {
       this.ttlNetAmount,
       this.ttlGrsAmount,
       this.detailList,
-      this.orddtl});
+      this.britemList,
+      this.orddtl,
+      this.brdtl});
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     mbordid = json['mbordid'];
@@ -124,10 +129,17 @@ class OrderModel {
     ttlNetAmount = json['ttlNetAmount'];
     ttlGrsAmount = json['ttlGrsAmount'];
     detailList = json['detailList'];
+    britemList = json['britemList'];
     if (json['orddtl'] != null) {
       orddtl = List<OrdDetailModel>.empty(growable: true);
       json['orddtl'].forEach((v) {
         orddtl.add(OrdDetailModel.fromJson(v));
+      });
+    }
+    if (json['brdtl'] != null) {
+      brdtl = List<BrItemModel>.empty(growable: true);
+      json['brdtl'].forEach((v) {
+        brdtl.add(BrItemModel.fromJson(v));
       });
     }
   }
@@ -161,7 +173,9 @@ class OrderModel {
     data['ttlNetAmount'] = this.ttlNetAmount;
     data['ttlGrsAmount'] = this.ttlGrsAmount;
     data['detailList'] = this.detailList;
+    data['britemList'] = this.britemList;
     data['orddtl'] = this.orddtl.map((e) => e.toJson()).toList();
+    data['brdtl'] = this.brdtl.map((e) => e.toJson()).toList();
     return data;
   }
 }

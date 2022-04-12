@@ -15,7 +15,7 @@ class UerRestFood extends StatefulWidget {
 }
 
 class _UerRestFoodState extends State<UerRestFood> {
-  final MainStateController mainStateController = Get.find(); 
+  final MainStateController mainStateController = Get.find();
   ShopRestModel restModel;
   List<Widget> listWidgets;
   int indexPage = 0;
@@ -47,8 +47,8 @@ class _UerRestFoodState extends State<UerRestFood> {
 
   BottomNavigationBarItem showMenuFoodNav() {
     return BottomNavigationBarItem(
-      icon: Icon(Icons.restaurant_menu),
-      label: ('เมนูอาหาร'),
+      icon: Icon(Icons.shopping_basket),
+      label: ('เมนูสินค้า'),
     );
   }
 

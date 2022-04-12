@@ -120,7 +120,7 @@ class _FoodByType extends State<FoodByType> {
                   ? MyStyle().showProgress()
                   : MyStyle().titleCenterTH(
                       context,
-                      'อาหารประเภท ${foodStateController.selectedFoodType.value.itname}',
+                      'สินค้าประเภท ${foodStateController.selectedFoodType.value.itname}',
                       20,
                       MyStyle().headcolor),
             ),
@@ -230,7 +230,7 @@ class _FoodByType extends State<FoodByType> {
             ? showListFood()
             : MyStyle().titleCenterTH(
                 context,
-                'ไม่มีรายการอาหาร ในประเภท${foodStateController.selectedFoodType.value.itname}',
+                'ไม่มีรายสินค้า ในประเภท${foodStateController.selectedFoodType.value.itname}',
                 22,
                 Colors.red));
   }

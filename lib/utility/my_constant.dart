@@ -27,6 +27,10 @@ class MyConstant {
   String imageapi =
       'https://imageapi.yakgin.com'; //'https://27.254.206.234/imageapi';
   String headBranch = '000';
+  String step1 = 'Order';
+  String step2 = 'Packing';
+  String step3 = 'Delivery';
+  String step4 = 'Finish';
 
   String keymbid = 'pid';
   String keymoblie = 'pmobile';
