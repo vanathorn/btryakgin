@@ -13,25 +13,25 @@ class ShopModel {
   String lat = '';
   String lng = '';
   String shoppict = '';
-  String banklist ='';
+  String banklist = '';
 
-  ShopModel({
-    this.thainame,
-    this.branchname,
-    this.addrline,
-    this.address,
-    this.build,
-    this.road,
-    this.district,
-    this.amphur,
-    this.province,
-    this.zipcode,
-    this.phone,
-    this.lat,
-    this.lng,
-    this.shoppict,
-    this.banklist
-  });
+  ShopModel(
+      {this.thainame,
+      this.branchname,
+      this.addrline,
+      this.address,
+      this.build,
+      this.road,
+      this.district,
+      this.amphur,
+      this.province,
+      this.zipcode,
+      this.phone,
+      this.lat,
+      this.lng,
+      this.shoppict,
+      this.banklist
+      });
 
   ShopModel.fromJson(Map<String, dynamic> json) {
     thainame = json['thainame'];
@@ -44,18 +44,12 @@ class ShopModel {
     amphur = '';
     province = '';
     zipcode = '';
-    if (json['build'] !=null)
-      build = json['build'];
-    if (json['road'] !=null)
-      road = json['road'];
-    if (json['district'] !=null)
-      district = json['district'];
-    if (json['amphur'] !=null)
-      amphur = json['amphur'];
-    if (json['province'] !=null)
-      province = json['province'];
-    if (json['zipcode'] !=null)
-      zipcode = json['zipcode'];
+    if (json['build'] != null) build = json['build'];
+    if (json['road'] != null) road = json['road'];
+    if (json['district'] != null) district = json['district'];
+    if (json['amphur'] != null) amphur = json['amphur'];
+    if (json['province'] != null) province = json['province'];
+    if (json['zipcode'] != null) zipcode = json['zipcode'];
     phone = json['phone'];
     lat = json['lat'];
     lng = json['lng'];

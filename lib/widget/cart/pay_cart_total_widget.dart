@@ -5,8 +5,8 @@ import 'package:yakgin/utility/my_calculate.dart';
 import 'package:yakgin/utility/mystyle.dart';
 import 'package:get/get.dart';
 
-class CartTotalWidget extends StatelessWidget {
-  CartTotalWidget({Key key,
+class PayCartTotalWidget extends StatelessWidget {
+  PayCartTotalWidget({Key key,
       @required this.controller,
       @required this.distance,
       @required this.logistCost})
@@ -31,21 +31,6 @@ class CartTotalWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            TotalItemWidget(
-                controller: controller,
-                text: 'มูลค่าสินค้า',
-                value: controller.sumCart(
-                    mainStateController.selectedRestaurant.value.restaurantId),
-                isSubTotal: false),
-            Divider(thickness: 1),
-            TotalItemWidget(
-                controller: controller,
-                text: ('$distance' != null && '$distance' != '')
-                    ? 'ค่าขนส่ง ($distance)'
-                    : 'ค่าขนส่ง',
-                value: shippingFree,
-                isSubTotal: false),
-            Divider(thickness: 1),
             TotalItemWidget(
                 controller: controller,
                 text: 'ยอดรวม',

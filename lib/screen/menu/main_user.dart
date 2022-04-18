@@ -205,7 +205,7 @@ class _MainUserState extends State<MainUser> {
         subtitle: MyStyle().subtitleDark('ร้านค้าที่ร่วมโครงการ'),
         onTap: () {
           setState(() {
-            currentWidget = UserSelectShoptype(); //UserResturantMenu();
+            currentWidget = UserSelectShoptype(); 
           });
           Navigator.pop(context);
         },

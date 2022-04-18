@@ -7,7 +7,9 @@ import 'package:yakgin/map_sample.dart';
 import 'package:yakgin/model/mess_model.dart';
 import 'package:yakgin/model/ord_model.dart';
 import 'package:yakgin/model/shop_model.dart';
-import 'package:yakgin/screen/shop/shop_food_category.dart';
+import 'package:yakgin/model/shoprest_model.dart';
+import 'package:yakgin/screen/branch/pay_cart.dart';
+import 'package:yakgin/screen/branch/prod_category.dart';
 import 'package:yakgin/screen/shop/shop_recive_item.dart';
 import 'package:yakgin/screen/shop/shop_select_branch.dart';
 import 'package:yakgin/screen/user_edit_info.dart';
@@ -37,14 +39,25 @@ class _MainShopBranchState extends State<MainShopBranch> {
   String mbid, loginName, loginMobile, ccode, mbimage = 'userlogo.png';
   Widget currentWidget = GetNewOrderBranch();
 
+  ShopRestModel restModel;
+
   final MainStateController mainStateController = Get.find();
-  double hi = 45;
+  //final CartStateController controller = Get.find();
+  double hi = 50;
+  List<Widget> listWidgets;
+  int indexNav = 0;
 
   @override
   void initState() {
     super.initState();
     notification();
     findUser();
+    listWidgets = [
+      //ShopFoodCategoryScreen(),
+      ShopReciveItem(),
+      ProdCategoryScreen(),
+      PayCartDetailScreen()
+    ];
   }
 
   Future<Null> findUser() async {
@@ -169,6 +182,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
           : (_shopName == null)
               ? dispApprove()
               : currentWidget,
+      bottomNavigationBar: showBottonNavBar(),
     );
   }
 
@@ -205,9 +219,9 @@ class _MainShopBranchState extends State<MainShopBranch> {
               Container(height: hi, child: orderBranchListMenu()),
               //Container(height: hi, child: shipOrdBrListMenu()),
               Container(height: hi, child: orderSumMenu()),
-              Container(height: hi, child: foodCatMenu()),
+              //Container(height: hi, child: foodCatMenu()),
               Container(height: hi, child: shopInfoMenu()),
-              Container(height: hi, child: reciveItemMenu()),
+              //Container(height: hi, child: reciveItemMenu()),
               // (brcode == MyConstant().headBranch)
               //     ? Container(height: hi, child: balItemMenu())
               //     : Container(),
@@ -320,6 +334,19 @@ class _MainShopBranchState extends State<MainShopBranch> {
       );
   //SwitchAccessShortcut RamenDining deck
 
+  ListTile shopInfoMenu() => ListTile(
+        leading: Icon(Icons.info),
+        title: MyStyle().titleDark('รายละเอียดของร้าน'),
+        subtitle: MyStyle().subtitleDark('Detail of Shop.'),
+        onTap: () {
+          setState(() {
+            currentWidget = ShopInfo();
+          });
+          Navigator.pop(context);
+        },
+      );
+
+  /*
   ListTile foodCatMenu() => ListTile(
         leading: Icon(
             Icons.auto_stories), //menu CircleNotifications FormatIndentIncrease
@@ -329,18 +356,6 @@ class _MainShopBranchState extends State<MainShopBranch> {
           setState(() {
             currentWidget = ShopFoodCategoryScreen();
             //เปลี่ยนจาก ShopFoodMenu() เป็น FoodCategoryScreen();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile shopInfoMenu() => ListTile(
-        leading: Icon(Icons.info),
-        title: MyStyle().titleDark('รายละเอียดของร้าน'),
-        subtitle: MyStyle().subtitleDark('Detail of Shop.'),
-        onTap: () {
-          setState(() {
-            currentWidget = ShopInfo();
           });
           Navigator.pop(context);
         },
@@ -357,6 +372,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
           Navigator.pop(context);
         },
       );
+  */
 
   ListTile balItemMenu() => ListTile(
         leading: Icon(Icons.auto_stories),
@@ -401,4 +417,52 @@ class _MainShopBranchState extends State<MainShopBranch> {
       ),
     );
   }
+
+  BottomNavigationBar showBottonNavBar() => BottomNavigationBar(
+          backgroundColor: MyStyle().primarycolor,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white.withOpacity(.60),
+          selectedFontSize: 18,
+          unselectedFontSize: 15,
+          currentIndex: indexNav,
+          onTap: (value) {
+            setState(() {
+              indexNav = value;
+              currentWidget = listWidgets[value];
+            });
+          },
+          items: <BottomNavigationBarItem>[
+            reviveItemNav(),
+            branchSaleNav(),
+            paymentNav()
+          ]);
+
+  /*BottomNavigationBarItem showMenuFoodNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.auto_stories),
+      label: ('สินค้า'),
+    );
+  }*/
+
+  BottomNavigationBarItem reviveItemNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.add_shopping_cart),
+      label: ('รับสินค้า'),
+    );
+  }
+
+  BottomNavigationBarItem branchSaleNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.shopping_basket),
+      label: ('จำหน่ายสินค้า'),
+    );
+  }
+
+  BottomNavigationBarItem paymentNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.shop),
+      label: ('คิดเงินค่าสินค้า'),
+    );
+  }
+
 }

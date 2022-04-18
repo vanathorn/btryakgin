@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:yakgin/map_sample.dart';
 import 'package:yakgin/screen/menu/main_admin.dart';
 import 'package:yakgin/screen/menu/main_shop_branch.dart';
 import 'package:yakgin/utility/dialig.dart';
@@ -164,10 +163,8 @@ class HomeState extends State<Home> {
               MyStyle().homeAccountsDrawerHeader(name, email, imgwall),
               buildSignIn(),
               buildSignUp(),
-              //testMap(),
             ],
           ),
-          //buildSignout(),
         ],
       ),
     );
@@ -305,22 +302,6 @@ class HomeState extends State<Home> {
     );
   }
 
-  ListTile testMap() {
-    return ListTile(
-      leading: Icon(
-        Icons.login,
-        size: 36,
-      ),
-      title: MyStyle().titleDark('ทดสอบแผนที่'),
-      subtitle: MyStyle().subtitleDark('test google map.'),
-      onTap: () {
-        Navigator.pop(context);
-        MaterialPageRoute route =
-            MaterialPageRoute(builder: (value) => MapSample());
-        Navigator.push(context, route);
-      },
-    );
-  }
 }
 
 class MyHttpOverrides extends HttpOverrides {

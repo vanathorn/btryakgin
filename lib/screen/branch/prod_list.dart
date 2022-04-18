@@ -1,5 +1,4 @@
 import 'dart:convert';
-//vtr after upgrade  import 'dart:ui';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -19,18 +18,17 @@ import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
 import 'package:yakgin/widget/appbar_withcart.dart';
 import 'package:yakgin/widget/commonwidget.dart';
-//import 'food_detail_screen.dart';
 
-class FoodListScreen extends StatefulWidget {
+class ProdListScreen extends StatefulWidget {
   final ShopRestModel restModel;
   final CategoryModel categoryModel;
-  FoodListScreen({Key key, this.restModel, this.categoryModel})
+  ProdListScreen({Key key, this.restModel, this.categoryModel})
       : super(key: key);
   @override
-  _FoodListScreenState createState() => _FoodListScreenState();
+  _ProdListScreenState createState() => _ProdListScreenState();
 }
 
-class _FoodListScreenState extends State<FoodListScreen> {
+class _ProdListScreenState extends State<ProdListScreen> {
   ShopRestModel restModel;
   CategoryModel categoryModel;
   String strConn, ccode, webPath;
@@ -87,8 +85,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
           foodModels.add(fModels);
         }
       }
-      setState(() {   
-        loadding = false;     
+      setState(() {
+        loadding = false;
         foodListCtl = Get.put(FoodListStateController());
       });
     });
@@ -122,8 +120,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         (loadding == false && foodModels.length == 0)
-                          ? MyStyle().txtTHRed('ไม่มีสินค้าประเภท ${categoryModel.name}')
-                          : MyStyle().showProgress()
+                            ? MyStyle().txtTHRed(
+                                'ไม่มีสินค้าประเภท ${categoryModel.name}')
+                            : MyStyle().showProgress()
                       ],
                     ),
                   ],
@@ -410,28 +409,13 @@ class _FoodListScreenState extends State<FoodListScreen> {
       setState(() {
         custlat = currentLocation.latitude;
         custlng = currentLocation.longitude;
+        //for test only
+        custlat = 14.1278686;
+        custlng = 100.6212333;
       });
     } catch (ex) {
       //
     }
   }
 
-  /*
-  final snackBar = SnackBar(
-    content: Row( 
-      children: [
-        Icon(Icons.fastfood, color: Colors.white,),
-        //SizedBox(width: MediaQuery.of(context).size.width),
-        Expanded(child: Text(' กรุณาระบุจำนวน',))
-      ],      
-    ),
-    duration: const Duration(seconds: 3),
-    backgroundColor: (Colors.black),
-    action: SnackBarAction(
-      label: 'dismiss',
-      onPressed: () {
-      },
-    ),
-  );
-  */
 }
