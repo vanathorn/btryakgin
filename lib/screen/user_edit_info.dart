@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:yakgin/model/phyimg_model.dart';
 import 'package:yakgin/model/shop_model.dart';
 import 'package:yakgin/model/shoprest_model.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yakgin/screen/home.dart';
 import 'package:yakgin/state/upimage/image_state.dart' as imgstate;
 import 'package:yakgin/state/upimage/imageapi_call.dart';
-//import 'package:yakgin/state/upimage/upload_state.dart';
 import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
 import 'package:yakgin/utility/myutil.dart';
@@ -27,7 +27,11 @@ class UserEditInfo extends StatefulWidget {
   final loginmobile;
   final pictname;
   UserEditInfo(
-      {Key key, this.mbid, this.loginname, this.loginmobile, this.pictname})
+      {Key key,
+      this.mbid,
+      this.loginname,
+      this.loginmobile,
+      this.pictname})
       : super(key: key);
 
   @override
@@ -52,7 +56,7 @@ class UserEditInfoState extends State<UserEditInfo> {
 
   @override
   void initState() {
-    super.initState();    
+    super.initState();
     findUser();
   }
 
@@ -84,27 +88,25 @@ class UserEditInfoState extends State<UserEditInfo> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       buildLogo(),
-                      //SizedBox(width: 5),
-                      //MyStyle().txtbrandsmall('Yakgin'),
                     ],
                   ),
-                  buildTitle(),
+                  //buildTitle(),
                   inputName(),
                   inputMobile(),
                   Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 3, left: 15),
+                          margin: const EdgeInsets.only(top: 0, left: 15),
                           width: !kIsWeb ? (screen) : (screen * 0.35),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
                                 width: screen * 0.58,
-                                child: 
-                                (_imageFile == null)
-                                    ? Image.network('https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$_userImage')
+                                child: (_imageFile == null)
+                                    ? Image.network(
+                                        'https://www.${MyConstant().domain}/${MyConstant().memberimagepath}/$_userImage')
                                     : displayImage(),
                               ),
                               Column(
@@ -114,7 +116,7 @@ class UserEditInfoState extends State<UserEditInfo> {
                                   (!kIsWeb) ? galleryPickup() : Container(),
                                   (!kIsWeb) ? photoGraphy() : Container(),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -132,7 +134,7 @@ class UserEditInfoState extends State<UserEditInfo> {
   Container buildLogo() {
     return Container(
         width: !kIsWeb ? (screen * 0.22) : (screen * 0.08),
-        margin: const EdgeInsets.only(top: 3),
+        margin: const EdgeInsets.only(top: 1),
         child: MyUtil().showLogo());
   }
 
@@ -166,6 +168,47 @@ class UserEditInfoState extends State<UserEditInfo> {
     }
   }
 
+  Future<Null> takePhoto(
+      ImageSource source, double maxWidth, double maxHeight) async {
+    try {
+      var pickedFile = await imgPicker.getImage(
+        source: source,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: 100,
+      );
+      if (pickedFile != null) {
+        imgFile = io.File(pickedFile.path);
+
+        var resultCrop = await ImageCropper().cropImage(
+            sourcePath: imgFile.path,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ],
+            androidUiSettings: const AndroidUiSettings(
+                toolbarTitle: 'Cropper',
+                toolbarColor: Colors.deepOrange,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.original,
+                lockAspectRatio: false),
+            iosUiSettings: const IOSUiSettings(
+              minimumAspectRatio: 1.0,
+            ));
+
+        setState(() {
+          _imageFile = pickedFile;
+          imgFile = io.File(resultCrop.path);
+        });
+      }
+    } catch (e) {
+      print("Image picker error " + e);
+    }
+  }
+
   Widget galleryPickup() => Container(
       margin: const EdgeInsets.only(top: 3, left: 3),
       width: 105,
@@ -176,9 +219,30 @@ class UserEditInfoState extends State<UserEditInfo> {
           var pickedFile = await imgPicker.getImage(
               source: ImageSource.gallery, maxWidth: 200, maxHeight: 200);
           if (pickedFile != null) {
+            imgFile = io.File(pickedFile.path);
+
+            var resultCrop = await ImageCropper().cropImage(
+                sourcePath: imgFile.path,
+                aspectRatioPresets: [
+                  CropAspectRatioPreset.square,
+                  CropAspectRatioPreset.ratio3x2,
+                  CropAspectRatioPreset.original,
+                  CropAspectRatioPreset.ratio4x3,
+                  CropAspectRatioPreset.ratio16x9
+                ],
+                androidUiSettings: const AndroidUiSettings(
+                    toolbarTitle: 'Cropper',
+                    toolbarColor: Colors.deepOrange,
+                    toolbarWidgetColor: Colors.white,
+                    initAspectRatio: CropAspectRatioPreset.original,
+                    lockAspectRatio: false),
+                iosUiSettings: const IOSUiSettings(
+                  minimumAspectRatio: 1.0,
+                ));
+
             setState(() {
               _imageFile = pickedFile;
-              imgFile = io.File(pickedFile.path);
+              imgFile = io.File(resultCrop.path);
             });
           }
         },
@@ -217,7 +281,7 @@ class UserEditInfoState extends State<UserEditInfo> {
       );
 
   Widget saveButton() => Container(
-      width: screen * 0.88,
+      width: screen * 0.5,
       margin: const EdgeInsets.only(top: 3),
       child: FloatingActionButton.extended(
         backgroundColor: MyStyle().savecolor,
@@ -257,53 +321,6 @@ class UserEditInfoState extends State<UserEditInfo> {
         foregroundColor: Colors.white,
         hoverColor: Color.fromARGB(255, 46, 180, 241),
         focusColor: Colors.red,
-      ));
-
-  Widget xxxsaveButton() => Container(
-      margin: const EdgeInsets.only(top: 3),
-      width: screen * 0.9,
-      height: 48,
-      child: ElevatedButton.icon(
-        onPressed: () async {
-          if ((txtName?.isEmpty ?? true) || (txtMobile?.isEmpty ?? true)) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                MySnackBar.showSnackBar(
-                    "! ชื่อสมาชิก และเบอร์มือถือ\r\nห้ามเป็นช่องว่าง",
-                    Icons.contact_phone,
-                    strDimiss: 'ลองใหม่'),
-              );
-          } else {
-            if (txtMobile.length != 10) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  MySnackBar.showSnackBar(
-                      "! เบอร์มือถือ ไม่ถูกต้อง", Icons.app_blocking_outlined,
-                      strDimiss: 'ลองใหม่'),
-                );
-            } else {
-              checkUser();
-            }
-          }
-        },
-        icon: Icon(
-          Icons.save,
-          color: Colors.white,
-        ),
-        label: MyStyle().txtTH('บันทึกข้อมูล', Colors.white),
-        style: ButtonStyle(
-          padding: MaterialStateProperty.all(EdgeInsets.all(2)),
-          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.pressed))
-                return Color.fromARGB(255, 46, 180, 241);
-              return Color.fromARGB(
-                  255, 0, 0, 80); // Use the component's default.
-            },
-          ),
-        ),
       ));
 
   Future<Null> routeToService() async {
@@ -431,29 +448,6 @@ class UserEditInfoState extends State<UserEditInfo> {
         ..showSnackBar(
           MySnackBar.showSnackBar('!บันทึกข้อมูล/รูปภาพไม่สำเร็จ', Icons.sick),
         );
-    }
-  }
-
-  Future<Null> takePhoto(
-      ImageSource source, double maxWidth, double maxHeight) async {
-    try {
-      final pickedFile = await imgPicker.getImage(
-        source: source,
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        imageQuality: 100,
-      );
-      if (pickedFile != null) {
-        setState(() {
-          _imageFile = pickedFile;
-          imgFile = io.File(pickedFile.path);
-          //*** _image = io.File(_imageFile.path);
-          //* context.read(imgstate.imageProvider).state = pickedFile.path;
-          //* context.read(uploadState).state = STATE.PICKED;
-        });
-      }
-    } catch (e) {
-      print("Image picker error " + e);
     }
   }
 

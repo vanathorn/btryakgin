@@ -56,7 +56,7 @@ class MyStyle {
   Widget txtshadowsIntoLight(String strtxt) => Text(strtxt,
       style: GoogleFonts.shadowsIntoLight(
           fontStyle: FontStyle.normal,
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Colors.black,
           fontFeatures: [
@@ -265,7 +265,7 @@ class MyStyle {
         fontFamily: 'thaisanslite',
         fontSize: 16,
         fontWeight: FontWeight.normal,
-        color: Colors.black26,
+        color: Colors.black38,
       ));
 
   Widget titleLight(String strtxt) => Text(strtxt,

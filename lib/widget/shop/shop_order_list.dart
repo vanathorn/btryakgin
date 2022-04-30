@@ -173,43 +173,43 @@ class _ShopOrderListState extends State<ShopOrderList> {
         havedata = true;
         for (var map in result) {
           //setState(() {
-            OrderModel mModel = OrderModel.fromJson(map);
-            listDetails.clear();
+          OrderModel mModel = OrderModel.fromJson(map);
+          listDetails.clear();
 
-            var detailList = mModel.detailList.split('*').toList();
-            String iname = '';
-            double qty;
-            double unitprice;
-            double netamount;
-            //iName+'|'+topnameA+'|'+topnameB+'|'+topnameC+'|'+topdText+'|'+special+'|'
-            //ex. สตอเบอร์รี่|1|2|3|4|5|
-            // 6=qty 1.00|7=unitprice 35.00|8=DiscPerc 0.00|9=DiscAmount 0.00|
-            //10=amount 35.00|11=netamount 35.00|12=ถ้วย
-            for (int i = 0; i < detailList.length; i++) {
-              var tmp = detailList[i].split('|');
-              iname = tmp[0] +
-                  tmp[1] +
-                  tmp[2] +
-                  tmp[3] +
-                  tmp[4] +
-                  (tmp[5] != '' ? '_' + tmp[5] : '');
-              qty = double.parse(tmp[6]);
-              unitprice = double.parse(tmp[7]);
-              netamount = double.parse(tmp[11]);
-              listDetails.add(OrdDetailModel(mModel.restaurantId,
-                  (i + 1).toString(), iname, qty, unitprice, netamount));
-            }
+          var detailList = mModel.detailList.split('*').toList();
+          String iname = '';
+          double qty;
+          double unitprice;
+          double netamount;
+          //iName+'|'+topnameA+'|'+topnameB+'|'+topnameC+'|'+topdText+'|'+special+'|'
+          //ex. สตอเบอร์รี่|1|2|3|4|5|
+          // 6=qty 1.00|7=unitprice 35.00|8=DiscPerc 0.00|9=DiscAmount 0.00|
+          //10=amount 35.00|11=netamount 35.00|12=ถ้วย
+          for (int i = 0; i < detailList.length; i++) {
+            var tmp = detailList[i].split('|');
+            iname = tmp[0] +
+                tmp[1] +
+                tmp[2] +
+                tmp[3] +
+                tmp[4] +
+                (tmp[5] != '' ? '_' + tmp[5] : '');
+            qty = double.parse(tmp[6]);
+            unitprice = double.parse(tmp[7]);
+            netamount = double.parse(tmp[11]);
+            listDetails.add(OrdDetailModel(mModel.restaurantId,
+                (i + 1).toString(), iname, qty, unitprice, netamount));
+          }
 
-            mModel.orddtl = listDetails.toList();
-            listOrders.add(mModel);
+          mModel.orddtl = listDetails.toList();
+          listOrders.add(mModel);
 
-            ttlDiscount += double.parse(mModel.ttlDiscount);
-            ttlLogist += double.parse(mModel.ttlLogist);
-            ttlNetAmount += double.parse(mModel.ttlNetAmount);
-            ttlVatAmount += double.parse(mModel.ttlVatAmount);
-            ttlGrsAmount += double.parse(mModel.ttlGrsAmount);
+          ttlDiscount += double.parse(mModel.ttlDiscount);
+          ttlLogist += double.parse(mModel.ttlLogist);
+          ttlNetAmount += double.parse(mModel.ttlNetAmount);
+          ttlVatAmount += double.parse(mModel.ttlVatAmount);
+          ttlGrsAmount += double.parse(mModel.ttlGrsAmount);
 
-            havedata = true;
+          havedata = true;
           //});
         }
         setState(() {

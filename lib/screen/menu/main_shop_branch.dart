@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:yakgin/map_sample.dart';
 import 'package:yakgin/model/mess_model.dart';
 import 'package:yakgin/model/ord_model.dart';
 import 'package:yakgin/model/shop_model.dart';
 import 'package:yakgin/model/shoprest_model.dart';
-import 'package:yakgin/screen/branch/pay_cart.dart';
+import 'package:yakgin/screen/branch/pay_carts_creen.dart';
 import 'package:yakgin/screen/branch/prod_category.dart';
 import 'package:yakgin/screen/shop/shop_recive_item.dart';
+import 'package:yakgin/screen/shop/branch_report_screen.dart';
 import 'package:yakgin/screen/shop/shop_select_branch.dart';
 import 'package:yakgin/screen/user_edit_info.dart';
 import 'package:yakgin/state/main_state.dart';
@@ -22,7 +22,6 @@ import 'package:yakgin/widget/appbar_withorder.dart';
 import 'package:yakgin/widget/branch/branch_order_list.dart';
 import 'package:yakgin/widget/branch/branch_order_ship.dart';
 import 'package:yakgin/widget/branch/new_ord_branch.dart';
-import 'package:yakgin/widget/shop/order_summary.dart';
 import 'package:yakgin/widget/shop/shop_info.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,15 +36,16 @@ class _MainShopBranchState extends State<MainShopBranch> {
   bool loading = true;
   String _shopName, brcode, brname;
   String mbid, loginName, loginMobile, ccode, mbimage = 'userlogo.png';
-  Widget currentWidget = GetNewOrderBranch();
+  Widget currentWidget = GetNewOrderBranch();//ProdCategoryScreen();
 
   ShopRestModel restModel;
 
   final MainStateController mainStateController = Get.find();
   //final CartStateController controller = Get.find();
-  double hi = 50;
+  double hi = 55;
   List<Widget> listWidgets;
   int indexNav = 0;
+  String latShop = '0', lngShop = '0';
 
   @override
   void initState() {
@@ -53,10 +53,10 @@ class _MainShopBranchState extends State<MainShopBranch> {
     notification();
     findUser();
     listWidgets = [
-      //ShopFoodCategoryScreen(),
       ShopReciveItem(),
       ProdCategoryScreen(),
-      PayCartDetailScreen()
+      PayCartDetailScreen(),
+      BranchReportScreen()
     ];
   }
 
@@ -102,8 +102,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
 
   Future<Null> findShop() async {
     String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/checkShop.aspx?ccode=' +
-            ccode;
+    '${MyConstant().apipath}.${MyConstant().domain}/checkShop.aspx?ccode=$ccode';
     try {
       await Dio().get(url).then((value) {
         var result = json.decode(value.data);
@@ -112,6 +111,8 @@ class _MainShopBranchState extends State<MainShopBranch> {
             setState(() {
               ShopModel shopModel = ShopModel.fromJson(map);
               _shopName = shopModel.thainame;
+              latShop = shopModel.lat;
+              lngShop = shopModel.lng;
               loading = false;
             });
           }
@@ -147,7 +148,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
 
   Future<Null> countOrderNo() async {
     String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/branch/countNewOrdBr.aspx?mbid=$mbid&condition=';
+      '${MyConstant().apipath}.${MyConstant().domain}/branch/countNewOrdBr.aspx?mbid=$mbid&condition=';
 
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
@@ -157,8 +158,15 @@ class _MainShopBranchState extends State<MainShopBranch> {
           setState(() {
             mainStateController.selectedRestaurant.value.restaurantId =
                 mModel.restaurantId;
+            mainStateController.selectedRestaurant.value.ccode = ccode;
             mainStateController.selectedRestaurant.value.cntord =
                 mModel.countord;
+            mainStateController.selectedRestaurant.value.lat = latShop;
+            mainStateController.selectedRestaurant.value.lng = lngShop;
+            // print(
+            //     'mainStateController.selectedRestaurant.value.lat =
+            //     ${mainStateController.selectedRestaurant.value.lat} /
+            //     ${mainStateController.selectedRestaurant.value.lng}');
           });
         }
       }
@@ -209,7 +217,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
           Column(
             children: [
               Container(
-                height: 175,
+                height: 177,
                 margin: EdgeInsets.all(0.0),
                 padding: EdgeInsets.all(0.0),
                 child: shopDrawerHeader(name, email, imgwall, mbimage),
@@ -218,7 +226,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
               Container(height: hi, child: newOrderBranchMenu()),
               Container(height: hi, child: orderBranchListMenu()),
               //Container(height: hi, child: shipOrdBrListMenu()),
-              Container(height: hi, child: orderSumMenu()),
+              //Container(height: hi, child: orderSumMenu()),
               //Container(height: hi, child: foodCatMenu()),
               Container(height: hi, child: shopInfoMenu()),
               //Container(height: hi, child: reciveItemMenu()),
@@ -320,7 +328,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
           Navigator.pop(context);
         },
       );
-
+  /*
   ListTile orderSumMenu() => ListTile(
         leading: Icon(Icons.photo_filter_outlined), //developer_board
         title: MyStyle().titleDark('สรุปการซื้อรายวัน'),
@@ -332,6 +340,7 @@ class _MainShopBranchState extends State<MainShopBranch> {
           Navigator.pop(context);
         },
       );
+  */
   //SwitchAccessShortcut RamenDining deck
 
   ListTile shopInfoMenu() => ListTile(
@@ -386,23 +395,6 @@ class _MainShopBranchState extends State<MainShopBranch> {
         },
       );
 
-  ListTile testMap() {
-    return ListTile(
-      leading: Icon(
-        Icons.login,
-        size: 36,
-      ),
-      title: MyStyle().titleDark('ทดสอบแผนที่'),
-      subtitle: MyStyle().subtitleDark('test google map.'),
-      onTap: () {
-        Navigator.pop(context);
-        MaterialPageRoute route =
-            MaterialPageRoute(builder: (value) => MapSample());
-        Navigator.push(context, route);
-      },
-    );
-  }
-
   Widget signOutMenu() {
     return Container(
       decoration: BoxDecoration(color: MyStyle().bgsignout),
@@ -420,10 +412,10 @@ class _MainShopBranchState extends State<MainShopBranch> {
 
   BottomNavigationBar showBottonNavBar() => BottomNavigationBar(
           backgroundColor: MyStyle().primarycolor,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white.withOpacity(.60),
-          selectedFontSize: 18,
-          unselectedFontSize: 15,
+          selectedItemColor: Theme.of(context).primaryColorDark,//Colors.white,
+          unselectedItemColor: Colors.grey,//Colors.white.withOpacity(.60),
+          selectedFontSize: 16,
+          unselectedFontSize: 13,
           currentIndex: indexNav,
           onTap: (value) {
             setState(() {
@@ -432,19 +424,17 @@ class _MainShopBranchState extends State<MainShopBranch> {
             });
           },
           items: <BottomNavigationBarItem>[
-            reviveItemNav(),
+            reciveItemNav(),
             branchSaleNav(),
-            paymentNav()
+            paymentNav(),
+            menuReportNav()
+            // BottomNavigationBarItem(
+            //     icon: Icon(FontAwesomeIcons.addressCard),
+            //     label: 'Contact',
+            // ),
           ]);
 
-  /*BottomNavigationBarItem showMenuFoodNav() {
-    return BottomNavigationBarItem(
-      icon: Icon(Icons.auto_stories),
-      label: ('สินค้า'),
-    );
-  }*/
-
-  BottomNavigationBarItem reviveItemNav() {
+  BottomNavigationBarItem reciveItemNav() {
     return BottomNavigationBarItem(
       icon: Icon(Icons.add_shopping_cart),
       label: ('รับสินค้า'),
@@ -454,15 +444,21 @@ class _MainShopBranchState extends State<MainShopBranch> {
   BottomNavigationBarItem branchSaleNav() {
     return BottomNavigationBarItem(
       icon: Icon(Icons.shopping_basket),
-      label: ('จำหน่ายสินค้า'),
+      label: ('ขาย'),
     );
   }
 
   BottomNavigationBarItem paymentNav() {
     return BottomNavigationBarItem(
       icon: Icon(Icons.shop),
-      label: ('คิดเงินค่าสินค้า'),
+      label: ('คิดเงิน'),
     );
   }
 
+  BottomNavigationBarItem menuReportNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.auto_fix_high),
+      label: ('รายงาน'),
+    );
+  }
 }

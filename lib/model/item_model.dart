@@ -4,12 +4,13 @@ class ItemModel {
   int currqty;
   String uname;
 
-  ItemModel({this.iid: 0, this.iname: '', this.currqty:0});
+  ItemModel({this.iid: 0, this.iname: '', this.currqty: 0});
 
   ItemModel.fromJson(Map<String, dynamic> json) {
     iid = int.parse(json['iid'].toString());
     iname = json['iname'];
-    if (json['currqty'] != null && json['currqty'] !='') {
+    currqty = 0;
+    if (json['currqty'] != null && json['currqty'] != '') {
       currqty = int.parse(json['currqty'].toString());
     }
     uname = json['uname'];

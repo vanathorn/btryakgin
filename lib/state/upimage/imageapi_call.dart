@@ -2,8 +2,8 @@ import 'package:yakgin/utility/my_constant.dart';
 import 'package:http/http.dart' as http;
 
 //*** physicalpath = D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\member\\
-Future<String> uploadImageMember(String physicalpath,
-    String mbid, String filePath, String chkfile) async {
+Future<String> uploadImageMember(
+    String physicalpath, String mbid, String filePath, String chkfile) async {
   http.MultipartRequest request = new http.MultipartRequest(
       "POST",
       Uri.parse('${MyConstant().imageapi}/' +
@@ -26,12 +26,12 @@ Future<String> uploadImageMember(String physicalpath,
 }
 
 //*** physicalpath = D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\shop\\
-Future<String> uploadImageShop(String physicalpath,
-    String ccode, String filePath, String chkfile) async {
+Future<String> uploadImageShop(String physicalpath, String ccodebr, 
+    String filePath, String chkfile) async {
   http.MultipartRequest request = new http.MultipartRequest(
       "POST",
       Uri.parse('${MyConstant().imageapi}/' +
-          'api/upload?dirpath=$physicalpath&fname=$ccode&chkfile=$chkfile'));
+          'api/upload?dirpath=$physicalpath&fname=$ccodebr&chkfile=$chkfile'));
 
   // http.MultipartRequest request = new http.MultipartRequest(
   //     "POST", Uri.parse('http://10.0.2.2:5000/api/upload'));
@@ -53,12 +53,13 @@ Future<String> uploadImageShop(String physicalpath,
 }
 
 //*** physicalpath = D:\\Inetpub\\vhosts\\yakgin.com\\httpdocs\\Images\\product\\
-Future<String> uploadImageItem(String physicalpath,
-    String ccode, String filePath, String chkfile, String fname) async {
+Future<String> uploadImageItem(String physicalpath, String ccode,
+    String filePath, String chkfile, String fname) async {
   http.MultipartRequest request = new http.MultipartRequest(
       "POST",
       Uri.parse('${MyConstant().imageapi}/' +
-          'api/upload?dirpath=$physicalpath'+'$ccode\\' +
+          'api/upload?dirpath=$physicalpath' +
+          '$ccode\\' +
           '&fname=$fname&chkfile=$chkfile'));
 
   http.MultipartFile multipartFile =

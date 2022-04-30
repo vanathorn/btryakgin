@@ -97,6 +97,34 @@ class _ShopSelectBranchState extends State<ShopSelectBranch> {
                   //: invalid range is emptu:0 - branchList.length,
                 },
                 child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: Stack(children: [
+                    Container(
+                      child: CachedNetworkImage(
+                        imageUrl:
+                          'https://www.${MyConstant().domain}/${MyConstant().shopimagepath}/${branchList[index].shoppict}', 
+                        fit: BoxFit.cover,
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                          height: 58,
+                          color: MyStyle().coloroverlay,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child: Center(
+                                        child: MyStyle().txtTH18Light(
+                                            '${branchList[index].branchname}')))
+                              ])),
+                    )])
+              )
+                /*
+                *** Overlay ทั้งภาพ
+                child: Card(
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: Stack(fit: StackFit.expand, children: [
@@ -113,7 +141,7 @@ class _ShopSelectBranchState extends State<ShopSelectBranch> {
                               '${branchList[index].branchname}',
                               Colors.white,
                               16.0)),
-                    ])),
+                    ]))*/
               )),
         ))
       ],

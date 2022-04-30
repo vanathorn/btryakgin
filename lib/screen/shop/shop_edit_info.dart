@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:yakgin/model/account_model.dart';
 import 'package:yakgin/model/phyimg_model.dart';
 import 'package:yakgin/model/shop_model.dart';
@@ -35,7 +36,7 @@ class ShopEditInfo extends StatefulWidget {
 }
 
 class ShopEditInfoState extends State<ShopEditInfo> {
-  String ccode;
+  String ccode, brcode;
   String loginName, loginMobile;
   double lat, lng, screen;
   ShopModel shopModel;
@@ -75,7 +76,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
         lat = event.latitude;
         lng = event.longitude;
         setState(() {
-          getCurrLoc = false;         
+          getCurrLoc = false;
         });
       }
     });
@@ -87,6 +88,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
     SharedPreferences prefer = await SharedPreferences.getInstance();
     setState(() {
       ccode = prefer.getString('pccode');
+      brcode = prefer.getString('pbrcode');
       loginName = prefer.getString('pname');
       loginMobile = prefer.getString('pmobile');
       readExistDataShop();
@@ -224,7 +226,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
                               ? buildMap()
                               : Text(''),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [currLocButton(), saveButton()],
                       ),
                     ],
@@ -293,27 +295,6 @@ class ShopEditInfoState extends State<ShopEditInfo> {
     }
   }
 
-  Widget galleryPickup() => Container(
-        //margin: const EdgeInsets.only(top: 3, left: 3),
-        //width: 105,
-        child: IconButton(
-          tooltip: 'Pick Image from Gallery',
-          icon: Icon(Icons.photo,
-              size: 48), // color: Color.fromARGB(255, 60, 212, 250),),
-          onPressed: () async {
-            gllery = 'Y';
-            var pickedFile = await imgPicker.getImage(
-                source: ImageSource.gallery, maxWidth: 200, maxHeight: 200);
-            if (pickedFile != null) {
-              setState(() {
-                _imageFile = pickedFile;
-                imgFile = io.File(pickedFile.path);
-              });
-            }
-          },
-        ),
-      );
-
   Widget photoGraphy() => Container(
         //margin: const EdgeInsets.only(top: 25, left: 3),
         //width: 105,
@@ -357,31 +338,6 @@ class ShopEditInfoState extends State<ShopEditInfo> {
         ),
         splashColor: Colors.blue,
       ));
-
-  Widget xxxphotoGraphy() => Container(
-        margin: const EdgeInsets.only(top: 25, left: 3),
-        width: 105,
-        child: FloatingActionButton.extended(
-          backgroundColor: Colors.black,
-          onPressed: () async {
-            gllery = 'N';
-            takePhoto(ImageSource.camera, 200.0, 200.0); //480.0, 640.0
-          },
-          label: Text('กล้อง',
-              style: TextStyle(
-                fontFamily: 'thaisanslite',
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                color: Colors.white,
-              )),
-          icon: Icon(
-            Icons.camera,
-            color: Colors.lightGreenAccent[400],
-            size: 32,
-          ),
-          splashColor: Colors.blue,
-        ),
-      );
 
   Widget saveButton() => FloatingActionButton.extended(
         backgroundColor: MyStyle().savecolor,
@@ -510,9 +466,10 @@ class ShopEditInfoState extends State<ShopEditInfo> {
         //     ? context.read(imgstate.imageProvider).state
         //     : _imageFile.path;
         String filePath = imgFile.path;
-        var imageUri =
-            await uploadImageShop(physicalpath, ccode, filePath, 'Y');
+        var imageUri = await uploadImageShop(
+            physicalpath, '$ccode$brcode', filePath, 'Y');
         if (imageUri != null) {
+          print('1 $physicalpath  $imageUri');
           //context.read(uploadState).state = STATE.SUCCESS;
           //context.read(resultProvider).state = imageUri;
           imageCache.clear();
@@ -533,22 +490,82 @@ class ShopEditInfoState extends State<ShopEditInfo> {
     }
   }
 
+  Widget galleryPickup() => Container(
+        //margin: const EdgeInsets.only(top: 3, left: 3),
+        //width: 105,
+        child: IconButton(
+          tooltip: 'Pick Image from Gallery',
+          icon: Icon(Icons.photo,
+              size: 48), // color: Color.fromARGB(255, 60, 212, 250),),
+          onPressed: () async {
+            gllery = 'Y';
+            var pickedFile = await imgPicker.getImage(
+                source: ImageSource.gallery, maxWidth: 200, maxHeight: 200);
+            if (pickedFile != null) {
+              imgFile = io.File(pickedFile.path);
+
+              var resultCrop = await ImageCropper().cropImage(
+                  sourcePath: imgFile.path,
+                  aspectRatioPresets: [
+                    CropAspectRatioPreset.square,
+                    CropAspectRatioPreset.ratio3x2,
+                    CropAspectRatioPreset.original,
+                    CropAspectRatioPreset.ratio4x3,
+                    CropAspectRatioPreset.ratio16x9
+                  ],
+                  androidUiSettings: const AndroidUiSettings(
+                      toolbarTitle: 'Cropper',
+                      toolbarColor: Colors.deepOrange,
+                      toolbarWidgetColor: Colors.white,
+                      initAspectRatio: CropAspectRatioPreset.original,
+                      lockAspectRatio: false),
+                  iosUiSettings: const IOSUiSettings(
+                    minimumAspectRatio: 1.0,
+                  ));
+
+              setState(() {
+                _imageFile = pickedFile;
+                imgFile = io.File(resultCrop.path);
+              });
+            }
+          },
+        ),
+      );
+
   Future<Null> takePhoto(
       ImageSource source, double maxWidth, double maxHeight) async {
     try {
-      final pickedFile = await imgPicker.getImage(
+      var pickedFile = await imgPicker.getImage(
         source: source,
         maxWidth: maxWidth,
         maxHeight: maxHeight,
         imageQuality: 100,
       );
       if (pickedFile != null) {
+        imgFile = io.File(pickedFile.path);
+
+        var resultCrop = await ImageCropper().cropImage(
+            sourcePath: imgFile.path,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ],
+            androidUiSettings: const AndroidUiSettings(
+                toolbarTitle: 'Cropper',
+                toolbarColor: Colors.deepOrange,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.original,
+                lockAspectRatio: false),
+            iosUiSettings: const IOSUiSettings(
+              minimumAspectRatio: 1.0,
+            ));
+
         setState(() {
           _imageFile = pickedFile;
-          imgFile = io.File(pickedFile.path);
-          //*** _image = io.File(_imageFile.path);
-          //* context.read(imgstate.imageProvider).state = pickedFile.path;
-          //* context.read(uploadState).state = STATE.PICKED;
+          imgFile = io.File(resultCrop.path);
         });
       }
     } catch (e) {
@@ -822,20 +839,19 @@ class ShopEditInfoState extends State<ShopEditInfo> {
     LatLng latLng = LatLng(lat, lng);
     CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 11.0);
     return Container(
-        margin: EdgeInsets.only(left: 8, right: 8, top: 3, bottom: 3),        
+        margin: EdgeInsets.only(left: 8, right: 8, top: 3, bottom: 3),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MyStyle().txtstyle('Lat=$lat Lng=$lng', Colors.black54, 10),
             Container(
-              height:200,
-              child: 
-                GoogleMap(
-                  initialCameraPosition: cameraPosition,
-                  mapType: MapType.normal,
-                  markers: shopMarker(),
-                  onMapCreated: (controller) {},
-                ),
+              height: 200,
+              child: GoogleMap(
+                initialCameraPosition: cameraPosition,
+                mapType: MapType.normal,
+                markers: shopMarker(),
+                onMapCreated: (controller) {},
+              ),
             )
           ],
         ));
@@ -866,12 +882,12 @@ class ShopEditInfoState extends State<ShopEditInfo> {
       );
 
   Future _myLocation() async {
-    // LocationData currentLocation = await getCurrentLocation();   
+    // LocationData currentLocation = await getCurrentLocation();
     // setState(() {
     //   lat = currentLocation.latitude;
     //   lng = currentLocation.longitude;
     //   buildMap();
-    // });    
+    // });
     getCurrLoc = true;
   }
 

@@ -208,7 +208,7 @@ class _ShopReciveItem extends State<ShopReciveItem> {
                         categoryStateContoller = Get.find();
                         //categoryStateContoller.selectCategory.value = foodtypeList[index].key;
                         //String itid = '${categoryStateContoller.selectCategory.value.key}';
-                        dialigReciveQty(foodList[index]);
+                        dialogReciveQty(foodList[index]);
                       },
                       child: Card(
                           elevation: 8,
@@ -288,7 +288,7 @@ class _ShopReciveItem extends State<ShopReciveItem> {
     });
   }
 
-  Future<Null> dialigReciveQty(FoodModel foodList) async {
+  Future<Null> dialogReciveQty(FoodModel foodList) async {
     reciveQty = 0;
     txtQty = '0';
     showDialog(
@@ -587,8 +587,7 @@ class _ShopReciveItem extends State<ShopReciveItem> {
     String mess = '';
     try {
       String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-          'shop/updateRecive.aspx?ccode=$ccode&mobile=$mobile&iid=$iid&qty=' +
-          recQty.toString();
+      'shop/updateRecive.aspx?ccode=$ccode&mobile=$mobile&iid=$iid&qty=$recQty&reciveby=$loginName';
 
       dio.Response response = await dio.Dio().get(url);
       if (response.toString() != '') {

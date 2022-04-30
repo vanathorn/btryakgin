@@ -29,7 +29,6 @@ class SendOrder extends StatefulWidget {
   final CartViewModelImp cartViewModel;
   final SumValue sumValue;
   final LoginModel loginModel;
-  //final bool isWeb;
 
   SendOrder(this.mainStateController, this.controller, this.cartViewModel,
       this.sumValue, this.loginModel);
@@ -40,11 +39,9 @@ class SendOrder extends StatefulWidget {
 class _SendOrderState extends State<SendOrder> {
   String restaurantid, ccode, mbid, loginName, loginMobile;
   double getlat = 0.0, getlng = 0.0, lat = 0.0, lng = 0.0, screen;
-  //SendModel sendModel=new SendModel();
   SumValue sumValue;
   CartViewModelImp cartViewModel;
   String txtName, txtAddress, txtMobile, txthhmm = '', attachlocation = 'Y';
-  //String _txtName, _txtAddress, _txtMobile;
   DateTime selectedDate = DateTime.now();
   String txtTime = 'ระบุเวลา', createdDT = '';
   String txtSelectDate = '';
@@ -65,8 +62,6 @@ class _SendOrderState extends State<SendOrder> {
   List<ItemModel> notenoughList = List<ItemModel>.empty(growable: true);
   LoginModel loginModel;
 
-  //x FoodListStateController foodListStateController;
-
   @override
   void initState() {
     super.initState();
@@ -83,6 +78,9 @@ class _SendOrderState extends State<SendOrder> {
     location.onLocationChanged.listen((event) {
       lat = event.latitude;
       lng = event.longitude;
+      //for test
+      //lat = 14.1458567;
+      //lng = 100.6179807;
     });
     initData();
   }
@@ -107,7 +105,6 @@ class _SendOrderState extends State<SendOrder> {
       txtName = loginModel.mbname;
       txtAddress = loginModel.sendaddr;
       txtMobile = loginModel.mobile;
-      getitemList();
     });
   }
 
@@ -164,7 +161,7 @@ class _SendOrderState extends State<SendOrder> {
     return location.getLocation();
   }
 
-  Future<Null> getitemList() async {
+  Future<Null> remainItemList() async {
     String strKey = '', dilim = '';
     cartList.clear();
     cartList = controller
@@ -177,9 +174,7 @@ class _SendOrderState extends State<SendOrder> {
     }
     keyList = strKey;
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-      'custom/item_remain.aspx?ccode=$ccode&idlist=$keyList&custlat=$lat&custlng=$lng';
-
-    print('*********** url=$url');
+        'custom/item_remain.aspx?ccode=$ccode&idlist=$keyList&custlat=$lat&custlng=$lng';
 
     itemsList.clear();
     await Dio().get(url).then((value) {
@@ -703,12 +698,9 @@ class _SendOrderState extends State<SendOrder> {
         delimiter = '*';
       }
     }
-    String url =
-        '${MyConstant().apipath}.${MyConstant().domain}/order/insertOrder.aspx?ccode=' +
-            '$ccode&ordhead=' +
-            ordhead +
-            '&orddetail=' +
-            orddetail;
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
+        'order/insertOrder.aspx?ccode=$ccode&ordhead=$ordhead&orddetail=$orddetail';
+
     try {
       Response response = await Dio().get(url);
       if (response.toString() == '') {
@@ -774,6 +766,7 @@ class _SendOrderState extends State<SendOrder> {
                     .checkTime(DateTime.now(), '$txthhmm', sumValue.distiance);
               }
               if (strError == '') {
+                await remainItemList();
                 await validate();
                 if (notenoughList.length > 0) {
                   setState(() {

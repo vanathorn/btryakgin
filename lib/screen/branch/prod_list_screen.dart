@@ -16,13 +16,14 @@ import 'package:yakgin/state/food_list_state.dart';
 import 'package:yakgin/state/main_state.dart';
 import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
-import 'package:yakgin/widget/appbar_withcart.dart';
+import 'package:yakgin/widget/appbar_br_paycart.dart';
 import 'package:yakgin/widget/commonwidget.dart';
 
 class ProdListScreen extends StatefulWidget {
   final ShopRestModel restModel;
   final CategoryModel categoryModel;
-  ProdListScreen({Key key, this.restModel, this.categoryModel})
+  final String brloc;
+  ProdListScreen({Key key, this.restModel, this.categoryModel, this.brloc})
       : super(key: key);
   @override
   _ProdListScreenState createState() => _ProdListScreenState();
@@ -31,7 +32,7 @@ class ProdListScreen extends StatefulWidget {
 class _ProdListScreenState extends State<ProdListScreen> {
   ShopRestModel restModel;
   CategoryModel categoryModel;
-  String strConn, ccode, webPath;
+  String ccode, brloc;
   double screen, custlat, custlng;
   CategoryStateContoller categoryStateContoller;
   List<FoodModel> foodModels = List<FoodModel>.empty(growable: true);
@@ -50,8 +51,7 @@ class _ProdListScreenState extends State<ProdListScreen> {
     restModel = widget.restModel;
     categoryModel = widget.categoryModel;
     ccode = restModel.ccode;
-    strConn = restModel.strconn;
-    webPath = restModel.webpath;
+    brloc = widget.brloc;
     categoryStateContoller = Get.find();
     categoryStateContoller.selectCategory.value = categoryModel;
     getFoodByType();
@@ -61,13 +61,12 @@ class _ProdListScreenState extends State<ProdListScreen> {
     await getLocation();
     String itid = '${categoryStateContoller.selectCategory.value.key}';
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'foodRemain_ByType.aspx?ccode=$ccode&custlat=$custlat&custlng=$custlng' +
+        'branch/prodremain_brloc.aspx?ccode=$ccode&brloc=$brloc' +
         '&itid=$itid&strOrder=iName';
 
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
-        print('************ $result');
         for (var map in result) {
           FoodModel fModels = FoodModel.fromJson(map);
           fModels.ccode = ccode; //for check what shop
@@ -78,7 +77,6 @@ class _ProdListScreenState extends State<ProdListScreen> {
           double balqty = fModels.balqty;
           int qtyincart = cartStateCtl.qtyIncart(
               mainStateCtl.selectedRestaurant.value.restaurantId, fModels.id);
-          //print('***** >>>> qtyincart= $qtyincart');
           double remainQty = balqty - double.parse(qtyincart.toString());
           fModels.reqty = remainQty;
           //--------------------------------
@@ -107,7 +105,7 @@ class _ProdListScreenState extends State<ProdListScreen> {
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBarWithCartButton(
+        appBar: AppBarBrPayCart(
             title: ' ร้าน ${restModel.thainame}', subtitle: ''),
         body: (loadding == false && foodModels.length > 0) //
             ? showFoodByType()
@@ -168,128 +166,81 @@ class _ProdListScreenState extends State<ProdListScreen> {
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: Stack(fit: StackFit.expand, children: [
-                          CachedNetworkImage(
-                            imageUrl: 'https://www.${MyConstant().domain}/' +
-                                '${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
-                            fit: BoxFit.cover,
+                        child: 
+Stack(fit: StackFit.expand, children: [
+  CachedNetworkImage(
+    imageUrl: 'https://www.${MyConstant().domain}/' +
+              '${MyConstant().imagepath}/$ccode/${foodModels[index].image}',
+    fit: BoxFit.cover,
+  ),
+  Align(
+    alignment: Alignment.bottomCenter,
+    child: Container(
+      color: MyStyle().coloroverlay,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Row(
+              crossAxisAlignment:
+              CrossAxisAlignment.center,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(color: MyStyle().coloroverlay),
+                    Row(
+                      children: [
+                        Container(
+                          width: screen * .95,
+                          child: SingleChildScrollView(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                MyStyle().txtTH18('${foodModels[index].name}',
+                                              Colors.white),
+                                showBalQty(foodModels[index])
+                              ],
+                            ),
                           ),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                                color: MyStyle().coloroverlay,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 5),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
-                                                  color:
-                                                      MyStyle().coloroverlay),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    width: screen * .95,
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          MyStyle().txtTH18(
-                                                              '${foodModels[index].name}',
-                                                              Colors.white),
-                                                          showBalQty(
-                                                              foodModels[index])
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                          width: 90,
-                                                          child: showPrice(
-                                                              foodModels[
-                                                                  index])),
-                                                      showRating(
-                                                          foodModels[index]),
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 0),
-                                                          child: Row(
-                                                            children: [
-                                                              MyStyle().txtstyle(
-                                                                  '-',
-                                                                  Colors.white,
-                                                                  20),
-                                                              imageSubtToCart(
-                                                                  foodModels[
-                                                                      index]),
-                                                            ],
-                                                          )),
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 3.0),
-                                                          child: imageAddToCart(
-                                                              foodModels[
-                                                                  index]))
-                                                      /*
-                                                      (foodModels[index].topbid ==
-                                                                  '' &&
-                                                              foodModels[index]
-                                                                      .topcid ==
-                                                                  '')
-                                                          ? Padding(
-                                                              padding: const EdgeInsets.only(
-                                                                  left: 40.0),
-                                                              child: imageAddToCart(
-                                                                  foodModels[
-                                                                      index]))
-                                                          : Container(
-                                                              child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets.only(
-                                                                          left:
-                                                                              10.0),
-                                                                  child: MyStyle()
-                                                                      .txtstyle(
-                                                                          'สินค้ากดรูป',
-                                                                          Colors.white,
-                                                                          10))),
-                                                      */
-                                                    ],
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                )),
-                          )
-                        ]),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 90,
+                              child: 
+                                showPrice(foodModels[index])),
+                                showRating(foodModels[index]),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 0),
+                                  child: Row(
+                                    children: [
+                                      MyStyle().txtstyle('-',Colors.white,20),
+                                      imageSubtToCart(foodModels[index]),
+                                    ],
+                                  )),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 3.0),
+                                  child: imageAddToCart(foodModels[index]))
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
+      )),
+  )
+]),
                       ),
                     ),
                   ))))
@@ -410,12 +361,11 @@ class _ProdListScreenState extends State<ProdListScreen> {
         custlat = currentLocation.latitude;
         custlng = currentLocation.longitude;
         //for test only
-        custlat = 14.1278686;
-        custlng = 100.6212333;
+        //custlat = 14.1278686;
+        //custlng = 100.6212333;
       });
     } catch (ex) {
       //
     }
   }
-
 }

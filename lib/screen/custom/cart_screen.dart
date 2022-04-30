@@ -54,8 +54,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   String strDistance;
   Location location = Location();
   final int startLogist = 30;
-  final double iwidth = 100;
-  final double iEle = 20;
+  final double iwidth = 130;
+  final double iEle = 5;
   int logistCost;
   String strKeyVal = '', nameBVal = '', nameCVal = '', straddonVal = '';
 
@@ -374,8 +374,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                               ),
                                             ),
                                             Expanded(
-                                              flex:
-                                                  7, //** ยิ่งตัวเลขมาก รูปยิ่งเล็กลง
+                                              flex:8, //** ยิ่งตัวเลขมาก รูปยิ่งเล็กลง
                                               child: Column(
                                                 children: [
                                                   //normal price
@@ -486,7 +485,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         Container(
           width: iEle,
           child: Padding(
-            padding: const EdgeInsets.only(left: 5, right: 3),
+            padding: const EdgeInsets.only(left: 0, right: 3),
             child: MyStyle().txtstyle('', Colors.black, 10),
           ),
         ),
@@ -585,10 +584,10 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           decimalPlaces: 0,
           step: 1,
           color: Colors.black12,
-          buttonSizeWidth: 40,
-          buttonSizeHeight: 40,
+          buttonSizeWidth: 38,
+          buttonSizeHeight: 38,
           textStyle: TextStyle(
-            fontSize: 14.0,
+            fontSize: 10.0,
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
@@ -644,10 +643,10 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           decimalPlaces: 0,
           step: 1,
           color: Colors.amberAccent[700],
-          buttonSizeWidth: 40,
-          buttonSizeHeight: 40,
+          buttonSizeWidth: 38,
+          buttonSizeHeight: 38,
           textStyle: TextStyle(
-              fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.bold),
+              fontSize: 10.0, color: Colors.black, fontWeight: FontWeight.bold),
         )
       ],
     );

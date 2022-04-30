@@ -97,7 +97,6 @@ class HomeState extends State<Home> {
       if (chooseCode != null && chooseCode.isNotEmpty) {
         if (chooseCode == 'U') {
           routeToService(MainUser());
-          //routeToService(ShowMenuFood()); //***** for test only
         } else if (chooseCode == 'R') {
           routeToService(MainRider());
         } else if (chooseCode == 'S') {

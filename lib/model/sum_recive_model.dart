@@ -1,21 +1,18 @@
-import 'package:yakgin/model/sumdaily_detail_model.dart';
+import 'package:yakgin/model/sum_detail_model.dart';
 
-class SumDailyModel {
+class SumReciveModel {
   String restaurantId;
-  String shopName;
-  String ccode; //ccode of Shop
+  String ccode; 
   String strorderDate;
   String sortDate;
   String ttlNetAmount;
   String ttlGrsAmount;
   String ttlitem;
   String detailList;
-  List<SumDailyDetailModel> orddtl =
-      List<SumDailyDetailModel>.empty(growable: true);
+  List<SumDetailModel> recivedtl=List<SumDetailModel>.empty(growable: true);
 
-  SumDailyModel(
+  SumReciveModel(
       {this.restaurantId,
-      this.shopName,
       this.ccode,
       this.strorderDate,
       this.sortDate,
@@ -23,11 +20,10 @@ class SumDailyModel {
       this.ttlGrsAmount,
       this.ttlitem,
       this.detailList,
-      this.orddtl});
+      this.recivedtl});
 
-  SumDailyModel.fromJson(Map<String, dynamic> json) {
+  SumReciveModel.fromJson(Map<String, dynamic> json) {
     restaurantId = json['restaurantId'];
-    shopName = json['shopName'];
     ccode = json['ccode'];
     strorderDate = json['strorderDate'];
     sortDate = json['sortDate'];
@@ -35,10 +31,10 @@ class SumDailyModel {
     ttlGrsAmount = json['ttlGrsAmount'];
     ttlitem = json['ttlitem'];
     detailList = json['detailList'];
-    if (json['orddtl'] != null) {
-      orddtl = List<SumDailyDetailModel>.empty(growable: true);
-      json['orddtl'].forEach((v) {
-        orddtl.add(SumDailyDetailModel.fromJson(v));
+    if (json['rcdtl'] != null) {
+      recivedtl = List<SumDetailModel>.empty(growable: true);
+      json['rcdtl'].forEach((v) {
+        recivedtl.add(SumDetailModel.fromJson(v));
       });
     }
   }
@@ -46,7 +42,6 @@ class SumDailyModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['restaurantId'] = this.restaurantId;
-    data['shopName'] = this.shopName;
     data['ccode'] = this.ccode;
     data['strorderDate'] = this.strorderDate;
     data['sortDate'] = this.sortDate;
@@ -54,7 +49,7 @@ class SumDailyModel {
     data['ttlGrsAmount'] = this.ttlGrsAmount;
     data['ttlitem'] = this.ttlitem;
     data['detailList'] = this.detailList;
-    data['orddtl'] = this.orddtl.map((e) => e.toJson()).toList();
+    data['rcdtl'] = this.recivedtl.map((e) => e.toJson()).toList();
     return data;
   }
 }

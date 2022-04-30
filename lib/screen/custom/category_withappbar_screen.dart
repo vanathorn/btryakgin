@@ -122,6 +122,32 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
                   }
                 },
                 child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: Stack(children: [
+                    Container(
+                      child: CachedNetworkImage(
+                        imageUrl:
+                          'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/foodtype/${categoryModels[index].image}',
+                        fit: BoxFit.cover,
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                          height: 45,
+                          color: MyStyle().coloroverlay,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                MyStyle().txtstyle('${categoryModels[index].name}',
+                              Colors.white, 16.0)
+                              ])),
+                    )])
+                )
+                /*
+                *** overlay ทั้งภาพ
+                child: Card(
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: Stack(fit: StackFit.expand, children: [
@@ -138,7 +164,7 @@ class _CategoryWithAppbarScreenState extends State<CategoryWithAppbarScreen> {
                               '${categoryModels[index].name}',
                               Colors.white,
                               16.0))
-                    ])),
+                    ]))*/
               )),
         ))
       ],

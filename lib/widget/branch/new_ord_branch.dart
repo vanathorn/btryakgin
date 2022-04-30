@@ -468,7 +468,7 @@ class _GetNewOrderBranchState extends State<GetNewOrderBranch> {
     String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
         'branch/setOrderStatus.aspx?ccode=${listord.ccode}' +
         '&mbid=$mbid&olid=${listord.olid}';
-      
+
     try {
       Response response = await Dio().get(url);
       if (response.toString() == 'Success') {

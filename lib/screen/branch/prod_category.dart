@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yakgin/model/account_model.dart';
 import 'package:yakgin/model/category_model.dart';
 import 'package:yakgin/model/shoprest_model.dart';
-import 'package:yakgin/screen/branch/prod_list.dart';
+import 'package:yakgin/screen/branch/prod_list_screen.dart';
 import 'package:yakgin/state/accbk_detail_state.dart';
 import 'package:yakgin/state/accbk_list_state.dart';
 import 'package:yakgin/state/category_state.dart';
@@ -29,9 +29,9 @@ class ProdCategoryScreen extends StatefulWidget {
 class _ProdCategoryScreenState extends State<ProdCategoryScreen> {
   final MainStateController mainStateController = Get.find();
   ShopRestModel restModel;
-  String ccode;
+  String ccode, brcode, strDistance;
   double screen;
-  String strDistance;
+
   Location location = Location();
   final viewModel = CategoryViewImp();
   List<CategoryModel> categoriesList = List<CategoryModel>.empty(growable: true);
@@ -53,6 +53,7 @@ class _ProdCategoryScreenState extends State<ProdCategoryScreen> {
     SharedPreferences prefer = await SharedPreferences.getInstance();
     setState(() {
       ccode = prefer.getString('pccode');
+      brcode = prefer.getString('pbrcode');
       getResturant();
       getCategory();
     });
@@ -156,7 +157,9 @@ class _ProdCategoryScreenState extends State<ProdCategoryScreen> {
                     MaterialPageRoute route = MaterialPageRoute(
                         builder: (context) => ProdListScreen(
                             restModel: restModel,
-                            categoryModel: categoriesList[index]));
+                            categoryModel: categoriesList[index],
+                            brloc: brcode
+                        ));
                     Navigator.push(context, route);
                   } else {
                     Toast.show(

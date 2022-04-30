@@ -216,7 +216,8 @@ class _OrderSummaryState extends State<OrderSummary> {
                               children: [
                                 MyStyle().txtstyle(
                                   listOrders[index].strorderDate,
-                                  Colors.redAccent[700], 11.0,
+                                  Colors.redAccent[700],
+                                  11.0,
                                 ),
                               ],
                             ),

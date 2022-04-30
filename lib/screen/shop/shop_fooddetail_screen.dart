@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:yakgin/model/category_model.dart';
 import 'package:yakgin/model/mess_model.dart';
 import 'package:yakgin/model/phyimg_model.dart';
@@ -302,9 +303,30 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
             var pickedFile = await imgPicker.getImage(
                 source: ImageSource.gallery, maxWidth: 200, maxHeight: 200);
             if (pickedFile != null) {
+              imgFile = io.File(pickedFile.path);
+
+              var resultCrop = await ImageCropper().cropImage(
+              sourcePath: imgFile.path,
+              aspectRatioPresets: [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio16x9
+              ],
+              androidUiSettings: const AndroidUiSettings(
+                  toolbarTitle: 'Cropper',
+                  toolbarColor: Colors.deepOrange,
+                  toolbarWidgetColor: Colors.white,
+                  initAspectRatio: CropAspectRatioPreset.original,
+                  lockAspectRatio: false),
+              iosUiSettings: const IOSUiSettings(
+                minimumAspectRatio: 1.0,
+              ));
+            
               setState(() {
                 _imageFile = pickedFile;
-                imgFile = io.File(pickedFile.path);
+                imgFile = io.File(resultCrop.path);
               });
             }
           },
@@ -599,7 +621,7 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
             margin: const EdgeInsets.all(5),
-            width: screen * 0.9,
+            width: screen * 0.5,
             height: 50,
             child: ElevatedButton.icon(
               onPressed: () async {
@@ -740,19 +762,40 @@ class _ShopFoodDetailScreenState extends State<ShopFoodDetailScreen> {
   Future<Null> takePhoto(
       ImageSource source, double maxWidth, double maxHeight) async {
     try {
-      final pickedFile = await imgPicker.getImage(
+      var pickedFile = await imgPicker.getImage(
         source: source,
         maxWidth: maxWidth,
         maxHeight: maxHeight,
         imageQuality: 100,
       );
       if (pickedFile != null) {
+        imgFile = io.File(pickedFile.path);
+        //*** _image = io.File(_imageFile.path);
+        //* context.read(imgstate.imageProvider).state = pickedFile.path;
+        //* context.read(uploadState).state = STATE.PICKED;
+
+        var resultCrop = await ImageCropper().cropImage(
+            sourcePath: imgFile.path,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ],
+            androidUiSettings: const AndroidUiSettings(
+                toolbarTitle: 'Cropper',
+                toolbarColor: Colors.deepOrange,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.original,
+                lockAspectRatio: false),
+            iosUiSettings: const IOSUiSettings(
+              minimumAspectRatio: 1.0,
+            ));
+
         setState(() {
           _imageFile = pickedFile;
-          imgFile = io.File(pickedFile.path);
-          //*** _image = io.File(_imageFile.path);
-          //* context.read(imgstate.imageProvider).state = pickedFile.path;
-          //* context.read(uploadState).state = STATE.PICKED;
+          imgFile = io.File(resultCrop.path);
         });
       }
     } catch (e) {

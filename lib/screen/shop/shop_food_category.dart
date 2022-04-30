@@ -18,8 +18,6 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopFoodCategoryScreen extends StatefulWidget {
-  //final ShopRestModel restModel;
-  //FoodCategoryScreen({Key key, this.restModel}) : super(key: key);
   @override
   _ShopFoodCategoryScreenState createState() => _ShopFoodCategoryScreenState();
 }
@@ -31,14 +29,12 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
   bool loadding = true;
   bool havemenu = true;
 
-  //??? final viewModel = CategoryViewImp(); // CategoryViewImp();
   List<CategoryModel> categoryModels =
       List<CategoryModel>.empty(growable: true);
   CategoryStateContoller categoryStateContoller;
 
   ShopRestModel restModel;
   List<ShopRestModel> restModels = List<ShopRestModel>.empty(growable: true);
-  //final viewModels = FoodViewImp();
   final resturantStateController = Get.put(ResturantStateController());
 
   @override
@@ -139,6 +135,31 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
                   //: invalid range is emptu:0 - categoryModels.length,
                 },
                 child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: Stack(children: [
+                    Container(
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            'https://www.${MyConstant().domain}/${MyConstant().imagepath}/$ccode/foodtype/${categoryModels[index].image}',
+                        fit: BoxFit.cover,
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                          height: 45,
+                          color: MyStyle().coloroverlay,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                MyStyle().txtTH18Light('${categoryModels[index].name}')
+                              ])),
+                    )])
+              )
+              /*
+                *** Overlay ทั้งภาพ
+                child: Card(
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: Stack(fit: StackFit.expand, children: [
@@ -155,8 +176,8 @@ class _ShopFoodCategoryScreenState extends State<ShopFoodCategoryScreen> {
                               '${categoryModels[index].name}',
                               Colors.white,
                               16.0)),
-                    ])),
-              )),
+                    ]))*/
+          )),
         ))
       ],
     );

@@ -1,23 +1,18 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:flutter_elegant_number_button/flutter_elegant_number_button.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:toast/toast.dart';
 import 'package:yakgin/model/login_model.dart';
-import 'package:yakgin/model/send_model.dart';
 import 'package:yakgin/model/shoprest_model.dart';
 import 'package:yakgin/model/sum_value.dart';
-import 'package:yakgin/screen/custom/send_order.dart';
+import 'package:yakgin/model/user_model.dart';
+import 'package:yakgin/screen/branch/branch_order.dart';
 import 'package:yakgin/screen/custom/user_select_shoptype.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:location/location.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:yakgin/model/cart_model.dart';
-import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/screen/menu/main_shop_branch.dart';
 import 'package:yakgin/state/cart_state.dart';
 import 'package:yakgin/state/main_state.dart';
 import 'package:yakgin/utility/my_calculate.dart';
@@ -27,6 +22,7 @@ import 'package:yakgin/utility/myutil.dart';
 import 'package:yakgin/view/cart_vm/cart_view_model_imp.dart';
 import 'package:yakgin/widget/cart/cart_image_widget.dart';
 import 'package:yakgin/widget/cart/pay_cart_total_widget.dart';
+import 'package:yakgin/widget/mysnackbar.dart';
 
 class PayCartDetailScreen extends StatefulWidget {
   @override
@@ -39,21 +35,16 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
   final CartViewModelImp cartViewModel = new CartViewModelImp();
   final MainStateController mainStateController = Get.find();
 
-  String loginName = '', loginMobile = '';
+  String txtName = '', txtMobile = '';
   double screen, screenH;
   String strPrice;
 
-  String restLat, restLng;
-  double lat1, lng1, latShop, lngShop, distance;
-  String strDistance;
-  Location location = Location();
-  final int startLogist = 30;
-  final double iwidth = 100;
   final double iEle = 20;
-  int logistCost;
+  final double hi = 10;
+  final int maxnum = 10;
   String strKeyVal = '', nameBVal = '', nameCVal = '', straddonVal = '';
   SumValue sumValue = new SumValue();
-  LoginModel loginModel = new LoginModel();  
+  LoginModel loginModel = new LoginModel();
   ShopRestModel shopModel = new ShopRestModel();
   Widget currentWidget = UserSelectShoptype();
   String mbimage = 'userlogo.png';
@@ -61,131 +52,67 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
   @override
   void initState() {
     super.initState();
-    findUser();
-  }
-
-  Future<Null> findUser() async {
-    SharedPreferences prefer = await SharedPreferences.getInstance();
-    setState(() {
-      loginName = prefer.getString('pname');
-      loginMobile = prefer.getString('pmobile');
-      findLatLngofShop();
-      getExistSend();
-    });
-  }
-
-  Future<Null> getExistSend() async {
-    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'getSendLocation.aspx?mobile=$loginMobile';
-
-    await Dio().get(url).then((value) {
-      if (value != null && value.toString() != '') {
-        var result = json.decode(value.data);
-        for (var map in result) {
-          setState(() {
-            SendModel sModel = SendModel.fromJson(map);
-            loginModel.mbname = sModel.name;
-            loginModel.mobile = sModel.mobile;
-            loginModel.sendaddr = sModel.address;
-          });
-        }
-      } else {
-        setState(() {
-          loginModel.mbname = loginName;
-          loginModel.sendaddr = '';
-          loginModel.mobile = loginMobile;
-        });
-      }
-    });
-  }
-
-  Future<Null> findLatLngofShop() async {
-    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
-        'getShopByType.aspx?ccode=${mainStateController.selectedRestaurant.value.ccode}';
-
-    await Dio().get(url).then((value) {
-      if (value.toString() != 'null') {
-        var result = json.decode(value.data);
-        for (var map in result) {
-          ShopModel fModels = ShopModel.fromJson(map);
-          restLat = fModels.lat;
-          restLng = fModels.lng;
-        }
-        findLogistCost(restLat, restLng);
-      }
-    });
-  }
-
-  Future<Null> findLogistCost(String restLat, String restLng) async {
-    LocationData locationData = await MyCalculate().findLocationData();
-    lat1 = locationData.latitude;
-    lng1 = locationData.longitude;
-    latShop = double.parse(restLat);
-    lngShop = double.parse(restLng);
-    distance = MyCalculate().calculateDistance(lat1, lng1, latShop, lngShop);
-    var myFmt = NumberFormat('##0.0#', 'en_US');
-    strDistance = myFmt.format(distance) + ' กม.';
-    setState(() {
-      logistCost = MyCalculate().calculateLogistic(distance, startLogist);
-      sumValue.distiance = distance;
-      sumValue.ttlLogist = double.parse(logistCost.toString());
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    findLatLngofShop();
     screen = MediaQuery.of(context).size.width;
     screenH = 42;
-    //listStateController = Get.find();
-    //listStateController.selectedAccount.value = shopModel;
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.white60,  //.headcolor,
+          backgroundColor: Colors.white60, //.headcolor,
           title: Row(
-            children: [              
+            children: [
+              Container(
+                height: 38.0,
+                width: 38,
+                child: FloatingActionButton(
+                  backgroundColor: MyStyle().primarycolor,
+                  onPressed: () {
+                    MaterialPageRoute route = MaterialPageRoute(
+                        builder: (context) =>
+                            MainShopBranch() //ProdCategoryScreen(),
+                        );
+                    Navigator.pushAndRemoveUntil(
+                        context, route, (route) => false);
+                  },
+                  child: Icon(
+                    Icons.home, //shopping_basket,
+                    color: Colors.white,
+                    size: 32.0,
+                  ),
+                ),
+              ),
               controller.getQuantity(mainStateController
-                          .selectedRestaurant.value.restaurantId)>0
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          width: screen * 0.8,
-                          child: MyStyle().txtstyle('เลื่อนขวาไปซ้ายเพื่อลบรายการ',
-                                      Colors.black,10.0),
-                        ),
-                        Container(
-                          height: 38.0,
-                          width: 38,
-                          child: FloatingActionButton(
-                            backgroundColor: Colors.deepOrangeAccent[400],
-                            onPressed: () {
-                              confirmDelete(controller);
-                            },
-                            child: Icon(
-                              Icons.clear,
-                              color: Colors.white,
-                              size: 32.0,
-                            ),
+                          .selectedRestaurant.value.restaurantId) >
+                      0
+                  ? Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Container(
+                        width: screen * 0.66,
+                        margin: const EdgeInsets.only(left: 5.0),
+                        child: MyStyle().txtstyle(
+                            'เลื่อนขวาไปซ้ายเพื่อลบรายการ', Colors.black, 10.0),
+                      ),
+                      Container(
+                        height: 38.0,
+                        width: 38,
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.deepOrangeAccent[400],
+                          onPressed: () {
+                            confirmDelete(controller);
+                          },
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                            size: 32.0,
                           ),
                         ),
-                      ],
-                    )
+                      ),
+                    ])
                   : Container()
             ],
-          )
-          /*
-        actions: [
-         controller.getQuantity(mainStateController.selectedRestaurant.value.restaurantId) > 0 
-          IconButton(onPressed: () {
-            confirmDelete(controller);
-          }, icon: Icon(Icons.clear),) 
-         : Container()         
-        ],
-        iconTheme: IconThemeData(color: Colors.black)
-        */
-          ),
+          )),
       body: controller
                   .getCart(
                       mainStateController.selectedRestaurant.value.restaurantId)
@@ -194,11 +121,6 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
               0
           ? Obx(() => Column(
                 children: [
-                  // (controller.getQuantity(mainStateController
-                  //            .selectedRestaurant.value.restaurantId) > 0 &&
-                  //         listAccbks.length > 0)
-                  //     ? buildAccBank()
-                  //     : Container(),
                   Expanded(
                       child: ListView.builder(
                           itemCount: controller
@@ -331,7 +253,6 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
                                   ),
                                 ),
                                 actionPane: SlidableDrawerActionPane(),
-                                
                                 actionExtentRatio: 0.2,
                                 secondaryActions: [
                                   IconSlideAction(
@@ -349,40 +270,33 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
 
                                         cartViewModel.deleteCart(
                                             controller,
-
                                             mainStateController
                                                 .selectedRestaurant
                                                 .value
                                                 .restaurantId,
-
                                             controller
                                                 .getCart(mainStateController
                                                     .selectedRestaurant
                                                     .value
                                                     .restaurantId)
                                                 .toList()[index],
-
-                                            strKeyVal
-                                        );
+                                            strKeyVal);
                                         setState(() {});
                                       })
                                 ],
-                                
                               ))),
                   PayCartTotalWidget(
-                      controller: controller,
-                      distance: (strDistance != null ? strDistance : ''),
-                      logistCost: '$logistCost'),
-
+                      controller: controller, distance: ('0'), logistCost: '0'),
                   (controller.getQuantity(mainStateController
-                          .selectedRestaurant.value.restaurantId)>0) 
-                  ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      generalButton(),
-                      memberButton(),
-                    ])
-                  :Container()
+                              .selectedRestaurant.value.restaurantId) >
+                          0)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                              generalButton(),
+                              memberButton(),
+                            ])
+                      : Container()
                 ],
               ))
           : Center(
@@ -407,7 +321,7 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
           ),
         ),
         Container(
-          width: iwidth,
+          width: 100,
           child: controller
                       .getCart(mainStateController
                           .selectedRestaurant.value.restaurantId)
@@ -444,7 +358,7 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
               )),
         ),
         Container(
-          width: iwidth,
+          width: 100,
           child: specialAmount(controller
               .getCart(
                   mainStateController.selectedRestaurant.value.restaurantId)
@@ -489,7 +403,7 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
         ElegantNumberButton(
           initialValue: cartModelCtl.quantity,
           minValue: 0,
-          maxValue: cartModelCtl.balqty,
+          maxValue: (cartModelCtl.balqty > 0) ? cartModelCtl.balqty : 0,
           onChanged: (value) {
             cartViewModel.updateQuantity(
                 controller,
@@ -548,7 +462,7 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
         ElegantNumberButton(
           initialValue: cartModelCtl.quantitySp,
           minValue: 0,
-          maxValue: cartModelCtl.balqty,
+          maxValue: (cartModelCtl.balqty > 0) ? cartModelCtl.balqty : 0,
           onChanged: (value) {
             cartViewModel.updateQuantitySp(
                 controller,
@@ -741,9 +655,11 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
       height: 50,
       child: ElevatedButton.icon(
         onPressed: () {
+          txtName = MyConstant().genMember;
+          txtMobile = MyConstant().genMobile;
           MaterialPageRoute route = MaterialPageRoute(
-              builder: (context) => SendOrder(mainStateController, controller,
-                  cartViewModel, sumValue, loginModel));
+              builder: (context) => BranchOrder(mainStateController, controller,
+                  cartViewModel, sumValue, loginModel, txtName, txtMobile));
           Navigator.push(context, route);
         },
         icon: Icon(
@@ -751,13 +667,12 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
           color: Colors.white,
           size: 32.0,
         ),
-        label: MyStyle().txtstyle('บุคคลทั่วไป', Colors.white, 14.0),
+        label: MyStyle().txtstyle(MyConstant().genMember, Colors.white, 14.0),
         style: ButtonStyle(
           padding: MaterialStateProperty.all(EdgeInsets.all(2)),
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
             (Set<MaterialState> states) {
-              if (states.contains(MaterialState.pressed))
-                return Colors.blue;
+              if (states.contains(MaterialState.pressed)) return Colors.blue;
               return Colors.black; // Use the component's default.
             },
           ),
@@ -770,10 +685,7 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
       height: 50,
       child: ElevatedButton.icon(
         onPressed: () {
-          MaterialPageRoute route = MaterialPageRoute(
-              builder: (context) => SendOrder(mainStateController, controller,
-                  cartViewModel, sumValue, loginModel));
-          Navigator.push(context, route);
+          dialogGetMember();
         },
         icon: Icon(
           Icons.face_retouching_natural,
@@ -805,4 +717,297 @@ class _PayCartDetailScreenState extends State<PayCartDetailScreen> {
         },
       );
 
+  Future<Null> dialogGetMember() async {
+    txtMobile = '';
+    showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, setState) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('เบอร์มือถือสมาชิก', style: MyStyle().myLabelStyle())
+                    ]),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(txtMobile,
+                            style: TextStyle(
+                              fontSize: 32.0,
+                              color: Colors.red,
+                              fontWeight: FontWeight.normal,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.black,
+                              decorationStyle: TextDecorationStyle.solid,
+                              letterSpacing: -1.0,
+                              wordSpacing: 5.0,
+                              fontFamily: 'Arial',
+                            )),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    keyPad(setState),
+                    Divider(thickness: 1),
+                    cancelButton(context, setState),
+                  ],
+                ),
+              ),
+            ));
+  }
+
+  Row keyPad(StateSetter setState) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: screen * 0.63,
+          margin: const EdgeInsets.only(bottom: 3),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  buildButton(setState, '1'),
+                  buildButton(setState, '2'),
+                  buildButton(setState, '3'),
+                ],
+              ),
+              SizedBox(height: hi),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  buildButton(setState, '4'),
+                  buildButton(setState, '5'),
+                  buildButton(setState, '6'),
+                ],
+              ),
+              SizedBox(height: hi),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  buildButton(setState, '7'),
+                  buildButton(setState, '8'),
+                  buildButton(setState, '9'),
+                ],
+              ),
+              SizedBox(height: hi),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  clearButton(setState),
+                  buildButton(setState, '0'),
+                  delButton(setState),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  GestureDetector buildButton(StateSetter setState, String txtValue) {
+    return GestureDetector(
+      child: InkWell(
+        onTap: () {
+          String tmp = txtMobile;
+          if (tmp.length < maxnum) {
+            setState(() {
+              txtMobile += txtValue;
+              if (txtMobile.length == maxnum) {
+                _checkMember();
+              }
+            });
+          }
+        },
+        highlightColor: Colors.transparent,
+        splashColor: Colors.black,
+        child: Container(
+          width: 54,
+          height: 54,
+          decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey[350],
+                width: 1,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(70))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(txtValue,
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.redAccent[700])),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container delButton(StateSetter setState) {
+    return Container(
+      margin: const EdgeInsets.only(right: 5),
+      width: 54,
+      height: 54,
+      child: FloatingActionButton.extended(
+        backgroundColor: Colors.black,
+        onPressed: () {
+          String tmp = txtMobile.toString();
+          if (tmp.length > 0) {
+            setState(() {
+              txtMobile = tmp.substring(0, tmp.length - 1);
+              //if (txtMobile == '') txtMobile = '';
+            });
+          }
+        },
+        label: Text('',
+            style: TextStyle(
+              fontFamily: 'thaisanslite',
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            )),
+        icon: Icon(
+          Icons.backspace,
+          color: Colors.white,
+          size: 32,
+        ),
+        splashColor: Colors.blue,
+      ),
+    );
+  }
+
+  Container clearButton(StateSetter setState) {
+    return Container(
+      margin: const EdgeInsets.only(left: 5, right: 5),
+      width: 54,
+      height: 54,
+      child: FloatingActionButton.extended(
+        backgroundColor: Colors.black54,
+        onPressed: () {
+          setState(() {
+            txtMobile = '';
+          });
+        },
+        label: Text('',
+            style: TextStyle(
+              fontFamily: 'thaisanslite',
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            )),
+        icon: Icon(
+          Icons.clear_all,
+          color: Colors.white,
+          size: 38,
+        ),
+        splashColor: Colors.redAccent[400],
+      ),
+    );
+  }
+
+  void _checkMember() {
+    if ((txtMobile?.isEmpty ?? true) || (txtMobile.length != maxnum)) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          MySnackBar.showSnackBar(
+              "!เบอร์ไม่ครบ $maxnum หลัก", Icons.app_blocking_outlined,
+              strDimiss: 'ลองใหม่'),
+        );
+      setState(() {
+        //
+      });
+    } else {
+      checkAuthen();
+    }
+  }
+
+  Future<Null> checkAuthen() async {
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
+        'checkMobile.aspx?Mobile=$txtMobile';
+
+    try {
+      dio.Response response = await dio.Dio().get(url);
+      if (response.toString().trim() == '') {
+        Toast.show(
+          '!ไม่พบเบอร์มือถือ $txtMobile',
+          context,
+          gravity: Toast.CENTER,
+          backgroundColor: Colors.black,
+          textColor: Colors.yellow,
+        );
+        /* ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            MySnackBar.showSnackBar(
+                "!ไม่พบเบอร์มือถือ $txtMobile ในระบบ", Icons.mobile_off,
+                strDimiss: 'ลองใหม่'),
+          );*/
+      } else if (response != null) {
+        Navigator.pop(context);
+        var result = json.decode(response.data);
+        for (var map in result) {
+          UserModel usermodel = UserModel.fromJson(map);
+          if (txtMobile == usermodel.mobile) {
+            txtName = usermodel.mbname;
+            MaterialPageRoute route = MaterialPageRoute(
+                builder: (context) => BranchOrder(
+                    mainStateController,
+                    controller,
+                    cartViewModel,
+                    sumValue,
+                    loginModel,
+                    txtName,
+                    txtMobile));
+            //Navigator.push(context, route);
+            Navigator.pushAndRemoveUntil(context, route, (route) => true);
+            //false หน้าต่อไปจะไม่มี <-
+          } else {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                MySnackBar.showSnackBar(
+                    "!เบอร์มือถือไม่ถูกต้อง", Icons.cloud_off),
+              );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('*** ${e.toString()}');
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          MySnackBar.showSnackBar("!ติดต่อ Server ไม่ได้", Icons.cloud_off),
+        );
+    }
+  }
+
+  Row cancelButton(BuildContext context, StateSetter setState) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Container(
+                width: screen * 0.25,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                ),
+                child: MyStyle()
+                    .titleCenter(context, 'ยกเลิก', 14.0, Colors.black))),
+      ],
+    );
+  }
 }

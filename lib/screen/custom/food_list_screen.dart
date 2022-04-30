@@ -69,7 +69,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
     await Dio().get(url).then((value) {
       if (value.toString() != 'null') {
         var result = json.decode(value.data);
-        print('************ $result');
         for (var map in result) {
           FoodModel fModels = FoodModel.fromJson(map);
           fModels.ccode = ccode; //for check what shop
@@ -410,6 +409,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
       setState(() {
         custlat = currentLocation.latitude;
         custlng = currentLocation.longitude;
+        //for test
+        //custlat = 14.1458567;
+        //custlng = 100.6179807;
       });
     } catch (ex) {
       //

@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:yakgin/map_sample.dart';
 import 'package:yakgin/model/mess_model.dart';
 import 'package:yakgin/model/ord_model.dart';
 import 'package:yakgin/model/shop_model.dart';
+import 'package:yakgin/screen/shop/head_report_screen.dart';
 import 'package:yakgin/screen/shop/shop_food_category.dart';
 import 'package:yakgin/screen/shop/shop_recive_item.dart';
 import 'package:yakgin/screen/shop/shop_select_branch.dart';
@@ -17,13 +17,8 @@ import 'package:yakgin/utility/my_constant.dart';
 import 'package:yakgin/utility/mystyle.dart';
 import 'package:yakgin/utility/signOut.dart';
 import 'package:yakgin/widget/appbar_withorder.dart';
-import 'package:yakgin/widget/branch/branch_order_list.dart';
-import 'package:yakgin/widget/branch/branch_order_ship.dart';
-import 'package:yakgin/widget/branch/new_ord_branch.dart';
 import 'package:yakgin/widget/shop/get_neworder.dart';
-import 'package:yakgin/widget/shop/order_summary.dart';
 import 'package:yakgin/widget/shop/shop_info.dart';
-import 'package:yakgin/widget/shop/shop_order_list.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //*** https://mui.com/components/material-icons/
@@ -37,10 +32,13 @@ class _MainShopHeadState extends State<MainShopHead> {
   bool loading = true;
   String _shopName, brcode, brname;
   String mbid, loginName, loginMobile, ccode, mbimage = 'userlogo.png';
-  Widget currentWidget = GetNewOrder();
+  Widget currentWidget = HeadReportScreen();
+
+  List<Widget> listWidgets;
 
   final MainStateController mainStateController = Get.find();
-  double hi = 45;
+  double hi = 55;
+  int indexNav = 3;
   //final orderStateController = Get.put(OrderStateController());  //count-order
   //OrderStateController ordController = new OrderStateController(); //count-order
 
@@ -49,6 +47,12 @@ class _MainShopHeadState extends State<MainShopHead> {
     super.initState();
     notification();
     findUser();
+    listWidgets = [
+      ShopFoodCategoryScreen(),
+      ShopReciveItem(),
+      ShopSelectBranch(),
+      HeadReportScreen()
+    ];
   }
 
   Future<Null> findUser() async {
@@ -238,6 +242,7 @@ class _MainShopHeadState extends State<MainShopHead> {
           : (_shopName == null)
               ? dispApprove()
               : currentWidget,
+      bottomNavigationBar: showBottonNavBar(),
     );
   }
 
@@ -264,24 +269,12 @@ class _MainShopHeadState extends State<MainShopHead> {
           Column(
             children: [
               Container(
-                height: 175,
+                height: 177,
                 margin: EdgeInsets.all(0.0),
                 padding: EdgeInsets.all(0.0),
                 child: shopDrawerHeader(name, email, imgwall, mbimage),
-                //MyStyle().builderUserAccountsDrawerHeader(name,email,imgwall,mbimage),
               ),
-              //Container(height: hi, child: newOrderMenu()),
-              // Container(height: hi, child: orderListMenu()),
-              Container(height: hi, child: newOrderBranchMenu()),
-              Container(height: hi, child: orderBranchListMenu()),
-              //Container(height: hi, child: shipOrdBrListMenu()),
-              Container(height: hi, child: orderSumMenu()),
-              Container(height: hi, child: foodCatMenu()),
               Container(height: hi, child: shopInfoMenu()),
-              Container(height: hi, child: reciveItemMenu()),
-              (brcode == MyConstant().headBranch)
-                  ? Container(height: hi, child: balItemMenu())
-                  : Container(),
             ],
           ),
           Column(
@@ -351,84 +344,6 @@ class _MainShopHeadState extends State<MainShopHead> {
         },
       );
 
-  ListTile orderListMenu() => ListTile(
-        leading: Icon(Icons.shopping_basket),
-        title: MyStyle().titleDark('รายการที่ลูกค้าสั่ง'),
-        subtitle: MyStyle().subtitleDark('คำสั่งซื้อทั้งหมด'),
-        onTap: () {
-          setState(() {
-            currentWidget = ShopOrderList();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile newOrderBranchMenu() => ListTile(
-        leading: Icon(Icons.fastfood),
-        title: MyStyle().titleDark('คำสั่งซื้อใหม่'),
-        subtitle: MyStyle().subtitleDark('ลูกค้าสั่งซื้อเข้ามาใหม่' +
-            (brname != null ? ' (' + brname + ')' : '')),
-        onTap: () {
-          setState(() {
-            currentWidget = GetNewOrderBranch();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile orderBranchListMenu() => ListTile(
-        leading: Icon(Icons.shopping_basket),
-        title: MyStyle().titleDark('รายการที่ลูกค้าสั่ง'),
-        subtitle: MyStyle().subtitleDark(
-            'คำสั่งซื้อทั้งหมด' + (brname != null ? ' (' + brname + ')' : '')),
-        onTap: () {
-          setState(() {
-            currentWidget = BranchOrderList();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile shipOrdBrListMenu() => ListTile(
-        leading: Icon(Icons.shopping_basket),
-        title: MyStyle().titleDark('ส่งสินค้าให้ลูกค้า'),
-        subtitle: MyStyle().subtitleDark(
-            'สินค้าที่แพคแล้ว' + (brname != null ? ' (' + brname + ')' : '')),
-        onTap: () {
-          setState(() {
-            currentWidget = BranchOrderShip();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile orderSumMenu() => ListTile(
-        leading: Icon(Icons.photo_filter_outlined), //developer_board
-        title: MyStyle().titleDark('สรุปการซื้อรายวัน'),
-        subtitle: MyStyle().subtitleDark('ที่ทำรายการจบแล้ว'),
-        onTap: () {
-          setState(() {
-            currentWidget = OrderSummary();
-          });
-          Navigator.pop(context);
-        },
-      );
-  //SwitchAccessShortcut RamenDining deck
-
-  ListTile foodCatMenu() => ListTile(
-        leading: Icon(
-            Icons.auto_stories), //menu CircleNotifications FormatIndentIncrease
-        title: MyStyle().titleDark('รายการสินค้า'),
-        subtitle: MyStyle().subtitleDark('แสดงรายการสินค้า'),
-        onTap: () {
-          setState(() {
-            currentWidget = ShopFoodCategoryScreen();
-            //เปลี่ยนจาก ShopFoodMenu() เป็น FoodCategoryScreen();
-          });
-          Navigator.pop(context);
-        },
-      );
-
   ListTile shopInfoMenu() => ListTile(
         leading: Icon(Icons.info),
         title: MyStyle().titleDark('รายละเอียดของร้าน'),
@@ -440,47 +355,6 @@ class _MainShopHeadState extends State<MainShopHead> {
           Navigator.pop(context);
         },
       );
-
-  ListTile reciveItemMenu() => ListTile(
-        leading: Icon(Icons.auto_stories),
-        title: MyStyle().titleDark('รับสินค้า'),
-        subtitle: MyStyle().subtitleDark('รับสินค้าเข้าร้านสาขา'),
-        onTap: () {
-          setState(() {
-            currentWidget = ShopReciveItem();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile balItemMenu() => ListTile(
-        leading: Icon(Icons.auto_stories),
-        title: MyStyle().titleDark('ปรับยอดสินค้า'),
-        subtitle: MyStyle().subtitleDark('ปรับยอดสินค้าคงเหลือ'),
-        onTap: () {
-          setState(() {
-            currentWidget = ShopSelectBranch();
-          });
-          Navigator.pop(context);
-        },
-      );
-
-  ListTile testMap() {
-    return ListTile(
-      leading: Icon(
-        Icons.login,
-        size: 36,
-      ),
-      title: MyStyle().titleDark('ทดสอบแผนที่'),
-      subtitle: MyStyle().subtitleDark('test google map.'),
-      onTap: () {
-        Navigator.pop(context);
-        MaterialPageRoute route =
-            MaterialPageRoute(builder: (value) => MapSample());
-        Navigator.push(context, route);
-      },
-    );
-  }
 
   Widget signOutMenu() {
     return Container(
@@ -497,10 +371,51 @@ class _MainShopHeadState extends State<MainShopHead> {
     );
   }
 
-  // ListTile signOutMenu() => ListTile(
-  //       leading: Icon(Icons.exit_to_app),
-  //       title: MyStyle().titleDark('ออกจากระบบ'),
-  //       subtitle: MyStyle().subtitleDark('Back to home page.'),
-  //       onTap: () => signOut(context),
-  //     );
+  BottomNavigationBar showBottonNavBar() => BottomNavigationBar(
+          backgroundColor: MyStyle().primarycolor,
+          selectedItemColor: Theme.of(context).primaryColorDark, //Colors.white,
+          unselectedItemColor: Colors.grey, //Colors.white.withOpacity(.60),
+          selectedFontSize: 16,
+          unselectedFontSize: 13,
+          currentIndex: indexNav,
+          onTap: (value) {
+            setState(() {
+              indexNav = value;
+              currentWidget = listWidgets[value];
+            });
+          },
+          items: <BottomNavigationBarItem>[
+            categoryItemNav(),
+            reciveItemNav(),
+            selectBranchNav(),
+            menuReportNav()
+          ]);
+
+  BottomNavigationBarItem categoryItemNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.auto_stories),
+      label: ('สินค้า'),
+    );
+  }
+
+  BottomNavigationBarItem reciveItemNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.add_shopping_cart),
+      label: ('รับสินค้า'),
+    );
+  }
+
+  BottomNavigationBarItem selectBranchNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.auto_graph),
+      label: ('ปรับยอด'),
+    );
+  }
+
+  BottomNavigationBarItem menuReportNav() {
+    return BottomNavigationBarItem(
+      icon: Icon(Icons.auto_fix_high),
+      label: ('รายงาน'),
+    );
+  }
 }

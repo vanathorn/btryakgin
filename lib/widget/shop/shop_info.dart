@@ -379,7 +379,7 @@ class _ShopInfoState extends State<ShopInfo> {
     CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 15.0);
     return Container(
       margin: EdgeInsets.only(top: 2, left: 2, right: 2, bottom: 2),
-      height: 350,
+      height: 300,
       width: screen * 0.98,
       child: GoogleMap(
         myLocationEnabled: false,

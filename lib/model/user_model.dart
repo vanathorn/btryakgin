@@ -10,6 +10,7 @@ class UserModel {
   String ccode;
   String strconn;
   String webpath;
+  String cid;
   String brcode;
   String brname;
 
@@ -25,6 +26,7 @@ class UserModel {
       this.ccode,
       this.strconn,
       this.webpath,
+      this.cid,
       this.brcode,
       this.brname});
 
@@ -40,8 +42,18 @@ class UserModel {
     ccode = json['ccode'];
     strconn = json['strconn'];
     webpath = json['webpath'];
-    brcode = json['brcode'];
-    brname = json['brname'];
+    cid = '0';
+    if (json['cid'] != null) {
+      brcode = json['cid'];
+    }
+    brcode = '';
+    if (json['brcode'] != null) {
+      brcode = json['brcode'];
+    }
+    brname = '';
+    if (json['brname'] != null) {
+      brname = json['brname'];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -57,7 +69,9 @@ class UserModel {
     data['ccode'] = this.ccode;
     data['strconn'] = this.strconn;
     data['webpath'] = this.webpath;
+    data['cid'] = this.cid;
     data['brcode'] = this.brcode;
+    data['brname'] = this.brname;
     return data;
   }
 }
