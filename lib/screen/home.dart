@@ -69,7 +69,7 @@ class HomeState extends State<Home> {
       HttpOverrides.global = MyHttpOverrides();
       await GetStorage.init();
     } catch (ex) {
-      print('***** HttpClient createHttpClient Fail *****');
+      debugPrint('***** HttpClient createHttpClient Fail *****');
       alertDialog(context, ex.toString());
     }
   }
@@ -88,7 +88,7 @@ class HomeState extends State<Home> {
       String chooseCode = prefer.getString('pchooseCode');
       String loginId = prefer.getString('pid');
       String brcode = prefer.getString(MyConstant().keybrcode);
-      print('************ loginId=$loginId --- token=$token');
+      debugPrint('*** home *** loginId=$loginId --- token=$token');
       if (loginId != null && loginId.isNotEmpty && token != "") {
         String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
             'updateToken.aspx?mbid=$loginId&token=$token';

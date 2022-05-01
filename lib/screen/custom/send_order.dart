@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:yakgin/model/cart_model.dart';
 import 'package:yakgin/model/item_model.dart';
 import 'package:yakgin/model/login_model.dart';
+import 'package:yakgin/model/mess_model.dart';
 import 'package:yakgin/model/sum_value.dart';
 import 'package:yakgin/screen/menu/main_user.dart';
 import 'package:yakgin/state/cart_state.dart';
@@ -712,9 +713,6 @@ class _SendOrderState extends State<SendOrder> {
                 .getCart(
                     mainStateController.selectedRestaurant.value.restaurantId)
                 .toList());
-
-        MyUtil().sendNoticToShop(resturantid, '!มีคำสั่งซื้อเข้ามา',
-            'จากลูกค้า $loginName ($loginMobile)');
         checkOrder(resturantid, ccode, mbid, createdDT);
       } else {
         alertDialog(context, response.toString());
@@ -731,15 +729,30 @@ class _SendOrderState extends State<SendOrder> {
             '$ccode&mbid=$mbid&createdDT=$createdDT';
 
     try {
-      Response response = await Dio().get(url);
-      if (response.toString().trim() != '') {
-        Toast.show('ส่งคำสั่งซื้อให้ร้านค้าแล้ว', context);
-        MaterialPageRoute route =
-            MaterialPageRoute(builder: (context) => MainUser());
-        Navigator.pushAndRemoveUntil(context, route, (route) => false);
-      } else {
-        alertDialog(context, '!ตรวจสอบไม่พบคำสั่งซื้อ\r\n(ตรวจสอบกับร้านค้า)');
-      }
+      await Dio().get(url).then((value) {
+        var result = json.decode(value.data);
+        if (result != null &&
+            result.toString() != '[]' &&
+            result.toString() != '') {
+          Toast.show('ส่งคำสั่งซื้อให้ร้านค้าแล้ว', context);
+
+          String olid = '0';
+          for (var map in result) {
+            MessModel mModel = MessModel.fromJson(map);
+            olid = mModel.mess;
+          }
+
+          MyUtil().sendNoticToMultiShop(resturantid, olid,
+              '!มีคำสั่งซื้อเข้ามา', 'จากลูกค้า $loginName ($loginMobile)');
+
+          MaterialPageRoute route =
+              MaterialPageRoute(builder: (context) => MainUser());
+          Navigator.pushAndRemoveUntil(context, route, (route) => false);
+        } else {
+          alertDialog(
+              context, '!ตรวจสอบไม่พบคำสั่งซื้อ\r\n(ตรวจสอบกับร้านค้า)');
+        }
+      });
     } catch (e) {
       alertDialog(
           context, '! ไม่สามารถติดต่อ Serverได้\r\n(ตรวจสอบกับร้านค้า)');

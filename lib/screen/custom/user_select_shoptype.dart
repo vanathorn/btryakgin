@@ -283,14 +283,14 @@ class _UserSelectShoptype extends State<UserSelectShoptype> {
                                         ],
                                       ),
                                       FloatingActionButton.extended(
-                                        backgroundColor: Color(0xffBFB372),
+                                        backgroundColor: MyStyle().primarycolor,
                                         label: Text('เกี่ยวกับร้าน',
                                             style: TextStyle(
                                                 fontFamily: 'thaisanslite',
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
-                                                color: Colors.black)),
-                                        icon: Icon(Icons.deck, color: Colors.black,),
+                                                color: Colors.white)),
+                                        icon: Icon(Icons.deck, color: Colors.white,),
                                         onPressed: () async {
                                           mainStateContoller
                                                   .selectedRestaurant.value =

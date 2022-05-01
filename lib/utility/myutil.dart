@@ -149,6 +149,20 @@ class MyUtil {
     }
   }
 
+  Future<Null> sendNoticToMultiShop(
+      String resturantid, String olid, String txtTitle, String txtBody) async {
+    String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
+        'notictoMultiShop.aspx?resturantid=$resturantid&olid=$olid&title=$txtTitle&body=$txtBody';
+    try {
+      Response response = await Dio().get(url);
+      if (response.toString() == '') {
+        //
+      }
+    } catch (e) {
+      //
+    }
+  }
+
   Future<Null> sendNoticToCustom(
       String mbid, String txtTitle, String txtBody) async {
     String url =

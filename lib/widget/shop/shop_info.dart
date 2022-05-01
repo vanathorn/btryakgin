@@ -462,29 +462,7 @@ class _ShopInfoState extends State<ShopInfo> {
       zoom: 18,
     )));
   }
-  /*
-  Future<Null> _xmyLocation() async {
-    LocationData locationData = await MyCalculate().findLocationData();
-    setState(() {
-      lat = locationData.latitude;
-      lng = locationData.longitude;
-    
-      LatLng latLng = LatLng(lat, lng);
-      print('******** _myLocation $lat *******');
-      CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 18.0);
-      return Container(
-        margin: EdgeInsets.only(top: 5, left: 15, right: 15),
-        height: 300,
-        child: GoogleMap(
-          initialCameraPosition: cameraPosition,
-          mapType: MapType.hybrid,
-          //onMapCreated: (controller) {},
-        ),
-      );
-    });
-  }
-  */
-
+  
   Future<LocationData> findLocationData() async {
     Location location = Location();
     try {

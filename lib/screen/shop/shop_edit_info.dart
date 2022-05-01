@@ -469,7 +469,7 @@ class ShopEditInfoState extends State<ShopEditInfo> {
         var imageUri = await uploadImageShop(
             physicalpath, '$ccode$brcode', filePath, 'Y');
         if (imageUri != null) {
-          print('1 $physicalpath  $imageUri');
+          //print('1 $physicalpath  $imageUri');
           //context.read(uploadState).state = STATE.SUCCESS;
           //context.read(resultProvider).state = imageUri;
           imageCache.clear();

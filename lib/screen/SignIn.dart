@@ -245,7 +245,7 @@ class _SignInState extends State<SignIn> {
               ),
               Container(
                 width: screen * 0.8,
-                margin: const EdgeInsets.only(bottom: 3),
+                margin: const EdgeInsets.only(top:5, bottom: 3),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -664,10 +664,10 @@ class _SignInState extends State<SignIn> {
               } else if (chooseCode == 'S') {
                 if (usermodel.brcode == '${MyConstant().headBranch}') {
                   routeToService(MainShopHead(), usermodel);
-                }else{
+                } else {
                   routeToService(MainShopBranch(), usermodel);
-                }               
-              } else if (chooseCode == 'A') {                
+                }
+              } else if (chooseCode == 'A') {
                 routeToService(MainAdmin(), usermodel);
               } else {
                 routeToService(MultiHome(), usermodel);
@@ -727,13 +727,16 @@ class _SignInState extends State<SignIn> {
       token = await firebaseMessaging.getToken();
       //token = await FirebaseMessaging.instance.getToken();
 
-      print(' SignIn loginId=$loginId ccode=${userModel.ccode} token=$token');
+      debugPrint(
+          ' SignIn loginId=$loginId ccode=${userModel.ccode} token=$token');
       if (loginId != null &&
           loginId.isNotEmpty &&
           token != null &&
           token.isNotEmpty) {
         String url = '${MyConstant().apipath}.${MyConstant().domain}/' +
             'updateToken.aspx?mbid=$loginId&token=$token';
+
+        debugPrint('<<< signin >>> updateToken url=$url');
         await Dio()
             .get(url)
             .then((value) => print('SignIn Update Token Success'));

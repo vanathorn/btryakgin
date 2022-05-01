@@ -9,17 +9,26 @@
       "client_info": {
         "mobilesdk_app_id": "1:506419221580:android:2d73104dbd370b330310e9",
         "android_client_info": {
-          "package_name": "com.butiron.yakgin"           
-        }        
+          "package_name": "com.butiron.yakgin"
+        }
       },
-      "relation": ["delegate_permission/common.handle_all_urls"],
-        "target": {
-          "namespace": "android_app",
-          "package_name": "com.butiron.yakgin",
-          "sha256_cert_fingerprints":
-            ["D3:4A:83:6B:93:2A:BD:72:13:DE:CA:CB:3C:1F:C0:EE:CA:26:0F:FD:9A:9F:D2:49:E1:9A:13:45:E5:B6:87:DB"]
-      },   
       "oauth_client": [
+        {
+          "client_id": "506419221580-hbrhctr26bo49jr6abobanb5u72q40ut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.butiron.yakgin",
+            "certificate_hash": "dc078e7fde6e0a7e326e2d0a0aa380b02e68576d"
+          }
+        },
+        {
+          "client_id": "506419221580-opdfg6i0b64b9l4kq01frdombsqh2j56.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.butiron.yakgin",
+            "certificate_hash": "af78693712a5d026b03cc88a6bcdec1e31af5290"
+          }
+        },
         {
           "client_id": "506419221580-527j87hha3cqoukiuu7m163scherles0.apps.googleusercontent.com",
           "client_type": 3
@@ -27,7 +36,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCWPGZBwztKeCpuL3MWGKFGnwTvkqUioQc"
+          "current_key": "AIzaSyBVKL0rcZAWcIca7VXYyXpuVkZ5Fu6zNwY"
         }
       ],
       "services": {
@@ -39,7 +48,7 @@
             }
           ]
         }
-      }      
+      }
     }
   ],
   "configuration_version": "1"

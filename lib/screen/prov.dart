@@ -87,7 +87,7 @@ class ProvState extends State<Prov> {
       HttpOverrides.global = MyHttpOverrides();
       await GetStorage.init();
     } catch (ex) {
-      print('***** HttpClient createHttpClient Fail *****');
+      debugPrint('***** HttpClient createHttpClient Fail *****');
       alertDialog(context, ex.toString());
     }
   }
